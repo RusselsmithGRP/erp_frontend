@@ -55,7 +55,8 @@ const customSelectStyle = {
       textAlign: "left",
       listStyle: "none",
       backgroundColor: "#fff",
-      backgroundClip: "padding-box"
+      backgroundClip: "padding-box",
+      
     },
     "& > div + div": {
       maxHeight: "266px !important"

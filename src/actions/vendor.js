@@ -1,4 +1,4 @@
-import { FETCH_VENDOR, FETCH_VENDORS, ADD_VENDOR, UPDATE_VENDOR, APPROVE_VENDOR, DELETE_VENDOR } from './index';
+import { FETCH_VENDOR, FETCH_VENDORS, ADD_VENDOR, UPDATE_VENDOR, APPROVE_VENDOR, DELETE_VENDOR, RECIEVE_GENERAL_INFO_DATA, RECIEVE_BUSINESS_INFO_DATA, RECIEVE_WORK_REFERENCE_DATA, RECIEVE_BANK_DETAIL_DATA } from './index';
 import * as loadAction from './loading';
 import MiddleWare from "../middleware/api";
 
@@ -20,7 +20,18 @@ export function approveVendorsAction(arry){
 export function deleteVendorsAction(arry){
     return {type: DELETE_VENDOR, data:arry};  
 }
-
+export function getGeneralInfoInputs(dispatch, d){
+dispatch({type: RECIEVE_GENERAL_INFO_DATA, data:d});
+}
+export function getBusinessInfoInputs(dispatch, d){
+    dispatch({type: RECIEVE_BUSINESS_INFO_DATA, data:d});
+}
+export function getBankDetailInputs(dispatch, d){
+    dispatch({type: RECIEVE_BANK_DETAIL_DATA, data:d});
+}
+export function getWorkReferenceInputs(dispatch, d){
+    dispatch({type: RECIEVE_WORK_REFERENCE_DATA, data:d});
+}
 export function findAllVendors(props, type=''){
 
     let middleware = new MiddleWare(props.user.token);
@@ -33,6 +44,8 @@ export function findAllVendors(props, type=''){
         endpoint = endpoint+'/unapproved';
     }else if(type === "blacklisted"){
         endpoint = endpoint+'/blacklisted';
+    }else if(type === "new"){
+        endpoint += '/new';
     }
     props.dispatch(loadAction.Loading());
         return middleware.makeConnection(endpoint ,'GET').then((response) => response.json()).then((responseJson)=>{
@@ -79,6 +92,18 @@ export function findVendorById(props,vendorId){
     );
 }
 
+export function searchVendor(token,search, callback){
+    let m = new MiddleWare(token);
+    ///props.dispatch(loadAction.Loading());
+    return m.makeConnection('/vendors/search/'+search, m.GET).then((response) => {
+        return response.json()
+    }).then(        
+        (responseJson)=>{
+            callback(responseJson);
+        }
+    );
+}
+
 export function submitVendorDetailsViaUserId(dispatch, userId, d){
     let middleware = new MiddleWare();
     let data = {};
@@ -105,4 +130,15 @@ export function deleteVendor(props, user){
     }).catch((e)=>{
       console.log("the error" + e);
     })
+}
+
+export function getVendorEvaluation(token, vendorId, callback){
+    let middleware = new MiddleWare(token);
+    return middleware.makeConnection('/vendorevaluation/view/'+vendorId,'GET').then((response) => {
+        return response.json()
+    }).then(        
+        (responseJson)=>{
+            callback(responseJson);
+        }
+    );
 }

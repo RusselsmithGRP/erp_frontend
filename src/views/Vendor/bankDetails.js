@@ -36,9 +36,7 @@ class BankDetails extends React.Component {
   handleChange = event => {
     let data = this.state.data;
     data[[event.target.id]] = event.target.value; 
-    this.setState({ 
-      data : data,
-    });
+    this.props.addDispatch(data);
   };
 
   handleSave = e=>{
@@ -143,7 +141,8 @@ BankDetails.propTypes = {
 function mapStateToProps(state) {
   return {
     data: (typeof(state.vendor.bank_detail) != 'undefined')?state.vendor.bank_detail: {},
-    user: state.auth.user
+    user: state.auth.user,
+    vendor: state.vendor
   };
 }
 
@@ -153,6 +152,9 @@ function mapDispatchToProps(dispatch) {
       let d = {};
       d.bank_detail = e.state.data
       vendorActions.submitVendorDetailsViaUserId(dispatch, e.props.user._id, d);
+    },
+    addDispatch(data){
+      vendorActions.getBankDetailInputs(dispatch, data); 
     }
   }
 }

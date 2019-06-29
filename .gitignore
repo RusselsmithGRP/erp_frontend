@@ -7,3 +7,4 @@ es
 coverage
 package-lock.json
 .env
+public

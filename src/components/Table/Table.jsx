@@ -7,14 +7,11 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
-import View from "@material-ui/icons/Pageview";
-import { Link } from 'react-router-dom';
-import Button from "../../components/CustomButtons/Button.jsx";
 // core components
-import tableStyle from "../../assets/jss/material-dashboard-pro-react/components/tableStyle.jsx";
+import tableStyle from "assets/jss/material-dashboard-pro-react/components/tableStyle.jsx";
 
 function CustomTable({ ...props }) {
-  const { classes, tableHead, tableData, tableHeaderColor, cardActions, viewLink, viewComponent} = props;
+  const { classes, tableHead, tableData, tableHeaderColor } = props;
   return (
     <div className={classes.tableResponsive}>
       <Table className={classes.table}>
@@ -24,7 +21,7 @@ function CustomTable({ ...props }) {
               {tableHead.map((prop, key) => {
                 return (
                   <TableCell
-                    className={classes.tableCell + " " + classes.tableHeadCell}
+                    className={classes.tableCell + " " + classes.tableHeadCell }
                     key={key}
                   >
                     {prop}
@@ -37,24 +34,14 @@ function CustomTable({ ...props }) {
         <TableBody>
           {tableData.map((prop, key) => {
             return (
-              <TableRow key={key}>
+              <TableRow key={key} >
                 {prop.map((prop, key) => {
-                  if(key == 0)return;
                   return (
                     <TableCell className={classes.tableCell} key={key}>
                       {prop}
                     </TableCell>
                   );
                 })}
-                <TableCell className={classes.tableCell} key={key}>
-                  <Button aria-label="View" variant="fab" to={viewLink+prop[0]} component={Link} className={classes.button}><View /></Button>;
-                    {cardActions.map((action,key)=>{
-                      return (
-                      <Button className={classes.button} onClick={props.handler("approve",prop[0])}>
-                      <action.label />
-                    </Button>)
-                    })}
-                </TableCell>
               </TableRow>
             );
           })}
@@ -65,8 +52,7 @@ function CustomTable({ ...props }) {
 }
 
 CustomTable.defaultProps = {
-  tableHeaderColor: "gray",
-  cardActions: [],
+  tableHeaderColor: "gray"
 };
 
 CustomTable.propTypes = {

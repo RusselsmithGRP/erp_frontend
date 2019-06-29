@@ -6,6 +6,9 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const extractPlugin = new ExtractTextPlugin({
     filename: './style.css'
 });
+const Dotenv = require('dotenv-webpack');
+ 
+
 module.exports = {
     entry: "./index.js",
     mode: 'development',
@@ -43,7 +46,8 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: 'index.html'
         }),
-        extractPlugin
+        extractPlugin,
+        new Dotenv(),
     ],
     module: {
         rules: [{
@@ -70,7 +74,8 @@ module.exports = {
          use: {
           loader: 'babel-loader',
           options: {
-           presets: ['env', 'stage-0', 'react']
+           presets: ['@babel/preset-env', "@babel/react"],
+           plugins: ['@babel/proposal-class-properties']
           }
          }
         }]

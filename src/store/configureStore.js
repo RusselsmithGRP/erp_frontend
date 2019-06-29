@@ -11,8 +11,8 @@ export default function configureStore() {
   const store = createStore(
     rootReducer,
     persistedState,
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-    applyMiddleware(thunk)
+    /* window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+    */ applyMiddleware(thunk)
   );
   store.subscribe(() => {
     stateLoader.saveState(store.getState());

@@ -9,7 +9,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 // @material-ui/icons
 import Assignment from "@material-ui/icons/Assignment";
-import Dvr from "@material-ui/icons/Dvr";
+import Edit from "@material-ui/icons/Edit";
 import Favorite from "@material-ui/icons/Favorite";
 import Close from "@material-ui/icons/Close";
 import Grid from "@material-ui/core/Grid";
@@ -55,13 +55,13 @@ componentDidMount(){
    userAction.findAllStaff(this.props, (json)=>{
     this.setState({users:json});
   });
+  
 }
 
 render(){
     console.log(this.state.users);
     const { classes } = this.props;
     let userData = this.state.users.map((data, key) => {
-      {{debugger}}
       return {
         id: key,
         firstname: data["firstname"],
@@ -70,6 +70,22 @@ render(){
         eid: data["eid"],
         department: data["department"],
         role: data["role"],
+        actions: (
+          // we've added some custom button actions
+          <div className="actions-right">
+            <Button
+              justIcon
+              round
+              simple
+              color="warning"
+              className="edit"
+              to={'/user/edit/' + data._id} component={Link}
+            >
+               <Edit/>
+            </Button>
+
+          </div>
+        )
       };
     });
         return (
@@ -82,7 +98,7 @@ render(){
                 </CardHeader>
                 <CardBody>
                   <div>
-                  <Button color="twitter" to="/adduser" component={Link}>Add New User</Button>
+                  <Button color="twitter" to="/user/add" component={Link}>Add New User</Button>
                   </div>
                   <br/>
                   <ReactTable
@@ -91,7 +107,7 @@ render(){
                 columns={[
                   {
                     Header: "First Name",
-                    accessor: "firsname"
+                    accessor: "firstname"
                   },
                   {
                     Header: "Last Name",
@@ -113,7 +129,12 @@ render(){
                     Header: "Role",
                     accessor: "role"
                   },
-                  
+                  {
+                    Header: "Actions",
+                    accessor: "actions",
+                    sortable: false,
+                    filterable: false
+                  }
                 ]}
                 defaultPageSize={10}
                 showPaginationTop

@@ -35,7 +35,7 @@ class BankDetails extends React.Component {
                         fullWidth: true
                       }} inputProps={{
                         onChange: this.handleChange,
-                        value: this.props.data.account_name
+                        value: this.props.data.account_name,disabled: true
                       }}
                     />
                 </GridItem>
@@ -45,7 +45,7 @@ class BankDetails extends React.Component {
                         fullWidth: true
                       }} inputProps={{
                         onChange: this.handleChange,
-                        value: this.props.data.account_number
+                        value: this.props.data.account_number,disabled: true
                       }}
                     />
                 </GridItem>
@@ -55,7 +55,7 @@ class BankDetails extends React.Component {
                         fullWidth: true
                       }} inputProps={{
                         onChange: this.handleChange,
-                        value: this.props.data.bank
+                        value: this.props.data.bank,disabled: true
                       }}
                     />
                 </GridItem>
@@ -65,7 +65,7 @@ class BankDetails extends React.Component {
                         fullWidth: true
                       }} inputProps={{
                         onChange: this.handleChange,
-                        value: this.props.data.sort_code
+                        value: this.props.data.sort_code,disabled: true
                       }}
                     />
                 </GridItem>
@@ -75,7 +75,7 @@ class BankDetails extends React.Component {
                         fullWidth: true
                       }} inputProps={{
                         onChange: this.handleChange,
-                        value: this.props.data.branch
+                        value: this.props.data.branch,disabled: true
                       }}
                     />
                 </GridItem>
@@ -85,7 +85,7 @@ class BankDetails extends React.Component {
                         fullWidth: true
                       }} inputProps={{
                         onChange: this.handleChange,
-                        value: this.props.data.contact_phone
+                        value: this.props.data.contact_phone,disabled: true
                       }}
                     />
                 </GridItem>

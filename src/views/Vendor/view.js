@@ -50,7 +50,6 @@ class View extends React.Component {
   }
 
   componentDidMount(){
-    {{debugger}}
     const vendorId = this.props.match.params.id;
     vendorActions.findVendorById(this.props, vendorId);
   }
@@ -154,6 +153,8 @@ class View extends React.Component {
                   </Button>
               </Grid>
               : ""}
+              {
+            ((this.props.user.role == "iac") && (this.props.data.status == "PENDING"))?
             <Grid
                 container
                 spacing={16}
@@ -170,7 +171,8 @@ class View extends React.Component {
                 <Unapprove />
                 Reject
               </Button>
-              </Grid>
+              </Grid> : ""
+              }
           </GridItem>
       </Grid>
     );

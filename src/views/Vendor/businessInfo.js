@@ -36,6 +36,7 @@ class BusinessInfo extends React.Component {
     data: {
     business_type: props.data.business_type,
     year_established: props.data.year_established,
+    employee_no: props.data.employee_no,
     vat_no: props.data.vat_no,
     tax_no: props.data.tax_no,
     product_related: props.data.product_related,
@@ -60,9 +61,7 @@ class BusinessInfo extends React.Component {
   handleChange = event => {
     let data = this.state.data;
     data[[event.target.id]] = event.target.value; 
-    this.setState({ 
-      data : data,
-    });
+    this.props.addDispatch(data);
   };
 
   checkChecked = event=>{
@@ -96,7 +95,6 @@ class BusinessInfo extends React.Component {
 
   render() {
     const { classes } = this.props;
-  
     return (
       <Grid container>
       <GridItem xs={12} sm={12} md={12}>
@@ -223,6 +221,7 @@ function mapStateToProps(state) {
   return {
     data: (typeof(state.vendor.business_info) != 'undefined')?state.vendor.business_info: {},
     user: state.auth.user,
+    vendor: state.vendor
   };
 }
 
@@ -232,6 +231,9 @@ function mapDispatchToProps(dispatch) {
       let d = {};
       d.business_info = e.state.data
       vendorActions.submitVendorDetailsViaUserId(dispatch, e.props.user._id, d);
+    },
+    addDispatch(data){
+      vendorActions.getBusinessInfoInputs(dispatch, data);
     }
   }
 }

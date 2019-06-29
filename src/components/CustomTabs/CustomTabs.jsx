@@ -21,6 +21,7 @@ class CustomTabs extends React.Component {
   };
 
   handleChange = (event, value) => {
+    
     this.setState({ value });
   };
 

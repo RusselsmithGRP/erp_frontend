@@ -34,7 +34,8 @@ class LoginInfo extends React.Component {
     data: {username:'', password:''},
 	 card: {
     minWidth:12,
-	 }
+   },
+   errorMsg: ''
   }
   handleChange = event => {
     let data = this.state.data;
@@ -48,18 +49,25 @@ class LoginInfo extends React.Component {
   }
 
   login = (e) => {
-    {{debugger}}
     e.preventDefault();
     this.setState({loading:true});
     AclAuth.authenticate(this.state.data.username, this.state.data.password, (err,user,token) => {
       this.setState({loading:false});
-      if(err) {
-        this.setState({showError:true});
+      if(err && err.status == 406) {
+        console.log(err);
+        this.setState({showError:true, errorMsg: "your account is not verified! please log into your email and follow the link sent to you."});
       return;
       }
-      let u = user;
-      u.token = token;
-      this.props.dispatch({type: USER_LOGGED_IN, user: u});
+      else if(err){
+        this.setState({showError:true, errorMsg: 'Invalid username or password, please try again'});
+        return;
+      }
+      else {
+        let u = user;
+        u.token = token;
+        this.props.dispatch({type: USER_LOGGED_IN, user: u});
+      }
+      
     })
   }
 
@@ -78,9 +86,7 @@ class LoginInfo extends React.Component {
             <form onSubmit={this.login}>
             <Progress loading={this.state.loading}/>
               {(this.state.showError)?<SnackbarContent
-                message={
-                  'Invalid username and password, please try again'
-                }
+                message={this.state.errorMsg}
                 close
                 color="danger"
               /> : ""}
