@@ -125,7 +125,7 @@ const sortParams = [
 class Index extends React.Component {
   constructor(props) {
     super(props);
-   // this.handler = this.handler.bind(this);
+    // this.handler = this.handler.bind(this);
     this.state = {
       data: [],
       multipleSelect: [],
@@ -163,12 +163,10 @@ class Index extends React.Component {
     this.fetchQuotes(this.state.selectedPr);
   };
 
-  
-  addActiveClass = (name) => {
+  addActiveClass = name => {
     this.setState({
       active: name
     });
-    
   };
 
   sortBy = type => {
@@ -181,8 +179,13 @@ class Index extends React.Component {
             const date = new Date(prop.created);
             return (
               <a
-                className={this.props.classes.boxRow + "  " + (this.state.active === key ? 'active' : '')}
+                className={
+                  this.props.classes.boxRow +
+                  "  " +
+                  (this.state.active === key ? "active" : "")
+                }
                 onClick={() => this.fetchQuotes(prop)}
+                key={key}
               >
                 <div className={this.props.classes.box}>
                   {prop.requisitionno}
@@ -204,8 +207,13 @@ class Index extends React.Component {
             const date = new Date(prop.created);
             return (
               <a
-                className={this.props.classes.boxRow + "  " + (this.state.active === key ? 'active' : '')}
+                className={
+                  this.props.classes.boxRow +
+                  "  " +
+                  (this.state.active === key ? "active" : "")
+                }
                 onClick={() => this.fetchQuotes(prop)}
+                key={key}
               >
                 <div className={this.props.classes.box}>
                   {prop.requisitionno}
@@ -226,8 +234,13 @@ class Index extends React.Component {
             const date = new Date(prop.created);
             return (
               <a
-                className={this.props.classes.boxRow + "  " + (this.state.active === key ? 'active' : '')}
+                className={
+                  this.props.classes.boxRow +
+                  "  " +
+                  (this.state.active === key ? "active" : "")
+                }
                 onClick={() => this.fetchQuotes(prop)}
+                key={key}
               >
                 <div className={this.props.classes.box}>
                   {prop.requisitionno}
@@ -245,11 +258,16 @@ class Index extends React.Component {
           const date = new Date(prop.created);
           return (
             <a
-              className={this.props.classes.boxRow + "  " + (this.state.active === key ? 'active' : '')}
-               onClick={()=> {
-                          this.fetchQuotes(prop);
-                          this.addActiveClass(key);
-                        }}
+              className={
+                this.props.classes.boxRow +
+                "  " +
+                (this.state.active === key ? "active" : "")
+              }
+              onClick={() => {
+                this.fetchQuotes(prop);
+                this.addActiveClass(key);
+              }}
+              key={key}
             >
               <div className={this.props.classes.box}>{prop.requisitionno}</div>
               <div className={this.props.classes.box}>
@@ -383,8 +401,8 @@ class Index extends React.Component {
                               borderBottomWidth: " 1px"
                             }}
                           >
-                            {sortParams.map(option => (
-                              <MenuItem key={option.value} value={option.value}>
+                            {sortParams.map((option, i) => (
+                              <MenuItem key={i} value={option.value}>
                                 {option.label}
                               </MenuItem>
                             ))}

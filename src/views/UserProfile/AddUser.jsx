@@ -37,11 +37,11 @@ const styles = {
 };
 
 const Types = [
-    {name: "CEO", value:"ceo"},
-    {name: "Head Of Department", value:"hod"},
-    {name: "Manager", value:"manager"},
-    {name: "Staff", value:"staff"}
-]
+  { name: "CEO", value: "ceo" },
+  { name: "Head Of Department", value: "hod" },
+  { name: "Manager", value: "manager" },
+  { name: "Staff", value: "staff" }
+];
 
 class AddUser extends React.Component {
   state = {
@@ -52,7 +52,7 @@ class AddUser extends React.Component {
       email: "",
       eid: "",
       department: "",
-      line_manager:""
+      line_manager: ""
     },
     responseMessage: "",
     optionsRole: [],
@@ -66,7 +66,7 @@ class AddUser extends React.Component {
       department: ""
     },
     submitButtonState: false,
-    users:[]
+    users: []
   };
 
   handleChange = event => {
@@ -81,13 +81,13 @@ class AddUser extends React.Component {
   handleChangeSelect = e => {
     let data = this.state.data;
     data[[e.target.name]] = e.target.value;
-    this.setState({ 
+    this.setState({
       data: data
     });
-    if(e.target.name =="line_manager"){
-      /* userAction.findManagers(this.props.user.token, users=>{
-        this.setState({users});
-      }) */
+    if (e.target.name == "line_manager") {
+      userAction.findManagers(this.props.user.token, users => {
+        this.setState({ users });
+      });
     }
     this.validate(event.target.id, event.target.value);
   };
@@ -141,33 +141,38 @@ class AddUser extends React.Component {
         break;
       case "role":
         const role = helpers.isEmpty(value) ? false : true;
-        this.setState({
+        // this.setState({
+        //   validationState: {
+        //     ...this.state.validationState,
+        //     role
+        //   }
+        // });
+
+        this.setState(state => ({
           validationState: {
-            ...this.state.validationState,
+            ...state.validationState,
             role
           }
-        });
+        }));
     }
   };
-
 
   getformData = e => {
     let data = this.state.data;
     //let validationState = this.state.validationState;
     userAction.addUser(this.props, data, json => {
-      if(json.success){
-        this.setState({ 
+      if (json.success) {
+        this.setState({
           responseMessage: json.message,
           data: json.user,
           validationState: {}
-         })
-      }else{
-        this.setState({ 
+        });
+      } else {
+        this.setState({
           responseMessage: json.message,
           validationState: {}
-         })
+        });
       }
-    
     });
     //this.setState({submitButtonState: true})
   };
@@ -178,22 +183,20 @@ class AddUser extends React.Component {
     genericActions.fetchAll("roles", this.props.user.token, items => {
       this.setState({ optionsRole: items });
     });
-    userAction.findManagers(this.props.user.token, users=>{
-      this.setState({users});
-    })
+    userAction.findManagers(this.props.user.token, users => {
+      this.setState({ users });
+    });
   }
 
   render() {
-    console.log(this.state.data);
+    // console.log(this.state.data);
+    // console.log(this.state.optionsRole);
     const { classes } = this.props;
     return (
       <div>
         <Grid container>
           {this.state.responseMessage ? (
-            <Notification
-              error={false}
-              message={this.state.responseMessage}
-            />
+            <Notification error={false} message={this.state.responseMessage} />
           ) : (
             ""
           )}
@@ -213,9 +216,9 @@ class AddUser extends React.Component {
                           fullWidth: true
                         }}
                         inputProps={{
-                          onChange: (e)=>this.handleChange(e),
+                          onChange: e => this.handleChange(e),
                           value: this.state.data.lastname
-                                                }}
+                        }}
                         error={
                           this.state.validationState.lastname === ""
                             ? ""
@@ -236,7 +239,7 @@ class AddUser extends React.Component {
                           fullWidth: true
                         }}
                         inputProps={{
-                          onChange: (e)=>this.handleChange(e),
+                          onChange: e => this.handleChange(e),
                           value: this.state.data.firstname
                         }}
                         error={
@@ -256,12 +259,12 @@ class AddUser extends React.Component {
                     <GridItem xs={12} sm={12} md={6}>
                       <CustomInput
                         labelText="Email"
-                        id="email"                        
+                        id="email"
                         formControlProps={{
                           fullWidth: true
                         }}
                         inputProps={{
-                          onChange: (e)=>this.handleChange(e),
+                          onChange: e => this.handleChange(e),
                           value: this.state.data.email
                         }}
                         error={
@@ -284,9 +287,9 @@ class AddUser extends React.Component {
                           fullWidth: true
                         }}
                         inputProps={{
-                          onChange: (e)=>this.handleChange(e),
+                          onChange: e => this.handleChange(e),
                           value: this.state.data.eid
-                               }}
+                        }}
                         error={
                           this.state.validationState.eid === ""
                             ? ""
@@ -378,7 +381,7 @@ class AddUser extends React.Component {
                         {this.state.users.map(function(data, key) {
                           return (
                             <MenuItem name="role" key={key} value={data._id}>
-                              {data.firstname +" "+data.lastname}
+                              {data.firstname + " " + data.lastname}
                             </MenuItem>
                           );
                         })}

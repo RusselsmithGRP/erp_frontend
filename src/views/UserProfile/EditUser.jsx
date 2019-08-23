@@ -8,16 +8,16 @@ import GridItem from "../../components/Grid/GridItem.jsx";
 import CustomSelect from "../../components/CustomInput/CustomSelect.jsx";
 import CustomInput from "../../components/CustomInput/CustomInput.jsx";
 import Button from "../../components/CustomButtons/Button.jsx";
-import MenuItem from '@material-ui/core/MenuItem';
+import MenuItem from "@material-ui/core/MenuItem";
 import Card from "../../components/Card/Card.jsx";
 import CardHeader from "../../components/Card/CardHeader.jsx";
 import CardAvatar from "../../components/Card/CardAvatar.jsx";
 import CardBody from "../../components/Card/CardBody.jsx";
 import CardFooter from "../../components/Card/CardFooter.jsx";
 import avatar from "../../assets/img/faces/marc.jpg";
-import {connect} from 'react-redux';
-import * as userAction from "../../actions/user"
-import * as genericActions from '../../actions/generic.js';
+import { connect } from "react-redux";
+import * as userAction from "../../actions/user";
+import * as genericActions from "../../actions/generic.js";
 
 const styles = {
   cardCategoryWhite: {
@@ -39,173 +39,209 @@ const styles = {
 };
 
 const Types = [
-    {name: "CEO", value:"ceo"},
-    {name: "Head Of Department", value:"hod"},
-    {name: "Manager", value:"manager"},
-    {name: "Staff", value:"staff"}
-]
+  { name: "CEO", value: "ceo" },
+  { name: "Head Of Department", value: "hod" },
+  { name: "Manager", value: "manager" },
+  { name: "Staff", value: "staff" }
+];
 
 class EditUser extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-        data: {},
-        responseMessage: '',
-        responseState: '',
-        isEnabled: false,
-        optionsDepartment : [
-        ],
-        optionsRole : [
-        ],
-        users:[]
-      }
-      this.enableEdit = this.enableEdit.bind(this),
-      this.handleChange = this.handleChange.bind(this)
-    }
+      data: {},
+      responseMessage: "",
+      responseState: "",
+      isEnabled: false,
+      optionsDepartment: [],
+      optionsRole: [],
+      users: []
+    };
+    (this.enableEdit = this.enableEdit.bind(this)),
+      (this.handleChange = this.handleChange.bind(this));
+  }
 
-  enableEdit(){
+  enableEdit() {
     let isTrue = true;
-    this.setState({ 
-      isEnabled : isTrue
-    }) 
+    this.setState({
+      isEnabled: isTrue
+    });
   }
 
   handleChange = event => {
-      let data = this.state.data;
-      data[[event.target.id]] = event.target.value; 
-      this.setState({ 
-        data : data
-      }) 
+    let data = this.state.data;
+    data[[event.target.id]] = event.target.value;
+    this.setState({
+      data: data
+    });
   };
 
-  handleChangeSelect = (e) => {
+  handleChangeSelect = e => {
     let data = this.state.data;
-    data[[e.target.name]] = e.target.value; 
-    this.setState({ 
-      data : data,
+    data[[e.target.name]] = e.target.value;
+    this.setState({
+      data: data
     });
-  }
+  };
 
   handleSave = e => {
     e.preventDefault();
     let data = this.state.data;
-    userAction.updateProfile(data, (json)=>{
+    userAction.updateProfile(data, json => {
       this.setState({
-          responseState: json.success,
-          responseMessage:json.message,
+        responseState: json.success,
+        responseMessage: json.message
       });
-      if(this.state.responseMessage){
-          alert("profile updated")
+      if (this.state.responseMessage) {
+        alert("profile updated");
       }
-    });}
-componentDidMount(){
-  {{debugger}}
-    userAction.getProfileDetails(this.props, this.props.match.params.id, (json)=>{
-        {{debugger}}
-        this.setState({data:json});
+    });
+  };
+  componentDidMount() {
+    {
+      {
+        // debugger;
+      }
+    }
+    userAction.getProfileDetails(
+      this.props,
+      this.props.match.params.id,
+      json => {
+        {
+          {
+            // debugger;
+          }
+        }
+        this.setState({ data: json });
         //console.log(json)
-      });
-    genericActions.fetchAll("departments", this.props.user.token, (items)=>{
-      this.setState({optionsDepartment : items});
+      }
+    );
+    genericActions.fetchAll("departments", this.props.user.token, items => {
+      this.setState({ optionsDepartment: items });
     });
-    genericActions.fetchAll("roles", this.props.user.token, (items)=>{
-      this.setState({optionsRole : items});
+    genericActions.fetchAll("roles", this.props.user.token, items => {
+      this.setState({ optionsRole: items });
     });
-    userAction.findManagers(this.props.user.token, users=>{
-      this.setState({users});
-    })
+    userAction.findManagers(this.props.user.token, users => {
+      this.setState({ users });
+    });
   }
   render() {
     const { classes, data } = this.props;
-  return (
-    <div>
-      <Grid container>
-        <GridItem xs={12} sm={12} md={8}>
-          <Card>
-            <CardHeader color="primary">
-              <h4 className={classes.cardTitleWhite}>Edit Staff Profile</h4>
-            </CardHeader>
-            <CardBody>
-            <form className={classes.container} noValidate autoComplete="off" >
-              <Grid container>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    id="lastname"
-                    formControlProps={{
-                      fullWidth: true
-                    }}inputProps={{
-                      onChange: this.handleChange.bind(this),
-                      value: this.state.data.lastname
-                    }}
-                  />
-                  
-                </GridItem>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    id="firstname"
-                    formControlProps={{
-                      fullWidth: true
-                    }}inputProps={{
-                      onChange: this.handleChange.bind(this),
-                      value: this.state.data.firstname
-                    }}
-                  />
-                </GridItem> 
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    id="email"
-                    formControlProps={{
-                      fullWidth: true
-                    }}inputProps={{
-                      onChange: this.handleChange,
-                      value: this.state.data.email
-                    }}
-                  />
-                </GridItem> 
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    id="eid"
-                    formControlProps={{
-                      fullWidth: true
-                    }}inputProps={{
-                      onChange: this.handleChange.bind(this),
-                      value: this.state.data.eid
-                    }}
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomSelect  name="department" required
-                  value={this.state.data.department} onChange={(e)=>this.handleChangeSelect(e)}
-                  formControlProps={{
-                      fullWidth: true
-                    }} 
-                    inputProps={{
-                      margin:"normal",
-                    }}       
-                  >
-                        {this.state.optionsDepartment.map(function(data, key){  return (
-                      <MenuItem name="department" key={key} value={data._id}>{data.name}</MenuItem>
-                                    )
-                  })}
-                    </CustomSelect>
-                  </GridItem>
-                  <GridItem xs={12} sm={12} md={6}>
-                  <CustomSelect labelText="Role" name="role" required
-                    value={this.state.data.role} onChange={(e)=>this.handleChangeSelect(e)}
-                  formControlProps={{
-                      fullWidth: true
-                    }} 
-                    inputProps={{
-                      margin:"normal",
-                    }}       
-                  >
-                        {this.state.optionsRole.map(function(data, key){  return (
-                      <MenuItem name="role" key={key} value={data.slug}>{data.name}</MenuItem>
-                                    )
-                  })}
-                    </CustomSelect>
-                  </GridItem>
-                  <GridItem xs={12} sm={12} md={6}>
+    // console.log(this.state.data.type);
+    return (
+      <div>
+        <Grid container>
+          <GridItem xs={12} sm={12} md={8}>
+            <Card>
+              <CardHeader color="primary">
+                <h4 className={classes.cardTitleWhite}>Edit Staff Profile</h4>
+              </CardHeader>
+              <CardBody>
+                <form
+                  className={classes.container}
+                  noValidate
+                  autoComplete="off"
+                >
+                  <Grid container>
+                    <GridItem xs={12} sm={12} md={6}>
+                      <CustomInput
+                        id="lastname"
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        inputProps={{
+                          onChange: this.handleChange.bind(this),
+                          value: this.state.data.lastname
+                        }}
+                      />
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={6}>
+                      <CustomInput
+                        id="firstname"
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        inputProps={{
+                          onChange: this.handleChange.bind(this),
+                          value: this.state.data.firstname
+                        }}
+                      />
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={6}>
+                      <CustomInput
+                        id="email"
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        inputProps={{
+                          onChange: this.handleChange,
+                          value: this.state.data.email
+                        }}
+                      />
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={6}>
+                      <CustomInput
+                        id="eid"
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        inputProps={{
+                          onChange: this.handleChange.bind(this),
+                          value: this.state.data.eid
+                        }}
+                      />
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={6}>
+                      <CustomSelect
+                        name="department"
+                        required
+                        value={this.state.data.department}
+                        onChange={e => this.handleChangeSelect(e)}
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        inputProps={{
+                          margin: "normal"
+                        }}
+                      >
+                        {this.state.optionsDepartment.map(function(data, key) {
+                          return (
+                            <MenuItem
+                              name="department"
+                              key={key}
+                              value={data._id}
+                            >
+                              {data.name}
+                            </MenuItem>
+                          );
+                        })}
+                      </CustomSelect>
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={6}>
+                      <CustomSelect
+                        labelText="Role"
+                        name="role"
+                        required
+                        value={this.state.data.role}
+                        onChange={e => this.handleChangeSelect(e)}
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        inputProps={{
+                          margin: "normal"
+                        }}
+                      >
+                        {this.state.optionsRole.map(function(data, key) {
+                          return (
+                            <MenuItem name="role" key={key} value={data.slug}>
+                              {data.name}
+                            </MenuItem>
+                          );
+                        })}
+                      </CustomSelect>
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={6}>
                       <CustomSelect
                         labelText="Select Line Manager"
                         name="line_manager"
@@ -222,7 +258,7 @@ componentDidMount(){
                         {this.state.users.map(function(data, key) {
                           return (
                             <MenuItem name="role" key={key} value={data._id}>
-                              {data.firstname +" "+data.lastname}
+                              {data.firstname + " " + data.lastname}
                             </MenuItem>
                           );
                         })}
@@ -251,19 +287,20 @@ componentDidMount(){
                         })}
                       </CustomSelect>
                     </GridItem>
-              </Grid>
-              </form>               
-            </CardBody>
-            <CardFooter>
-              <Button color="primary" onClick={this.handleSave}>Update Profile</Button>
-            </CardFooter>
-          </Card>
-        </GridItem>
-      
-      </Grid>
-    </div>
-  );
-}
+                  </Grid>
+                </form>
+              </CardBody>
+              <CardFooter>
+                <Button color="primary" onClick={this.handleSave}>
+                  Update Profile
+                </Button>
+              </CardFooter>
+            </Card>
+          </GridItem>
+        </Grid>
+      </div>
+    );
+  }
 }
 
 function mapStateToProps(state) {
@@ -272,4 +309,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default  connect(mapStateToProps)(withStyles(styles)(EditUser));
+export default connect(mapStateToProps)(withStyles(styles)(EditUser));

@@ -57,7 +57,7 @@ class Add extends React.Component {
       creditterms: "",
       grand_total: 0,
       vat: 5,
-      lineitems: [],
+      lineitems: []
     },
     vendors: [],
     quotes: [],
@@ -66,9 +66,9 @@ class Add extends React.Component {
     locations: [],
     types: [],
     address: "",
-    checkeditemsprice:{},
+    checkeditemsprice: {},
     cummulativeprice: 0,
-    isvatable:false, 
+    isvatable: false,
     redirect: ""
   };
 
@@ -78,7 +78,7 @@ class Add extends React.Component {
         window.location.href = "/order";
       }, 3000);
     }
-    isvatable:true
+    isvatable: true;
   };
 
   handleChange = event => {
@@ -98,7 +98,7 @@ class Add extends React.Component {
         this.setState({
           message: "Purchase Order created succesfully",
           error: false,
-          redirect: "yes" 
+          redirect: "yes"
         });
       } else
         this.setState({
@@ -113,76 +113,90 @@ class Add extends React.Component {
     let types = this.state.types;
     let index = checkeditems.indexOf(i);
     let cummulativeprice = 0;
-    if(index > -1){
+    if (index > -1) {
       checkeditems.splice(index, 1);
       types.splice(index, 1);
-      cummulativeprice  = this.state.cummulativeprice - parseInt(this.state.checkeditemsprice[i]);
-    }else{
+      cummulativeprice =
+        this.state.cummulativeprice - parseInt(this.state.checkeditemsprice[i]);
+    } else {
       checkeditems.push(i);
       types.push(k);
-      cummulativeprice  = this.state.cummulativeprice + parseInt(this.state.checkeditemsprice[i]);
+      cummulativeprice =
+        this.state.cummulativeprice + parseInt(this.state.checkeditemsprice[i]);
     }
     this.setState({
-      checkeditems, cummulativeprice, types
+      checkeditems,
+      cummulativeprice,
+      types
     });
-    this.calcPrice( "", cummulativeprice);
-  }
+    this.calcPrice("", cummulativeprice);
+  };
 
-  handleItemChange= event =>{
-    const { classes} = this.props;
+  handleItemChange = event => {
+    const { classes } = this.props;
     this.handleChange(event);
     let itemsprice = this.state.checkeditemsprice;
-    rfqActions.fetchAllQuoteforVendor(this.props.user.token, event.target.value, (quotes)=>{
-        this.setState({quotes});
+    rfqActions.fetchAllQuoteforVendor(
+      this.props.user.token,
+      event.target.value,
+      quotes => {
+        this.setState({ quotes });
         let grandTotal = this.state.data.grand_total;
-        const table_data = this.state.quotes.map((prop, key)=> {
-          itemsprice[prop._id] = ((prop.price*prop.quantity)/100).toFixed(2);
-            return (
+        const table_data = this.state.quotes.map((prop, key) => {
+          itemsprice[prop._id] = ((prop.price * prop.quantity) / 100).toFixed(
+            2
+          );
+          return (
             <TableRow key={key}>
-                <TableCell component="th" style={{border: "none", padding: "0", width: "20px", textAlign: "center"}}>                   
-                  <FormControlLabel
+              <TableCell
+                component="th"
+                style={{
+                  border: "none",
+                  padding: "0",
+                  width: "20px",
+                  textAlign: "center"
+                }}
+              >
+                <FormControlLabel
                   control={
                     <Checkbox
-                        tabIndex={-1}
-                        onClick={() => this.handleCheckedItems(prop._id, prop.service_type)}
-                        checkedIcon={
-                          <Check className={classes.checkedIcon} />
-                        }
-                        icon={<Check className={classes.uncheckedIcon} />}
-                        classes={{
-                          checked: classes.checked
-                        }}
+                      tabIndex={-1}
+                      onClick={() =>
+                        this.handleCheckedItems(prop._id, prop.service_type)
+                      }
+                      checkedIcon={<Check className={classes.checkedIcon} />}
+                      icon={<Check className={classes.uncheckedIcon} />}
+                      classes={{
+                        checked: classes.checked
+                      }}
                     />
                   }
-                      classes={{
-                        label: classes.label
-                      }}
-                  />
-                    {key+1}
-                </TableCell>
-                <TableCell className={classes.td}>
-                    {prop.description }
-                </TableCell>
-                <TableCell className={classes.td}>
-                    {prop.quantity}
-                </TableCell>
-                <TableCell className={classes.td}>
-                    {prop.unit}   
-                </TableCell>   
-                <TableCell className={classes.td}>
-                    {currencies.getCurrency(prop.currency)} {" "} {(prop.price/100).toFixed(2)}   
-                </TableCell>   
-                <TableCell className={classes.td}>
-                {currencies.getCurrency(prop.currency)} {" "} {((prop.price*prop.quantity)/100).toFixed(2)}   
-                </TableCell> 
+                  classes={{
+                    label: classes.label
+                  }}
+                />
+                {key + 1}
+              </TableCell>
+              <TableCell className={classes.td}>{prop.description}</TableCell>
+              <TableCell className={classes.td}>{prop.quantity}</TableCell>
+              <TableCell className={classes.td}>{prop.unit}</TableCell>
+              <TableCell className={classes.td}>
+                {currencies.getCurrency(prop.currency)}{" "}
+                {(prop.price / 100).toFixed(2)}
+              </TableCell>
+              <TableCell className={classes.td}>
+                {currencies.getCurrency(prop.currency)}{" "}
+                {((prop.price * prop.quantity) / 100).toFixed(2)}
+              </TableCell>
             </TableRow>
-            )}
-        );
+          );
+        });
 
         let data = this.state.data;
-        this.setState({data, table_data, itemsprice });
-    });
-}
+        this.setState({ data, table_data, itemsprice });
+      }
+    );
+  };
 
   selectedLocation(e) {
     locationAction.getAddress(this.props, e.target.value, json => {
@@ -195,34 +209,40 @@ class Add extends React.Component {
     this.calcPrice(name, this.state.cummulativeprice);
   };
 
-  calcPrice = (name, currentPrice)=>{
+  calcPrice = (name, currentPrice) => {
     const grandTotal = currentPrice;
     let data = this.state.data;
-    if(this.state.isvatable){
+    if (this.state.isvatable) {
       //const vat = event.target.value? event.target.values: this.state.data.vat;
-      data.grand_total = parseInt(grandTotal) + (grandTotal * (5/100));
-    }else{
+      data.grand_total = parseInt(grandTotal) + grandTotal * (5 / 100);
+    } else {
       data.grand_total = parseInt(grandTotal);
     }
-    switch (name){
-        case "discount":
-            const discount = (event.target.value)? event.target.value: this.state.data.discount;
-            data.grand_total=grandTotal-parseInt(discount);
-            data.discount = discount;
-            break;
-        case "freightcharges":
-            const freightcharges = (event.target.value)? event.target.value: this.state.data.freightcharges;
-            data.grand_total = parseInt(grandTotal)+parseInt(freightcharges);
-            data.freightcharges = event.target.value;
-            break;
-        case "servicecharge":
-            const servicecharge = (event.target.value)? event.target.value: this.state.data.servicecharge;
-            data.grand_total = parseInt(grandTotal)+parseInt(servicecharge);
-            data.servicecharge = event.target.value;
-            break;
+    switch (name) {
+      case "discount":
+        const discount = event.target.value
+          ? event.target.value
+          : this.state.data.discount;
+        data.grand_total = grandTotal - parseInt(discount);
+        data.discount = discount;
+        break;
+      case "freightcharges":
+        const freightcharges = event.target.value
+          ? event.target.value
+          : this.state.data.freightcharges;
+        data.grand_total = parseInt(grandTotal) + parseInt(freightcharges);
+        data.freightcharges = event.target.value;
+        break;
+      case "servicecharge":
+        const servicecharge = event.target.value
+          ? event.target.value
+          : this.state.data.servicecharge;
+        data.grand_total = parseInt(grandTotal) + parseInt(servicecharge);
+        data.servicecharge = event.target.value;
+        break;
     }
     this.setState({ data });
-  }
+  };
 
   componentDidMount() {
     rfqActions.fetchUniqueVendorFromQuote(this.props.user.token, vendors => {
@@ -232,8 +252,8 @@ class Add extends React.Component {
       this.setState({ locations: json });
     });
   }
-  componentDidUpdate(prevProps, prevState){
-    if(prevState.isvatable != this.state.isvatable){
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.isvatable != this.state.isvatable) {
       this.calcPrice("isvatable", this.state.cummulativeprice);
     }
   }
@@ -359,14 +379,17 @@ class Add extends React.Component {
                   </Grid>
                   <br />
                   <FormControlLabel
-                      control={
-                        <Checkbox checked={this.state.isvatable}
-                          onChange={(e)=>{ this.setState({isvatable: !this.state.isvatable})}}
+                    control={
+                      <Checkbox
+                        checked={this.state.isvatable}
+                        onChange={e => {
+                          this.setState({ isvatable: !this.state.isvatable });
+                        }}
                       />
-                      }
-                      label="Check if VAT apply"
-                    />
-                   <div style={{ overflowX: "scroll" }}>
+                    }
+                    label="Check if VAT apply"
+                  />
+                  <div style={{ overflowX: "scroll" }}>
                     <Table>
                       <TableHead
                         className={classes[tableHeaderColor + "TableHeader"]}
@@ -474,21 +497,21 @@ class Add extends React.Component {
                       />
                     </GridItem>
                     <GridItem xs={3}>
-                   {
-                     this.state.isvatable && <CustomInput
-                     labelText="VAT Applies"
-                     id="vat"
-                     formControlProps={{
-                       style: { width: "100%" },
-                       disabled:true
-                     }}
-                     inputProps={{
-                       name: "vat",
-                       onBlur: this.formulatePricing,
-                       disabled:true
-                     }}
-                   />
-                   }
+                      {this.state.isvatable && (
+                        <CustomInput
+                          labelText="VAT Applies"
+                          id="vat"
+                          formControlProps={{
+                            style: { width: "100%" },
+                            disabled: true
+                          }}
+                          inputProps={{
+                            name: "vat",
+                            onBlur: this.formulatePricing,
+                            disabled: true
+                          }}
+                        />
+                      )}
                     </GridItem>
                     <GridItem xs={3}>
                       <CustomInput
@@ -540,7 +563,12 @@ class Add extends React.Component {
                 </CardBody>
                 <CardFooter>
                   <Grid container>
-                    <GridItem xs={12} sm={6} md={2} additionalclass={classes.removeDivPadding}>
+                    <GridItem
+                      xs={12}
+                      sm={6}
+                      md={2}
+                      additionalclass={classes.removeDivPadding}
+                    >
                       <Button color="primary" onClick={this.handleSave}>
                         Save
                       </Button>
