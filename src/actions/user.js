@@ -24,6 +24,8 @@ export function updateProfile(data, callback) {
       return res.json();
     })
     .then(e => {
+      console.log("Data Updated Successfully...");
+      console.log(e);
       callback(e);
     })
     .catch(e => {
@@ -135,6 +137,7 @@ export function addUser(props, data, callback) {
   middleware
     .makeConnection("/users/createnewuser/", "POST", data)
     .then(response => {
+      console.log(response.json());
       return response.json();
     })
     .then(e => {
