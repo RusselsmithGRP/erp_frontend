@@ -146,7 +146,7 @@ class Index extends React.Component {
         creditterms: "",
         currency: "₦",
         availability: true,
-        availableDate:""
+        availableDate: ""
       },
       multipleSelect: [],
       showForm: false,
@@ -154,11 +154,16 @@ class Index extends React.Component {
       quote: { lineitems: [] },
       docs: [],
       startDate: moment(),
-      expenseheaders:[],
+      expenseheaders: [],
       showNotification: false
     };
   }
-  componentWillMount() {
+
+  /**
+   * @author Idowu
+   * @summary Changed componentWillMount to UNSAFE_componentWillMount
+   */
+  UNSAFE_componentWillMount() {
     const userId = this.props.user._id;
     vendorActions.findVendorByUserId(this.props, userId);
   }
@@ -177,7 +182,7 @@ class Index extends React.Component {
     let items = [];
     let data = this.state.data;
     quote.lineitems.map((it, i) => {
-      var item= {};
+      var item = {};
       item = {
         price: "",
         currency: "",
@@ -185,7 +190,7 @@ class Index extends React.Component {
         availableDate: "",
         description: it.itemdescription,
         uom: it.uom,
-        category:it.category,
+        category: it.category,
         quantity: it.quantity
       };
       items.push(item);
@@ -199,16 +204,21 @@ class Index extends React.Component {
     this.setState({ isOpen: !this.state.isOpen });
   };
 
-  submitQuote = ()=>{
+  submitQuote = () => {
     let data = this.state.data;
-    rfqActions.submitVendorQuote( this.props.user.token, this.state.quote._id, data, docs=>{
-        if(docs) {
+    rfqActions.submitVendorQuote(
+      this.props.user.token,
+      this.state.quote._id,
+      data,
+      docs => {
+        if (docs) {
           this.setState({
             showNotification: true
           });
         }
-    })
-  }
+      }
+    );
+  };
 
   handleSelect = event => {
     let data = this.state.data;
@@ -223,7 +233,7 @@ class Index extends React.Component {
     if (event._d) {
       this.toggleCalendar();
       this.setState({ startDate: event });
-      items[[i]]['availableDate'] = event.format("MM/DD/YYYY");
+      items[[i]]["availableDate"] = event.format("MM/DD/YYYY");
     } else {
       items[[i]][[event.target.name]] = event.target.value;
     }
@@ -241,7 +251,7 @@ class Index extends React.Component {
   }
 
   render() {
-   // console.log(this.state);
+    // console.log(this.state);
     const { classes, tableHeaderColor } = this.props;
     let mappedData = this.state.docs.map((prop, key) => {
       let date = new Date(prop.created);
@@ -257,7 +267,9 @@ class Index extends React.Component {
       const uom = Uom.getUom(prop.uom);
       return (
         <TableRow key={key}>
-          <TableCell className={classes.td}>{(prop.description)? prop.description: prop.itemdescription}</TableCell>
+          <TableCell className={classes.td}>
+            {prop.description ? prop.description : prop.itemdescription}
+          </TableCell>
           <TableCell className={classes.td}>{prop.quantity}</TableCell>
           <TableCell className={classes.td}>{uom.name}</TableCell>
           <TableCell className={classes.td}>
@@ -366,10 +378,11 @@ class Index extends React.Component {
 
     return (
       <GridContainer>
-          {
-            (this.state.showNotification == true)?
-              <Notification error={false} message={"Quote submitted succesfully"} /> : ""
-          }
+        {this.state.showNotification == true ? (
+          <Notification error={false} message={"Quote submitted succesfully"} />
+        ) : (
+          ""
+        )}
         <GridItem xs={12}>
           <Card>
             <CardHeader color="success" icon>

@@ -81,7 +81,11 @@ class Sidebar extends React.Component {
     st[collapse] = !this.state[collapse];
     this.setState(st);
   }
-  componentWillMount() {
+  /**
+   * @author Idowu
+   * @summary Changed componentWillMount to UNSAFE_componentWillMount
+   */
+  UNSAFE_componentWillMount() {
     roleAction.resolvePermission(this.props, this.props.user.role, json => {
       this.setState({ permissions: json[0].permission });
     });

@@ -10,7 +10,7 @@ import pdfTemplate from "./pdfTemplate";
 import * as poActions from "../../actions/purchaseorder";
 import * as Uom from "utility/Uom";
 import * as Status from "utility/Status";
-import * as Util from "utility/Util"
+import * as Util from "utility/Util";
 import moment from "moment";
 import * as currencies from "../../utility/Currencies.js";
 
@@ -65,13 +65,17 @@ class Pdf extends Component {
 
     return realSum;
   }
-  getVAT(vat, total){
-    let val = (total * vat)/100;
-    let realVat = (parseInt(total) + parseInt(val));
-    return realVat
+  getVAT(vat, total) {
+    let val = (total * vat) / 100;
+    let realVat = parseInt(total) + parseInt(val);
+    return realVat;
   }
 
-  componentWillMount() {
+  /**
+   * @author Idowu
+   * @summary Changed componentWillMount to UNSAFE_componentWillMount
+   */
+  UNSAFE_componentWillMount() {
     poActions.fetchPurchaseOrderById(
       this.props.user.token,
       this.props.match.params.id,
@@ -94,10 +98,12 @@ class Pdf extends Component {
           <td style={generalStyle.tableTd}>{prop.description}</td>
           <td style={generalStyle.tableTd}>{prop.quantity}</td>
           <td style={generalStyle.tableTd}>
-          {currencies.getCurrencyCode(prop.currency)}{" "}{Util.financial(prop.price)}
+            {currencies.getCurrencyCode(prop.currency)}{" "}
+            {Util.financial(prop.price)}
           </td>
           <td style={generalStyle.tableTd}>
-          {currencies.getCurrencyCode(prop.currency)}{" "}{Util.financial(prop.quantity * prop.price)}
+            {currencies.getCurrencyCode(prop.currency)}{" "}
+            {Util.financial(prop.quantity * prop.price)}
           </td>
         </tr>
       );
@@ -248,9 +254,14 @@ class Pdf extends Component {
                       </td>
                     </tr>
                     <tr>
-                      <th style={generalStyle.tableTd3}>V.A.T ({this.state.po.vat}%):</th>
+                      <th style={generalStyle.tableTd3}>
+                        V.A.T ({this.state.po.vat}%):
+                      </th>
                       <td style={generalStyle.tableTd2}>
-                      {this.getVAT(this.state.po.vat, this.getTotal(this.state.items))}
+                        {this.getVAT(
+                          this.state.po.vat,
+                          this.getTotal(this.state.items)
+                        )}
                       </td>
                     </tr>
                     <tr>
@@ -274,7 +285,8 @@ class Pdf extends Component {
                     <tr>
                       <th style={generalStyle.tableTd3}>Total:</th>
                       <td style={generalStyle.tableTd2}>
-                      {currencies.getCurrencyCode(currency)}{" "}{this.getTotal(this.state.items)}
+                        {currencies.getCurrencyCode(currency)}{" "}
+                        {this.getTotal(this.state.items)}
                       </td>
                     </tr>
                   </tbody>
