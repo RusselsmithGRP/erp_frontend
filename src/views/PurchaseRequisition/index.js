@@ -66,6 +66,7 @@ componentDidUpdate(prevProps) {
 }
 
 processJson(responseJson){
+  console.log(this.state.data, "responseJson")
   let datas = [];
   responseJson.map((row)=>{
     let arry = [];
