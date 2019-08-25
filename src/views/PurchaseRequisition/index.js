@@ -1,6 +1,6 @@
 import React from "react";
 import ReactTable from "react-table";
-import 'react-table/react-table.css'
+import "react-table/react-table.css";
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
 // @material-ui/icons
@@ -20,15 +20,15 @@ import CardHeader from "components/Card/CardHeader.jsx";
 import Button from "../../components/CustomButtons/Button.jsx";
 import Add from "@material-ui/icons/Add";
 import PropTypes from "prop-types";
-import CircularProgress from '@material-ui/core/CircularProgress';
-import purple from '@material-ui/core/colors/purple';
-import * as prActions from '../../actions/purchaserequisition';
-import { Redirect } from 'react-router';
+import CircularProgress from "@material-ui/core/CircularProgress";
+import purple from "@material-ui/core/colors/purple";
+import * as prActions from "../../actions/purchaserequisition";
+import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.jsx";
 import generalStyle from "assets/jss/material-dashboard-pro-react/generalStyle.jsx";
-import * as Status from 'utility/Status';
-import {connect} from 'react-redux';
+import * as Status from "utility/Status";
+import { connect } from "react-redux";
 
 const styles = {
   cardIconTitle: {
@@ -38,150 +38,181 @@ const styles = {
   }
 };
 class Index extends React.Component {
-
   constructor(props) {
     super(props);
     this.handler = this.handler.bind(this);
-    this.state = { 
-      data:[]
+    this.state = {
+      data: []
     };
   }
- 
 
-handler(type, id){
-  console.log(type, id);
-}
-
-
-componentDidMount(){
-  prActions.fetchAllRequistion(this.props.user.token , (docs)=>{
-    this.setState({data : docs});
-  });
-}
-
-componentDidUpdate(prevProps) {
-  if (this.props.match.params.type !== prevProps.match.params.type) {
-    //vendorActions.findAllVendors(this.props, this.props.match.params.type);
+  handler(type, id) {
+    console.log(type, id);
   }
-}
 
-processJson(responseJson){
-  console.log(this.state.data, "responseJson")
-  let datas = [];
-  responseJson.map((row)=>{
-    let arry = [];
-    arry.push(row._id, row.requisitionno, row.requestor.firstname, row.requestor.lastname, 
-      row.department.name, row.status);
-    datas.push(arry);
-  });
-  const dataTable = {
-    headerRow: ["#", "Requestor Name", "Department", "Status", "Actions"],
-    footerRow: ["#", "Requestor Name", "Department", "Status","Actions"],
-    dataRows: datas}
-  return dataTable;
-}
+  /**
+   * @author Idowu
+   * @summary Modified prActions.fetchAllRequisition by returning docs
+   * @summary then update the state within the `.then` call
+   */
+  componentDidMount() {
+    prActions
+      .fetchAllRequistion(this.props.user.token, docs => {
+        // this.setState({ data: docs });
+        return docs;
+      })
+      .then(data => {
+        this.setState({ data });
+      });
+  }
 
-render(){
+  componentDidUpdate(prevProps) {
+    if (this.props.match.params.type !== prevProps.match.params.type) {
+      //vendorActions.findAllVendors(this.props, this.props.match.params.type);
+    }
+  }
+
+  processJson(responseJson) {
+    let datas = [];
+    responseJson.map(row => {
+      {
+        {
+          debugger;
+        }
+      }
+      let arry = [];
+      arry.push(
+        row._id,
+        row.requisitionno,
+        row.requestor.firstname,
+        row.requestor.lastname,
+        row.department.name,
+        row.status
+      );
+      datas.push(arry);
+    });
+    const dataTable = {
+      headerRow: ["#", "Requestor Name", "Department", "Status", "Actions"],
+      footerRow: ["#", "Requestor Name", "Department", "Status", "Actions"],
+      dataRows: datas
+    };
+    return dataTable;
+  }
+
+  render() {
     const { classes } = this.props;
-    let prs = {"dataRows":[]};
-    if(this.state.data.length> 0){
+    let prs = { dataRows: [] };
+    if (this.state.data.length > 0) {
       prs = this.processJson(this.state.data);
     }
 
-    if(this.props.loader.loading){
+    if (this.props.loader.loading) {
       return (
         <div>
           <Grid container>
-            <GridItem xs={12} sm={6} md={3} style={{ margin:'20% auto'}}>
-              <CircularProgress className={classes.progress} size={70} style={{ color: purple[500]}} thickness={10} />
+            <GridItem xs={12} sm={6} md={3} style={{ margin: "20% auto" }}>
+              <CircularProgress
+                className={classes.progress}
+                size={70}
+                style={{ color: purple[500] }}
+                thickness={10}
+              />
             </GridItem>
           </Grid>
-        </div>)
-    }else{
+        </div>
+      );
+    } else {
       let mappedData = prs.dataRows.map((prop, key) => {
         return {
           id: prop[1],
-          requestor: prop[2]+" "+prop[3],
+          requestor: prop[2] + " " + prop[3],
           department: prop[4],
           status: Status.getStatus(prop[5]),
           actions: (
             // we've added some custom button actions
             <div className="actions-right">
-               <Link to={"/requisition/view/"+prop[0]} >View</Link>
+              <Link to={"/requisition/view/" + prop[0]}>View</Link>
             </div>
           )
         };
       });
-    return (
-      <GridContainer>
-        <GridItem xs={12}>
-          <Card>
-            <CardHeader color="primary" icon>
-              <CardIcon color="primary">
-                <Assignment />
-              </CardIcon>
-              <h3 className={classes.cardIconTitle}>Purchase Requisition Records</h3>
-            </CardHeader>
-            <CardBody>
-              <div>
-                  <Button color="twitter" to="/requisition/add" component={Link}>Add New Requisition</Button>
-              </div>
-              <ReactTable
-                data={mappedData}
-                filterable
-                columns={[
-                  {
-                    Header: "#",
-                    accessor: "id"
-                  },
-                  {
-                    Header: "Requestor",
-                    accessor: "requestor"
-                  },
-                  {
-                    Header: "Department",
-                    accessor: "department"
-                  },
-                  {
-                    Header: "Status",
-                    accessor: "status"
-                  },
-                  {
-                    Header: "Actions",
-                    accessor: "actions",
-                    sortable: false,
-                    filterable: false
-                  }
-                ]}
-                defaultPageSize={10}
-                showPaginationTop
-                showPaginationBottom={false}
-                className="-striped -highlight"
-              />
-            </CardBody>
-          </Card>
-        </GridItem>
-      </GridContainer>
-    );
-  }
+      return (
+        <GridContainer>
+          <GridItem xs={12}>
+            <Card>
+              <CardHeader color="primary" icon>
+                <CardIcon color="primary">
+                  <Assignment />
+                </CardIcon>
+                <h3 className={classes.cardIconTitle}>
+                  Purchase Requisition Records
+                </h3>
+              </CardHeader>
+              <CardBody>
+                <div>
+                  <Button
+                    color="twitter"
+                    to="/requisition/add"
+                    component={Link}
+                  >
+                    Add New Requisition
+                  </Button>
+                </div>
+                <ReactTable
+                  data={mappedData}
+                  filterable
+                  columns={[
+                    {
+                      Header: "#",
+                      accessor: "id"
+                    },
+                    {
+                      Header: "Requestor",
+                      accessor: "requestor"
+                    },
+                    {
+                      Header: "Department",
+                      accessor: "department"
+                    },
+                    {
+                      Header: "Status",
+                      accessor: "status"
+                    },
+                    {
+                      Header: "Actions",
+                      accessor: "actions",
+                      sortable: false,
+                      filterable: false
+                    }
+                  ]}
+                  defaultPageSize={10}
+                  showPaginationTop
+                  showPaginationBottom={false}
+                  className="-striped -highlight"
+                />
+              </CardBody>
+            </Card>
+          </GridItem>
+        </GridContainer>
+      );
+    }
   }
 }
 
 Index.propTypes = {
-  vendorActions:PropTypes.object,
+  vendorActions: PropTypes.object,
   data: PropTypes.object
-}
+};
 
 Index.defaultProps = {
-  data: {"dataRows":{}}
-}
+  data: { dataRows: {} }
+};
 function mapStateToProps(state) {
   return {
     loader: state.loader,
-    user: state.auth.user,
+    user: state.auth.user
   };
 }
-
 
 export default connect(
   mapStateToProps,

@@ -2,6 +2,11 @@ import * as loadAction from "./loading";
 import MiddleWare from "../middleware/api";
 
 export function fetchAll(type, token, callback) {
+  {
+    {
+      debugger;
+    }
+  }
   let m = new MiddleWare(token);
   return m
     .makeConnection("/" + type + "/", m.GET)
@@ -9,13 +14,15 @@ export function fetchAll(type, token, callback) {
       return response.json();
     })
     .then(responseJson => {
+      console.log(responseJson);
       callback(responseJson);
     });
 }
 
-export function findOne(type, id,token, callback) {
+export function findOne(type, id, token, callback) {
   let m = new MiddleWare(token);
-  return m.makeConnection("/" + type + "/view/"+id, m.GET)
+  return m
+    .makeConnection("/" + type + "/view/" + id, m.GET)
     .then(response => {
       return response.json();
     })
@@ -24,9 +31,10 @@ export function findOne(type, id,token, callback) {
     });
 }
 
-export function saveEdit(type, id,token, callback) {
+export function saveEdit(type, id, token, callback) {
   let m = new MiddleWare(token);
-  return m.makeConnection("/" + type + "/edit/"+id, m.GET)
+  return m
+    .makeConnection("/" + type + "/edit/" + id, m.GET)
     .then(response => {
       return response.json();
     })
@@ -37,22 +45,30 @@ export function saveEdit(type, id,token, callback) {
 
 export function saveItem(type, token, data, callback) {
   let m = new MiddleWare(token);
-  return m.makeConnection("/" + type + "/add/", m.POST, data).then(res => {
+  return m
+    .makeConnection("/" + type + "/add/", m.POST, data)
+    .then(res => {
       return res.json();
-    }).then(e => {
+    })
+    .then(e => {
       callback(e);
-    }).catch(e => {
+    })
+    .catch(e => {
       console.log("the error" + e);
     });
 }
 
-export function updateItem(type, id,token, data, callback) {
+export function updateItem(type, id, token, data, callback) {
   let m = new MiddleWare(token);
-  return m.makeConnection("/" + type + "/edit/"+id, m.POST, data).then(res => {
+  return m
+    .makeConnection("/" + type + "/edit/" + id, m.POST, data)
+    .then(res => {
       return res.json();
-    }).then(e => {
+    })
+    .then(e => {
       callback(e);
-    }).catch(e => {
+    })
+    .catch(e => {
       console.log("the error" + e);
     });
 }

@@ -20,7 +20,7 @@ import PropTypes from "prop-types";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import purple from "@material-ui/core/colors/purple";
 import * as genericActions from "../../actions/generic.js";
-import { Redirect } from "react-router";
+import { Redirect } from "react-router-dom";
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.jsx";
 import { Link } from "react-router-dom";
 
@@ -95,7 +95,13 @@ class ListCrud extends React.Component {
                   <Dvr />
                 </Link>
               ) : (
-                <Link to={"/crud/edit/"+this.props.match.params.type +"/" + prop[0]}>edit</Link>
+                <Link
+                  to={
+                    "/crud/edit/" + this.props.match.params.type + "/" + prop[0]
+                  }
+                >
+                  edit
+                </Link>
               )}
             </Button>
             <Button
@@ -127,7 +133,7 @@ class ListCrud extends React.Component {
             >
               <Close />
             </Button>
-           
+
             {this.props.match.params.type == "roles" ? (
               <Link to={"/roles/permission/" + prop[0]}>Permission</Link>
             ) : (

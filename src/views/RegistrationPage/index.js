@@ -49,13 +49,13 @@ class RegisterPage extends React.Component {
         email: "",
         password: "",
         coy_name: ""
-      },
+      }
     };
     this.handleToggle = this.handleToggle.bind(this);
   }
 
   handleChange = event => {
-    this.validate(event.target.id, event.target.value);   
+    this.validate(event.target.id, event.target.value);
     this.setState({
       [[event.target.id]]: event.target.value,
       responseMessage: ""
@@ -87,7 +87,7 @@ class RegisterPage extends React.Component {
           }
         });
         break;
-        case "email":
+      case "email":
         const email = helpers.isEmail(value) ? false : true;
         this.setState({
           validationState: {
@@ -96,7 +96,7 @@ class RegisterPage extends React.Component {
           }
         });
         break;
-        case "password":
+      case "password":
         const password = helpers.isPassword(value) ? false : true;
         this.setState({
           validationState: {
@@ -105,14 +105,18 @@ class RegisterPage extends React.Component {
           }
         });
         break;
-
     }
-}   
+  };
   register = e => {
     e.preventDefault();
-   if (this.state.validationState.coy_name === this.state.validationState.email == this.state.validationState.password ==! false) {
-    this.setState({ showErrorNotice: true });
-    return;
+    if (
+      ((this.state.validationState.coy_name ===
+        this.state.validationState.email) ==
+        this.state.validationState.password) ==
+      !false
+    ) {
+      this.setState({ showErrorNotice: true });
+      return;
     }
     if (this.state.checked.length === 0) {
       this.setState({ showCheckNotice: true });
@@ -137,8 +141,7 @@ class RegisterPage extends React.Component {
     });
   };
   hideAlert() {
-    return window.location.href = 'login';
-    ;
+    return (window.location.href = "login");
   }
   render() {
     const { classes } = this.props;
@@ -253,7 +256,7 @@ class RegisterPage extends React.Component {
                           formControlProps={{
                             fullWidth: true,
                             className: classes.customFormControlClasses
-                          }} 
+                          }}
                           id="password"
                           inputProps={{
                             onChange: this.handleChange,
@@ -293,14 +296,14 @@ class RegisterPage extends React.Component {
                         ) : (
                           ""
                         )}
-                         {this.state.showErrorNotice ? (
+                        {this.state.showErrorNotice ? (
                           <Typography
                             variant="caption"
                             color="secondary"
                             gutterBottom
                             align="center"
                           >
-                           Please Enter valid Data
+                            Please Enter valid Data
                           </Typography>
                         ) : (
                           ""
@@ -336,7 +339,7 @@ class RegisterPage extends React.Component {
                           </Link>
                         </GridItem>
                         <div className={classes.center}>
-                          <Button round color="primary" onClick={this.register} >
+                          <Button round color="primary" onClick={this.register}>
                             Get started
                           </Button>
                         </div>
