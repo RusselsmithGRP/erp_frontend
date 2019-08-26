@@ -92,7 +92,7 @@ class EditUser extends React.Component {
         responseState: json.success,
         responseMessage: json.message
       });
-      if (this.state.responseMessage) {
+      if (this.state.responseMessage !== "") {
         alert("profile updated");
       }
     });
