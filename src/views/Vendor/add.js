@@ -78,7 +78,7 @@ class AddTabs extends React.Component {
                   tabName: "General Information",
                   tabIcon: DNS,
                   tabContent: (
-                    <GeneralInfo data={this.props.vendor.general_info} />
+                    <GeneralInfo />
                   ),
                 },
                 {

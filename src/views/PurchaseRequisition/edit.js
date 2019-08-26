@@ -592,7 +592,6 @@ class Edit extends React.Component {
                   <br />
                   <div style={generalStyle.aboveTable}>
                     <div style={generalStyle.aboveTableIcon}>
-                      <span />
                       <span>
                         <Checkbox
                           checked={this.state.data.isextrabudget ? true : false}
@@ -684,7 +683,7 @@ class Edit extends React.Component {
                     </Table>
                   </div>
                 </CardBody>
-                {this.state.disabled == false ? (
+                {/* {this.state.disabled == false ? (
                   <CardFooter>
                     <Grid container>
                       <GridItem xs={12} sm={6} md={6}>
@@ -696,11 +695,11 @@ class Edit extends React.Component {
                   </CardFooter>
                 ) : (
                   ""
-                )}
+                )} */}
                 {this.props.user._id == this.state.department.hod ? (
                   <CardFooter>
-                    <Grid container>
                       {this.state.showReason ? (
+                      <Grid container>
                         <GridItem xs={12} sm={12} md={12}>
                           <CustomInput
                             labelText="Reason"
@@ -716,61 +715,69 @@ class Edit extends React.Component {
                             }}
                           />
                         </GridItem>
+                      </Grid>
                       ) : (
                         ""
                       )}
-                      <GridItem xs={12} sm={6} md={6}>
-                        <FormControl
-                          fullWidth
-                          className={classes.selectFormControl}
-                        >
-                          <InputLabel
-                            htmlFor="simple-select"
-                            className={classes.selectLabel}
-                          >
-                            Choose Action
-                          </InputLabel>
-                          <Select
-                            MenuProps={{
-                              className: classes.selectMenu
-                            }}
-                            classes={{
-                              select: classes.select
-                            }}
-                            value={this.state.action}
-                            inputProps={{
-                              name: "simpleSelect",
-                              id: "type"
-                            }}
-                            onChange={this.handleAction}
-                          >
-                            <MenuItem
-                              classes={{
-                                root: classes.selectMenuItem,
-                                selected: classes.selectMenuItemSelected
-                              }}
-                              value="approve"
+                      {
+                        (this.state.data.status !== "01" ) ? ( 
+                          ""
+                        ): (
+                          <Grid container>
+                          <GridItem xs={12} sm={6} md={6}>
+                            <FormControl
+                              fullWidth
+                              className={classes.selectFormControl}
                             >
-                              Approve
-                            </MenuItem>
-                            <MenuItem
-                              classes={{
-                                root: classes.selectMenuItem,
-                                selected: classes.selectMenuItemSelected
-                              }}
-                              value="disapprove"
-                            >
-                              Reject
-                            </MenuItem>
-                          </Select>
-                        </FormControl>
-                      </GridItem>
-                      <GridItem xs={12} sm={6} md={6}>
-                        <Button color="yellowgreen" onClick={this.submitForm}>
-                          Submit
-                        </Button>
-                      </GridItem>
-                    </Grid>
+                              <InputLabel
+                                htmlFor="simple-select"
+                                className={classes.selectLabel}
+                              >
+                                Choose Action
+                              </InputLabel>
+                              <Select
+                                MenuProps={{
+                                  className: classes.selectMenu
+                                }}
+                                classes={{
+                                  select: classes.select
+                                }}
+                                value={this.state.action}
+                                inputProps={{
+                                  name: "simpleSelect",
+                                  id: "type"
+                                }}
+                                onChange={this.handleAction}
+                              >
+                                <MenuItem
+                                  classes={{
+                                    root: classes.selectMenuItem,
+                                    selected: classes.selectMenuItemSelected
+                                  }}
+                                  value="approve"
+                                >
+                                  Approve
+                                </MenuItem>
+                                <MenuItem
+                                  classes={{
+                                    root: classes.selectMenuItem,
+                                    selected: classes.selectMenuItemSelected
+                                  }}
+                                  value="disapprove"
+                                >
+                                  Reject
+                                </MenuItem>
+                              </Select>
+                            </FormControl>
+                          </GridItem>
+                          <GridItem xs={12} sm={6} md={6}>
+                            <Button color="yellowgreen" onClick={this.submitForm}>
+                              Submit
+                            </Button>
+                          </GridItem>
+                        </Grid>
+                        )
+                      }
                   </CardFooter>
                 ) : (
                   ""

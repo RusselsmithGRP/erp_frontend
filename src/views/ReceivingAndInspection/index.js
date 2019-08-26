@@ -17,13 +17,13 @@ import PropTypes from "prop-types";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import purple from "@material-ui/core/colors/purple";
 import * as poActions from "../../actions/purchaseorder";
+import * as riActions from "../../actions/receivingandinspection";
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.jsx";
 import generalStyle from "assets/jss/material-dashboard-pro-react/generalStyle.jsx";
 import * as Status from "utility/Status";
 import { connect } from "react-redux";
-import * as riActions from "../../actions/receivingandinspection";
 
 
 const styles = {
@@ -37,7 +37,9 @@ class Index extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: []
+      data: [],
+      workCompletions: [],
+      recievedItems: []
     };
   }
 
@@ -45,7 +47,12 @@ class Index extends React.Component {
     poActions.fetchAllPurchaseOrder(this.props.user.token, docs => {
       this.setState({ data: docs });
     });
-    
+    riActions.fetchAllRecievedItems(this.props.user.token, docs => {
+      this.setState({ recievedItems: docs });
+    });
+    riActions.fetchAllWorkCompletion(this.props.user.token, docs => {
+      this.setState({ workCompletions: docs });
+    });
   }
 
   componentDidUpdate(prevProps) {
@@ -55,18 +62,20 @@ class Index extends React.Component {
   }
 
  checKStatus = (poID) => {
-    riActions.getInspectedProduct( 
-      this.props.user.token,
-      poID,
-      (json) => {
-        if (json.result == "nothing") {
-
-           let status = "pending";
-            return status
-
-        } 
+   if(this.state.recievedItems.some(x => x.purchaseOrder === poID) || this.state.workCompletions.some(x => x.purchaseOrder === poID)){
+      let item = this.state.recievedItems.find(x => x.purchaseOrder === poID) || this.state.workCompletions.find(x => x.purchaseOrder === poID);
+      let stage = (item != undefined)? item.inspection_stage: "";
+      let arr = (stage != undefined)? [stage.inspected, stage.reviewed, stage.approved]: [];
+      if (arr.every(x => {x == true})){
+        return "completed"
       }
-    );
+      else {
+        return "in progress"
+      }
+   }
+   else {
+     return "pending"
+   }
   }
 
 
@@ -78,7 +87,7 @@ class Index extends React.Component {
         id: prop.no,
         vendor: prop.vendor.general_info.company_name,
         order_date: date.toISOString().split("T")[0],
-        completion_rate: "pending", //this.checKStatus(prop._id),
+        completion_rate: this.checKStatus(prop._id),
         actions: (
           // we've added some custom button actions
           <div className="actions-right">
@@ -128,7 +137,7 @@ class Index extends React.Component {
                   <Assignment />
                 </CardIcon>
                 <h3 className={classes.cardIconTitle}>
-                  Receiving and Inspection
+                  Receiving and Inspection 
                 </h3>
               </CardHeader>
               <CardBody>

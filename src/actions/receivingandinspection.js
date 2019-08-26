@@ -1,6 +1,30 @@
 import * as loadAction from "./loading";
 import MiddleWare from "../middleware/api";
 
+export function fetchAllRecievedItems(token, callback) {
+  let m = new MiddleWare(token);
+  return m
+    .makeConnection("/receivingandinspection/", m.GET)
+    .then(response => {
+      return response.json();
+    })
+    .then(responseJson => {
+      callback(responseJson);
+    });
+}
+
+export function fetchAllWorkCompletion(token, callback) {
+  let m = new MiddleWare(token);
+  return m
+    .makeConnection("/receivingandinspection/all/work/completion", m.GET)
+    .then(response => {
+      return response.json();
+    })
+    .then(responseJson => {
+      callback(responseJson);
+    });
+}
+
 export function submitRIF(token, data, callback) {
   let m = new MiddleWare(token);
   return m

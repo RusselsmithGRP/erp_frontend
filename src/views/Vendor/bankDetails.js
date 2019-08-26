@@ -121,9 +121,9 @@ class BankDetails extends React.Component {
             </CardBody>  
               <CardFooter>
               <Grid container>
-                <GridItem xs={12} sm={6} md={2}>
+                {/* <GridItem xs={12} sm={6} md={2}>
                   <Button color="primary" onClick={this.handleSave}>Save</Button>
-                </GridItem>
+                </GridItem> */}
               </Grid>
             </CardFooter>
             </Card>

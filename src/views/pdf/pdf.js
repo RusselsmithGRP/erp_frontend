@@ -98,11 +98,11 @@ class Pdf extends Component {
           <td style={generalStyle.tableTd}>{prop.description}</td>
           <td style={generalStyle.tableTd}>{prop.quantity}</td>
           <td style={generalStyle.tableTd}>
-            {currencies.getCurrencyCode(prop.currency)}{" "}
+            {currencies.getCurrencyCode(prop.currency)}
             {Util.financial(prop.price)}
           </td>
           <td style={generalStyle.tableTd}>
-            {currencies.getCurrencyCode(prop.currency)}{" "}
+            {currencies.getCurrencyCode(prop.currency)}
             {Util.financial(prop.quantity * prop.price)}
           </td>
         </tr>
@@ -285,7 +285,7 @@ class Pdf extends Component {
                     <tr>
                       <th style={generalStyle.tableTd3}>Total:</th>
                       <td style={generalStyle.tableTd2}>
-                        {currencies.getCurrencyCode(currency)}{" "}
+                        {currencies.getCurrencyCode(currency)}
                         {this.getTotal(this.state.items)}
                       </td>
                     </tr>
@@ -294,7 +294,7 @@ class Pdf extends Component {
                 <div style={{ clear: "right" }}>
                   <br />
                   <p>
-                    <strong>Amount In words: </strong>{" "}
+                    <strong>Amount In words: </strong>
                     {numberWords.convert(this.getTotal(this.state.items))}
                   </p>
                 </div>

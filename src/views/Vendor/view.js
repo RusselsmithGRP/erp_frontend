@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import GeneralInfo from './view/generalInfo';
+import GeneralInfo from './view/generalInfoView';
 import BusinessInfo from './view/businessInfo';
 import WorkReference from './view/workReferences';
 import TechnicalCapabilities from './view/technicalCapabilities';
 import BankDetails from './view/bankDetails';
 import Typography from '@material-ui/core/Typography';
+import { Redirect } from "react-router";
 import CustomTabs from "../../components/CustomTabs/CustomTabs.jsx";
 import GridItem from "../../components/Grid/GridItem.jsx";
 import Grid from "@material-ui/core/Grid";
@@ -22,6 +23,7 @@ import {connect} from 'react-redux';
 import MiddleWare from "../../middleware/api";
 import Notification from 'views/Notifications/Index.jsx'
 import * as vendorActions from '../../actions/vendor';
+import GeneralInfoView from './view/generalInfoView';
 
 const styles = {
   root: {
@@ -42,7 +44,8 @@ TabContainer.propTypes = {
 };
 class View extends React.Component {
   state = {
-    reason:""
+    reason:"",
+    vendor: {}
   }
   constructor(props){
     super(props)
@@ -51,7 +54,9 @@ class View extends React.Component {
 
   componentDidMount(){
     const vendorId = this.props.match.params.id;
-    vendorActions.findVendorById(this.props, vendorId);
+    vendorActions.findVendorById(this.props, vendorId, (vendor) => {
+      this.setState({vendor})
+    });
   }
 
   handleChange = event => {
@@ -79,12 +84,28 @@ class View extends React.Component {
       })
 
   }
+  back = () => {
+    //vendorActions.clearStore(this.props);
+    this.props.history.push("/vendor");
+  }
 
   render() {
+    console.log(this.state.vendor, "data")
     const { classes } = this.props;
     return (
+      <div>
       <Grid container>
       <Notification error={this.state.error} message={this.state.message} />
+      <GridItem xs={12} sm={12} md={12}>
+      <Button 
+      color="secondary"
+      onClick={this.back}>
+          Back
+        </Button>
+      </GridItem>
+      </Grid>
+      <Grid container>
+
            <GridItem xs={12} sm={12} md={12}>
            <Progress loading={this.state.loading}/>
             <CustomTabs
@@ -95,35 +116,28 @@ class View extends React.Component {
                   tabName: "General Information",
                   tabIcon: BugReport,
                   tabContent: (
-                    <GeneralInfo />
+                   (this.state.vendor.general_info)? <GeneralInfoView data={this.state.vendor.general_info}/>: ""
                   )
                 },
                 {
                   tabName: "Business Information",
                   tabIcon: Code,
                   tabContent: (
-                    <BusinessInfo />
+                    (this.state.vendor.business_info)? <BusinessInfo  data={this.state.vendor.business_info}/>: ""
                   )
                 },
-               /*  {
-                  tabName: "Technical Capabilities",
-                  tabIcon: Cloud,
-                  tabContent: (
-                    <TechnicalCapabilities  />
-                  )
-                }, */
                 {
                   tabName: "Bank Details",
                   tabIcon: Cloud,
                   tabContent: (
-                    <BankDetails />
+                    (this.state.vendor.bank_detail)? <BankDetails data={this.state.vendor.bank_detail}/>: ""
                   )
                 },
                 {
                   tabName: "Work Reference",
                   tabIcon: Cloud,
                   tabContent: (
-                    <WorkReference />
+                    (this.state.vendor.work_reference)? <WorkReference data={this.state.vendor.work_reference}/>: ""
                   )
                 }
               ]}
@@ -175,6 +189,7 @@ class View extends React.Component {
               }
           </GridItem>
       </Grid>
+      </div>
     );
   }
 }
@@ -195,5 +210,13 @@ function mapStateToProps(state) {
     data: state.vendor
   };
 }
+
+// function mapDispatchToProps(dispatch) {
+//   return {
+//     goBack(){
+//       vendorActions.clearStore(dispatch)
+//     }
+//   }
+// }
 
 export default connect(mapStateToProps, null)(withStyles(styles)(View));

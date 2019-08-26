@@ -40,27 +40,25 @@ const styles = {
 
 class GeneralInfo extends React.Component {
 
-  constructor(props) {
-    super(props);
-    console.log(props);
-    this.state ={
+    state = {
         data: {
-          company_name: props.data.company_name,
-          reg_no: props.data.reg_no,
-          office_address: props.data.office_address,
-          city: props.data.city,
-          state: props.data.state,
-          country: props.data.country,
-          coy_phone: props.data.coy_phone,
-          coy_email: props.data.coy_email,
-          website: props.data.website,
-          contact_name: props.data.contact_name,
-          designation: props.data.designation,
-          contact_phone: props.data.contact_phone,
-          contact_email: props.data.contact_email
+          // company_name: (props.data.company_name)? props.data.company_name: (props.vendor.data.general_info.company_name)? props.vendor.data.general_info.company_name: "",
+          company_name: this.props.data.company_name,
+          reg_no: this.props.data.reg_no,
+          office_address: this.props.data.office_address,
+          city: this.props.data.city,
+          state: this.props.data.state,
+          country: this.props.data.country,
+          coy_phone: this.props.data.coy_phone,
+          coy_email: this.props.data.coy_email,
+          website: this.props.data.website,
+          contact_name: this.props.data.contact_name,
+          designation: this.props.data.designation,
+          contact_phone: this.props.data.contact_phone,
+          contact_email: this.props.data.contact_email
         },
     };
-  }
+
 
   handleChange = event => {
     let data = this.state.data;
@@ -76,7 +74,18 @@ class GeneralInfo extends React.Component {
       e.preventDefault();
       this.props.updateVendor(this); 
   }
+  
+  static getDerivedStateFromProps(props, state) {
+    if (props.data!== state.data) {
+      return {
+        data: props.data,
+      };
+    }
+    return null;
+  }
+
   render() {
+
     const { classes, data } = this.props;
     if(this.state.loading){
       return (
@@ -225,9 +234,9 @@ class GeneralInfo extends React.Component {
               </CardBody>
               <CardFooter>
               <Grid container>
-                <GridItem xs={12} sm={6} md={2}>
+                {/* <GridItem xs={12} sm={6} md={2}>
                   <Button color="primary" onClick={this.handleSave}>Save</Button>
-                </GridItem>
+                </GridItem> */}
               </Grid>
             </CardFooter>
             </Card>
@@ -240,18 +249,19 @@ class GeneralInfo extends React.Component {
 }
 
 
-GeneralInfo.propTypes = {
-  classes: PropTypes.object.isRequired,
-  data: PropTypes.object.isRequired
-};
+// GeneralInfo.propTypes = {
+//   classes: PropTypes.object.isRequired,
+//   data: PropTypes.object.isRequired
+// };
 
-GeneralInfo.defaultProps = {
-  data: {}
-}
+// GeneralInfo.defaultProps = {
+//   data: {}
+// }
 
 function mapStateToProps(state) {
   return {
     user: state.auth.user,
+    data: state.vendor.general_info,
     vendor: state.vendor,
     loading: state.loader.loading,
     loader : state.loader

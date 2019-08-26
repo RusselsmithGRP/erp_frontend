@@ -1,52 +1,16 @@
 import React from "react";
-import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-
 import Grid from "@material-ui/core/Grid";
 import GridItem from "../../../components/Grid/GridItem.jsx";
 import CustomInput from "../../../components/CustomInput/CustomInput.jsx";
-import Button from "../../../components/CustomButtons/Button.jsx";
 import Card from "../../../components/Card/Card.jsx";
-import CardHeader from "../../../components/Card/CardHeader.jsx";
 import CardBody from "../../../components/Card/CardBody.jsx";
-import CardFooter from "../../../components/Card/CardFooter.jsx";
-import Progress from "../../../components/Progress/Progress.jsx";
-import MiddleWare from "../../../middleware/api";
-import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
 
-const styles = {
-  cardCategoryWhite: {
-    color: "rgba(255,255,255,.62)",
-    margin: "0",
-    fontSize: "14px",
-    marginTop: "0",
-    marginBottom: "0"
-  },
-  cardTitleWhite: {
-    color: "#FFFFFF",
-    marginTop: "0px",
-    minHeight: "auto",
-    fontWeight: "300",
-    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
-    marginBottom: "3px",
-    textDecoration: "none"
-  }
-};
-class WorkReferences extends React.Component {
-  props = {
-    redirect: false
-  };
+const WorkReferences =({data})=> {
 
-  render() {
-    const { classes } = this.props;
-    return this.props.redirect ? (
-      <Redirect to="/dashboard" />
-    ) : (
+    return (
       <Grid container>
         <GridItem xs={12} sm={12} md={12}>
-          <form className={classes.container} noValidate autoComplete="off">
-            <Progress loading={this.props.loading} />
+          <form  noValidate autoComplete="off">
             <Card>
               <CardBody>
                 <Grid container>
@@ -60,7 +24,7 @@ class WorkReferences extends React.Component {
                       }}
                       inputProps={{
                         disabled: true,
-                        value: this.props.data.coy_name
+                        value: data.coy_name
                       }}
                     />
                   </GridItem>
@@ -74,7 +38,7 @@ class WorkReferences extends React.Component {
                       }}
                       inputProps={{
                         disabled: true,
-                        value: this.props.data.coy_address
+                        value: data.coy_address
                       }}
                     />
                   </GridItem>
@@ -88,7 +52,7 @@ class WorkReferences extends React.Component {
                       }}
                       inputProps={{
                         disabled: true,
-                        value: this.props.data.contact_person
+                        value: data.contact_person
                       }}
                     />
                   </GridItem>
@@ -100,7 +64,7 @@ class WorkReferences extends React.Component {
                       }}
                       inputProps={{
                         disabled: true,
-                        value: this.props.data.contact_designation
+                        value: data.contact_designation
                       }}
                     />
                   </GridItem>
@@ -112,7 +76,7 @@ class WorkReferences extends React.Component {
                       }}
                       inputProps={{
                         disabled: true,
-                        value: this.props.data.contact_email
+                        value: data.contact_email
                       }}
                     />
                   </GridItem>
@@ -124,7 +88,7 @@ class WorkReferences extends React.Component {
                       }}
                       inputProps={{
                         disabled: true,
-                        value: this.props.data.contact_phone
+                        value: data.contact_phone
                       }}
                     />
                   </GridItem>
@@ -141,7 +105,7 @@ class WorkReferences extends React.Component {
                       }}
                       inputProps={{
                         disabled: true,
-                        value: this.props.data.name
+                        value: data.name
                       }}
                     />
                   </GridItem>
@@ -153,7 +117,7 @@ class WorkReferences extends React.Component {
                       }}
                       inputProps={{
                         disabled: true,
-                        value: this.props.data.address
+                        value: data.address
                       }}
                     />
                   </GridItem>
@@ -165,7 +129,7 @@ class WorkReferences extends React.Component {
                       }}
                       inputProps={{
                         disabled: true,
-                        value: this.props.data.email
+                        value: data.email
                       }}
                     />
                   </GridItem>
@@ -177,7 +141,7 @@ class WorkReferences extends React.Component {
                       }}
                       inputProps={{
                         disabled: true,
-                        value: this.props.data.phone
+                        value: data.phone
                       }}
                     />
                   </GridItem>
@@ -188,24 +152,7 @@ class WorkReferences extends React.Component {
         </GridItem>
       </Grid>
     );
-  }
 }
 
-WorkReferences.propTypes = {
-  classes: PropTypes.object.isRequired
-};
 
-function mapStateToProps(state) {
-  return {
-    data:
-      typeof state.vendor.work_reference != "undefined"
-        ? state.vendor.work_reference
-        : {},
-    user: state.auth.user
-  };
-}
-
-export default connect(
-  mapStateToProps,
-  null
-)(withStyles(styles)(WorkReferences));
+export default WorkReferences;

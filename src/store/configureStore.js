@@ -19,3 +19,14 @@ export default function configureStore() {
   });
   return store;
 }
+
+// const initialState = {
+//   data: []
+// }
+
+// const middleware = [thunk]
+
+// const store = createStore(rootReducer, initialState, applyMiddleware(...middleware))
+
+// export default store;
+

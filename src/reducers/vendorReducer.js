@@ -1,5 +1,6 @@
 import * as types from "../actions/index";
 let data = {
+  // vendorDetails: {},
   general_info: {},
   business_info: {},
   work_references: {},
@@ -25,9 +26,11 @@ export default function vendor(state = data, action) {
       return { ...state, data: action.data };
     case types.FETCH_VENDOR:
       return action.data;
+      case types.CLEAR:
+      return {};
     case types.RECIEVE_GENERAL_INFO_DATA:
       return {
-        ...state,
+        ...state, 
         general_info: { ...state.general_info, ...action.data }
       };
     case types.RECIEVE_BUSINESS_INFO_DATA:

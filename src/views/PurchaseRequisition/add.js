@@ -285,7 +285,9 @@ class PurchaseRequisition extends React.Component {
   }
 
   render() {
-    console.log(this.state.errorState);
+    console.log(this.state.data, "data");
+    console.log(this.state.departments, "departments");
+
     const { classes, tableHeaderColor } = this.props;
     var today = new Date();
     var dd = today.getDate();

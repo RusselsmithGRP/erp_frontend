@@ -6,12 +6,11 @@ class MiddleWare {
   DELETE = "DELETE";
   GET = "GET";
 
-  constructor(token = "") {
-    // this.api_root =
-    //   "http://ec2-18-223-2-36.us-east-2.compute.amazonaws.com:3000";
-    this.api_root = "http://localhost:3000";
-    this.token = token;
-  }
+    constructor(token=""){
+        this.api_root = "http://ec2-18-223-2-36.us-east-2.compute.amazonaws.com:3000";
+        //this.api_root = "http://localhost:3000" 
+        this.token = token;
+    }
 
   makeConnection(endpoint, httpVerb, body = "") {
     let option = {};
