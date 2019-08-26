@@ -428,12 +428,12 @@ class WorkReferences extends React.Component {
               </CardBody>
               <CardFooter>
                 <Grid container>
-                  <GridItem xs={12} sm={6} md={2}>
-                    <Button color="primary" onClick={this.handleSave}>
+                  <GridItem xs={12} sm={12} md={10}>
+                    {/* <Button color="primary" onClick={this.handleSave}>
                       Save
-                    </Button>
+                    </Button> */}
                   </GridItem>
-                  <GridItem xs={12} sm={6} md={2}>
+                  <GridItem xs={12} sm={12} md={2}>
                     <Button
                       color="info"
                       onClick={this.submitDetails}
@@ -480,7 +480,9 @@ function mapDispatchToProps(dispatch) {
     submitVendor(e) {
       let d = {};
       d.work_reference = e.state.data;
-      d.status = "PENDING";
+      d.general_info = e.props.vendor.general_info;
+      d.business_info = e.props.vendor.business_info;
+      d.bank_detail = e.props.vendor.bank_detail;
       vendorActions.submitVendorDetailsViaUserId(dispatch, e.props.user._id, d);
     },
    

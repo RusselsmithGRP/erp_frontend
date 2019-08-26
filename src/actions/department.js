@@ -37,7 +37,6 @@ export function saveDepartment(token, departmentId, data, callback){
       });   
 }
 
-
 export function fectchDeptHod(token, departmentId, callback){
     let m = new MiddleWare(token);
     return m.makeConnection('/departments/gethod/'+departmentId, m.GET, data).then((result) =>

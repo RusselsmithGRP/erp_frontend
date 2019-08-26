@@ -1,4 +1,4 @@
-import { FETCH_VENDOR, FETCH_VENDORS, ADD_VENDOR, UPDATE_VENDOR, APPROVE_VENDOR, DELETE_VENDOR, RECIEVE_GENERAL_INFO_DATA, RECIEVE_BUSINESS_INFO_DATA, RECIEVE_WORK_REFERENCE_DATA, RECIEVE_BANK_DETAIL_DATA } from './index';
+import { FETCH_VENDOR, FETCH_VENDORS, ADD_VENDOR, UPDATE_VENDOR, APPROVE_VENDOR, DELETE_VENDOR, RECIEVE_GENERAL_INFO_DATA, RECIEVE_BUSINESS_INFO_DATA, RECIEVE_WORK_REFERENCE_DATA, RECIEVE_BANK_DETAIL_DATA, CLEAR } from './index';
 import * as loadAction from './loading';
 import MiddleWare from "../middleware/api";
 
@@ -32,6 +32,13 @@ export function getBankDetailInputs(dispatch, d){
 export function getWorkReferenceInputs(dispatch, d){
     dispatch({type: RECIEVE_WORK_REFERENCE_DATA, data:d});
 }
+
+export function clearStore(props){
+    console.log("hello 2")
+    props.dispatch(  
+        {type: CLEAR, data: {}}
+        );
+}   
 export function findAllVendors(props, type=''){
 
     let middleware = new MiddleWare(props.user.token);
@@ -68,25 +75,43 @@ export function findAllVendors(props, type=''){
 export function findVendorByUserId(props,userId){
     if(typeof(userId) == "undefined")return;
     let middleware = new MiddleWare(props.user.token);
-    props.dispatch(loadAction.Loading());
+    props.dispatch(
+        loadAction.Loading()
+        );
     return middleware.makeConnection('/vendors/'+userId,'GET').then((response) => {
-        return response.json()
+    return response.json()
     }).then(        
         (responseJson)=>{
-            props.dispatch({type: 'UPDATE_VENDOR', data:responseJson[0]});
+            props.dispatch(  
+                {type: RECIEVE_GENERAL_INFO_DATA, data:responseJson[0].general_info},
+                {type: RECIEVE_BUSINESS_INFO_DATA, data:responseJson[0].business_info},
+                {type: RECIEVE_BANK_DETAIL_DATA, data:responseJson[0].bank_detail},
+                {type: RECIEVE_WORK_REFERENCE_DATA, data:responseJson[0].work_references},
+                );
             props.dispatch(loadAction.LoadingSuccess());
         }
     );
 }
 
-export function findVendorById(props,vendorId){
+export function findVendorById(props, vendorId, callback){
     let middleware = new MiddleWare(props.user.token);
-    props.dispatch(loadAction.Loading());
+    props.dispatch(
+        loadAction.Loading()
+        );
     return middleware.makeConnection('/vendors/one/'+vendorId,'GET').then((response) => {
-        return response.json()
+    return response.json()
     }).then(        
         (responseJson)=>{
-            props.dispatch({type: 'UPDATE_VENDOR', data:responseJson[0]});
+            //console.log(responseJson[0], "the data")
+            // props.dispatch(  
+            //     {type: RECIEVE_BUSINESS_INFO_DATA, data:responseJson[0].business_info},
+            //     {type: RECIEVE_BANK_DETAIL_DATA, data:responseJson[0].bank_detail},
+            //     {type: RECIEVE_WORK_REFERENCE_DATA, data:responseJson[0].work_reference},
+            //     {type: RECIEVE_GENERAL_INFO_DATA, data:responseJson[0].general_info},
+
+            //     );
+            console.log(responseJson[0])
+            callback(responseJson[0]);
             props.dispatch(loadAction.LoadingSuccess());
         }
     );
@@ -104,21 +129,22 @@ export function searchVendor(token,search, callback){
     );
 }
 
-export function submitVendorDetailsViaUserId(dispatch, userId, d){
+export function submitVendorDetailsViaUserId(dispatch, userId, data){
     let middleware = new MiddleWare();
-    let data = {};
-    data.payload = d;
-    data.key = "user";
-    data.value = userId;
+    // let data = {};
+    // data.payload = d;
+    // data.key = "user";
+    // data.value = userId;
+    let _data = data;
+    _data.user = userId;
     dispatch(loadAction.Loading());
-    middleware.makeConnection('/vendors','PUT', data).then(
+    middleware.makeConnection('/vendors','PUT', _data)
+    .then(
       (result)=>{
         if(result.ok && result.statusText == "OK" && result.status == 200 ) 
             dispatch(loadAction.LoadingSuccess("Saved Successfully"));
         }
-    ).then(()=>{
-        dispatch({type: 'UPDATE_VENDOR', data:d});
-    }).catch((e)=>{
+    ).catch((e)=>{
       console.log(e);
     })
 }

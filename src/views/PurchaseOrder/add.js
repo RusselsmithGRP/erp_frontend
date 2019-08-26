@@ -258,6 +258,9 @@ class Add extends React.Component {
     }
   }
   render() {
+    console.log(this.props, "props")
+    console.log(this.state, "state")
+
     const { classes, tableHeaderColor } = this.props;
     return (
       <div>

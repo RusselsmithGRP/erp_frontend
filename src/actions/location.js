@@ -12,6 +12,7 @@ export function getLocation(props, callback) {
       callback(e);
     });
 }
+
 export function getAddress(props, location, callback) {
   let data = {};
   data.location = location;
