@@ -148,6 +148,7 @@ class Index extends React.Component {
         availability: true,
         availableDate: ""
       },
+      vendor: {},
       multipleSelect: [],
       showForm: false,
       submitRfq: true,
@@ -164,14 +165,18 @@ class Index extends React.Component {
    * @summary Changed componentWillMount to UNSAFE_componentWillMount
    */
   UNSAFE_componentWillMount() {
+    console.log(this.props.user._id, "before")
     const userId = this.props.user._id;
-    vendorActions.findVendorByUserId(this.props, userId);
+    // vendorActions.findVendorByUserId(this.props, userId);
+    vendorActions.findVendorById(this.props, vendorId, (vendor) => {
+      this.setState({vendor})
+    });
   }
 
   componentDidMount() {
     rfqActions.fetchVendorsQuotes(
       this.props.user.token,
-      this.props.vendor._id,
+      this.state.vendor._id,
       docs => {
         this.setState({ docs: docs });
       }
@@ -251,7 +256,7 @@ class Index extends React.Component {
   }
 
   render() {
-    // console.log(this.state);
+   console.log(this.props, "vendor");
     const { classes, tableHeaderColor } = this.props;
     let mappedData = this.state.docs.map((prop, key) => {
       let date = new Date(prop.created);

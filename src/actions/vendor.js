@@ -165,6 +165,6 @@ export function getVendorEvaluation(token, vendorId, callback){
     }).then(        
         (responseJson)=>{
             callback(responseJson);
-        }
-    );
+    });
+
 }
