@@ -1,5 +1,6 @@
 import { USER_LOGIN, USER_LOGOUT } from "./index";
 import MiddleWare from "../middleware/api";
+import axios from "axios";
 
 export function getProfileDetails(props, id, callback) {
   let middleware = new MiddleWare(props.user.token);
@@ -30,6 +31,11 @@ export function updateProfile(data, callback) {
     .catch(e => {
       console.log("the error" + e);
     });
+
+  // axios
+  //   .patch(`/users/updateprofiledata`, data)
+  //   .then(res => callback(res.data))
+  //   .catch(e => console.log(`The error`, e));
 }
 
 export function importUser(data, callback) {

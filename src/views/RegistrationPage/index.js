@@ -107,6 +107,12 @@ class RegisterPage extends React.Component {
         break;
     }
   };
+
+  /**
+   * @author Idowu
+   * @summary Made adjustments to the error message being displayed
+   * @summary for vendor registration with an already registered email
+   */
   register = e => {
     e.preventDefault();
     if (
@@ -131,7 +137,11 @@ class RegisterPage extends React.Component {
     this.setState({ loading: true });
     userAction.register(data, json => {
       if (json.errorMsg && json.errCode == "11000") {
-        this.setState({ responseMessage: "vendor already exist" });
+        // this.setState({ responseMessage: "vendor already exist" });
+        this.setState({
+          responseMessage:
+            "This email acount has already been registered on our system. If you are the account owner, please login."
+        });
       } else if (json.errorMsg && json.errCode != "11000") {
         this.setState({ responseMessage: json.errorMsg });
       } else if (json.token) {
