@@ -46,7 +46,6 @@ export function getWorkReferenceInputs(dispatch, d) {
 }
 
 export function clearStore(props) {
-  console.log("hello 2");
   props.dispatch({ type: CLEAR, data: {} });
 }
 export function findAllVendors(props, type = "") {
@@ -129,6 +128,18 @@ export function findVendorById(props, vendorId, callback) {
       //     );
       console.log(responseJson[0]);
       callback(responseJson[0]);
+      props.dispatch(loadAction.LoadingSuccess());
+    });
+}
+
+export function getVendorIdByUserId(props, userId, callback) {
+  let middleware = new MiddleWare(props.user.token);
+  props.dispatch(loadAction.Loading());
+  return middleware
+    .makeConnection("/vendors/details-by-userId/" + userId, "GET")
+    .then(response => response.json())
+    .then(responseJson => {
+      callback(responseJson)
       props.dispatch(loadAction.LoadingSuccess());
     });
 }

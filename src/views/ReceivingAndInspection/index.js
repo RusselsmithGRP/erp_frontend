@@ -63,7 +63,7 @@ class Index extends React.Component {
 
  checKStatus = (poID) => {
    if(this.state.recievedItems.some(x => x.purchaseOrder === poID) || this.state.workCompletions.some(x => x.purchaseOrder === poID)){
-      let item = this.state.recievedItems.find(x => x.purchaseOrder === poID) || this.state.workCompletions.find(x => x.purchaseOrder === poID);
+      let item = this.state.workCompletions.find(x => x.purchaseOrder === poID) || this.state.recievedItems.find(x => x.purchaseOrder === poID) ;
       let stage = (item != undefined)? item.inspection_stage: "";
       let arr = (stage != undefined)? [stage.inspected, stage.reviewed, stage.approved]: [];
       if (arr.every(x => {x == true})){

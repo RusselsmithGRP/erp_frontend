@@ -164,23 +164,24 @@ class Index extends React.Component {
    * @author Idowu
    * @summary Changed componentWillMount to UNSAFE_componentWillMount
    */
-  UNSAFE_componentWillMount() {
-    console.log(this.props.user._id, "before")
-    const userId = this.props.user._id;
-    // vendorActions.findVendorByUserId(this.props, userId);
-    vendorActions.findVendorById(this.props, vendorId, (vendor) => {
-      this.setState({vendor})
-    });
-  }
+  // UNSAFE_componentWillMount() {
+  //   const userId = this.props.user._id;
+  //    //vendorActions.findVendorByUserId(this.props, userId);
+  
+    
+  // }
 
   componentDidMount() {
-    rfqActions.fetchVendorsQuotes(
-      this.props.user.token,
-      this.state.vendor._id,
-      docs => {
-        this.setState({ docs: docs });
+    vendorActions.getVendorIdByUserId(this.props, this.props.user._id, (vendor) => {
+      if(vendor._id) {
+        rfqActions.fetchVendorsQuotes(
+          this.props.user.token,
+          vendor._id,
+          docs => {
+            this.setState({ docs: docs });
+          })
       }
-    );
+    });
   }
 
   fetchQuotes(quote) {
@@ -256,7 +257,7 @@ class Index extends React.Component {
   }
 
   render() {
-   console.log(this.props, "vendor");
+   //console.log(this.props, "vendor");
     const { classes, tableHeaderColor } = this.props;
     let mappedData = this.state.docs.map((prop, key) => {
       let date = new Date(prop.created);
