@@ -247,6 +247,9 @@ class Edit extends React.Component {
   }
 
   render() {
+    console.log(this.state.data, "data")
+    console.log(this.props, "props")
+
     const { classes, tableHeaderColor } = this.props;
     var today = new Date();
     var dd = today.getDate();
@@ -696,7 +699,7 @@ class Edit extends React.Component {
                 ) : (
                   ""
                 )} */}
-                {this.props.user._id == this.state.department.hod ? (
+                {(this.props.user.type=="hod" || this.props.user.role == "admin") ? (
                   <CardFooter>
                       {this.state.showReason ? (
                       <Grid container>

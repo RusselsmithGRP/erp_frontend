@@ -59,9 +59,8 @@ componentDidMount(){
 }
 
 render(){
-    console.log(this.state.users);
     const { classes } = this.props;
-    let userData = this.state.users.map((data, key) => {
+    let userData = this.state.users.reverse().map((data, key) => {
       return {
         id: key,
         firstname: data["firstname"],
