@@ -191,7 +191,7 @@ class Index extends React.Component {
                   if (window.confirm("Delete this Vendor?")) {
                     let datum = this.props.data[key];
                     let data = this.props.data;
-                    //vendorActions.deleteVendor(this.props, datum.user);
+                    vendorActions.deleteVendor(this.props, datum.user); // Idowu -- Delete vendor functionality
                     delete data[key];
                     this.setState({ data: data });
                   }
