@@ -94,7 +94,7 @@ class Index extends React.Component {
     this.setState({ status: e.target.value });
   };
 
-  processJson(responseJson) {
+  processJson = responseJson => {
     let datas = [];
     responseJson.map(row => {
       if (typeof row.general_info !== "undefined") {
@@ -131,7 +131,7 @@ class Index extends React.Component {
       dataRows: datas
     };
     return dataTable;
-  }
+  };
 
   render() {
     const { classes } = this.props;

@@ -59,6 +59,8 @@ class Index extends React.Component {
   /**
    * @author Idowu
    * @summary Changed processJson to arrow function
+   * @summary Created a default empty string for `prop.vendor.general_info.company_name`
+   * @summary which was throwing an error on my browser
    */
   processJson = responseJson => {
     return responseJson.map((prop, key) => {
