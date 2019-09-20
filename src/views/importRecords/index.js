@@ -23,21 +23,21 @@ export default class Index extends React.Component {
         return "";
     }
   };
-  
+
   importRecord = () => {
     for (var i = 0; i < record.length; i++) {
       let data = {};
-      data.email = record[i].FIELD8;
+      data.email = record[i].FIELD7;
       data.password = "password";
       data.coy_name = record[i].FIELD3;
       data.role = "vendor";
-      data.classes = this.roman_to_int(record[i].FIELD11);
-      data.contact_name = record[i].FIELD7;
-      data.contact_phone = record[i].FIELD10;
+      data.classes = this.roman_to_int(record[i].FIELD10);
+      data.contact_name = record[i].FIELD6;
+      data.contact_phone = record[i].FIELD9;
       data.office_address = record[i].FIELD4;
-      data.state = record[i].FIELD6;
-      data.country = record[i].FIELD5;
-      data.website = record[i].FIELD9;
+      data.state = record[i].FIELD5;
+      // data.country = record[i].FIELD5;
+      data.website = record[i].FIELD8;
       data.product_related = record[i].FIELD1;
       data.supplier_id = record[i].FIELD2;
       userAction.importUser(data, json => {
