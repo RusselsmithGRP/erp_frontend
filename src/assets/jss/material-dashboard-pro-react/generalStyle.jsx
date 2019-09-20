@@ -83,6 +83,10 @@ const generalStyle = {
   pr: {
     position: "relative"
   },
+  signature: {
+    position:"absolute",
+    marginLeft: "80px"
+  },
   positionCenter: {
     position: "fixed",
     top: "50%",
@@ -289,7 +293,8 @@ const generalStyle = {
     borderWidth: "0 0 1px",
     borderColor: "#000",
     float: "right",
-    maxWidth: "150px"
+    maxWidth: "290px",
+    width: "100%"
   },
   divider: {
     height: "1px",

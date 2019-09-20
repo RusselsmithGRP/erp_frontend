@@ -203,9 +203,13 @@ class Edit extends React.Component {
     if (this.state.action == "approve") {
       data.status = "011";
       message = "Purchase requisition approved.";
-    } else {
+    }
+     else {
       data.status = "010";
       data.reason = this.state.reason;
+      if(!this.state.reason) {
+       return  this.setState({ message: "Please fill in reason for rejection.", error: true });
+      }
       message = "Purchase requisition has been disapproved.";
     }
     prActions.editRequisition(

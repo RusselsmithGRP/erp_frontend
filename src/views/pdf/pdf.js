@@ -3,6 +3,8 @@ import React, { Component } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { connect } from "react-redux";
 import { PDFExport } from "@progress/kendo-react-pdf";
+import ReactDOMServer from 'react-dom/server';
+import canvg from 'canvg';
 import generalStyle from "../../assets/jss/material-dashboard-pro-react/generalStyle.jsx";
 import Grid from "@material-ui/core/Grid";
 import GridItem from "../../components/Grid/GridItem.jsx";
@@ -46,11 +48,26 @@ class Pdf extends Component {
       po: {
         vendor: {
           general_info: []
-        }
+        },
+        requestor: {},
+        reviewedBy: {},
+        authorizedBy: {},
+        approvedBy: {}
       }
     }),
       (this.canvLoaded = false);
+      this.reviewedBy = null;
+
   }
+
+//   convertSVGToImage = () => {
+//     // if FontAwesome, run this next part
+//     let htmlString = ReactDOMServer.renderToStaticMarkup(
+//       this.state.po.reviewedBy.signature);
+//     // for both FontAwesome and regular SVG:
+//     canvg(this.refs.canvas, htmlString);
+//     this.reviewedBy = this.refs.canvas.toDataURL('image/png')
+// }
 
   exportPDF = () => {
     this.po_doc.save();
@@ -85,7 +102,12 @@ class Pdf extends Component {
     );
   }
 
+  componentDidMount() {
+    // this.convertSVGToImage();
+}
+
   render() {
+    console.log(this.reviewedBy, "hello")
     const { classes, data } = this.props;
     let currency = "";
     const numberWords = require("number-words");
@@ -307,7 +329,7 @@ class Pdf extends Component {
                 <div style={generalStyle.divider} />
 
                 <Grid container>
-                  <GridItem xs={7}>
+                  <GridItem xs={11}>
                     <div>
                       <div style={generalStyle.space30} />
 
@@ -318,16 +340,17 @@ class Pdf extends Component {
                         style={generalStyle.POinput2}
                         type="text"
                         id="your-input"
+                        value={this.state.po.requestor.lastname + " "+ this.state.po.requestor.firstname}
                       />
                       <div style={generalStyle.space10} />
                     </div>
 
-                    <div>
-                      <span>
+                      <div>
                         <strong>Reviewed by:</strong>
 
                         <br />
-                      </span>
+                      </div>
+                      <div style={generalStyle.pr}>
                       <label style={generalStyle.POLabel2} for="input">
                         Reviewer Signature:
                       </label>
@@ -335,10 +358,15 @@ class Pdf extends Component {
                         style={generalStyle.POinput2}
                         type="text"
                         id="your-input"
+                        value={(this.state.po.reviewedBy)? (this.state.po.reviewedBy.lastname + " "+ this.state.po.reviewedBy.firstname): "" }
                       />
+               {/* <img src="https://careersome.com/img/career2.png" /> */}
+
+                     {(this.state.po.reviewedBy) ? ( <span dangerouslySetInnerHTML={{__html: this.state.po.reviewedBy.signature}}  style={generalStyle.signature} />): ""}
+
                       <div style={generalStyle.space10} />
                     </div>
-                    <div>
+                    <div style={generalStyle.pr}>
                       <span>
                         <strong>Authorized and Approved By:</strong>
                         <br />
@@ -350,9 +378,12 @@ class Pdf extends Component {
                         style={generalStyle.POinput2}
                         type="text"
                         id="your-input"
+                        value={(this.state.po.authorizedBy)? (this.state.po.authorizedBy.lastname + " "+ this.state.po.authorizedBy.firstname): "" }
+
                       />
+                     {(this.state.po.authorizedBy) ? ( <span dangerouslySetInnerHTML={{__html: this.state.po.authorizedBy.signature}}  style={generalStyle.signature} />): ""}
                     </div>
-                    <div>
+                    <div style={generalStyle.pr}>
                       <label style={generalStyle.POLabel2} for="input">
                         Approver’s Signature:
                       </label>
@@ -360,7 +391,9 @@ class Pdf extends Component {
                         style={generalStyle.POinput2}
                         type="text"
                         id="your-input"
+                        value={(this.state.po.approvedBy)? (this.state.po.approvedBy.lastname + " "+ this.state.po.approvedBy.firstname): "" }
                       />
+                      {(this.state.po.approvedBy) ? ( <span dangerouslySetInnerHTML={{__html: this.state.po.approvedBy.signature}}  style={generalStyle.signature} />): ""}
                     </div>
                     <div>
                       <div style={generalStyle.space10} />
@@ -379,8 +412,8 @@ class Pdf extends Component {
                       />
                     </div>
                   </GridItem>
-                  <GridItem xs={5}>
-                    <div style={generalStyle.pt3}>
+                  {/* <GridItem xs={5}>
+                    <div style={{ height: "40px"}}  >
                       <label style={generalStyle.POLabel} for="input">
                         Date:
                       </label>
@@ -435,7 +468,7 @@ class Pdf extends Component {
                       />
                     </div>
                     <div style={generalStyle.space20} />
-                  </GridItem>
+                  </GridItem> */}
                 </Grid>
                 <div>
                   <br />

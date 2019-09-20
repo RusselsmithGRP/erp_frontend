@@ -12,6 +12,18 @@ const records = [
     "FIELD10": "08099999548",
     "FIELD11": "I"
   },
+  {
+    "FIELD1": "Apparel & Fashion",
+    "FIELD2": "KI-AF-001",
+    "FIELD3": "Karishma Industries Ltd",
+    "FIELD4": " 1, Harmony Crescent, Beckley Estate. Agege",
+    "FIELD5": "Lagos",
+    "FIELD6": "Dhiraj Karam",
+    "FIELD7": "dhirajkaram@yahoo.com",
+    "FIELD8": "",
+    "FIELD9": "08035749975",
+    "FIELD10": "I"
+  },
  
   
  ]

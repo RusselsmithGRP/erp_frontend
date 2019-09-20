@@ -225,6 +225,7 @@ class View extends React.Component {
       data.type = this.state.action;
       message = "Purchase Order has been disapproved.";
     }
+    //console.log(data, "wik")
     poActions.editPurchaseOrder(
       this.props.user.token,
       this.props.match.params.id,
