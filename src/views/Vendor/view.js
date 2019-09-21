@@ -297,7 +297,7 @@ class View extends React.Component {
                 {this.allStepsCompleted() ? (
                   <div>
                     <Typography style={{ marginTop: "20px" }}>
-                      Registration completed
+                      Step Complete
                     </Typography>
                     <Button onClick={this.handleReset}>Reset</Button>
                   </div>
