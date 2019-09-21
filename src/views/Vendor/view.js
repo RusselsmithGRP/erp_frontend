@@ -311,7 +311,7 @@ class View extends React.Component {
                         onClick={this.handleBack}
                         style={{ marginRight: "10px" }}
                       >
-                        Back
+                        Prev
                       </Button>
                       <Button
                         variant="contained"
