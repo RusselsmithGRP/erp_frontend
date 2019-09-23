@@ -94,7 +94,9 @@ class AddTabs extends React.Component {
   };
 
   handleBack = () => {
-    this.setState(prevState => ({ activeStep: prevState - 1 }));
+    this.setState({
+      activeStep: this.state.activeStep - 1
+    });
   };
 
   handleStep = step => () => {
@@ -188,7 +190,7 @@ class AddTabs extends React.Component {
       return <Redirect to="/dashboard" />;
     } else
       return (
-        <Grid container>
+        <Grid container style={styles.maxSize}>
           <Notification
             error={this.props.loader.error}
             message={this.props.loader.message}
@@ -221,7 +223,7 @@ class AddTabs extends React.Component {
               ]}
             /> */}
             {/* Multistep form starts here */}
-            <div style={styles.maxSize}>
+            <div>
               <Stepper nonLinear activeStep={activeStep}>
                 {steps.map((label, index) => (
                   <Step key={label}>
