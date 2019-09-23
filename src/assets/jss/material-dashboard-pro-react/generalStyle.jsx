@@ -110,13 +110,13 @@ const generalStyle = {
     borderSpacing: "0"
   },
   tableTh: {
-    fontSize: "11px",
+    fontSize: "9px",
     textAlign: "left",
     textTransform: "uppercase",
     background: "#000",
     padding: "6px 12px",
-    maxWidth: "100px",
-    minWidth: "50px",
+    width: "70px",
+    // minWidth: "50px",
     border: " 1px solid #d9d7ce",
     color: "#fff",
     borderCollapse: "collapse"
@@ -125,20 +125,23 @@ const generalStyle = {
     padding: "6px 12px",
     border: "1px solid #d9d7ce",
     borderCollapse: "collapse",
-    maxWidth: "100px",
-    minWidth: "52px"
+    width: "70px",
+    fontSize: "9px"
+    // minWidth: "52px"
   },
   tableTd2: {
     padding: "6px 12px",
     border: "1px solid #d9d7ce",
     borderCollapse: "collapse",
-    minWidth: "60px"
+    width: "60px",
+    fontSize: "9px"
   },
   tableTd3: {
     padding: "4px 5px",
     border: "1px solid #d9d7ce",
     borderCollapse: "collapse",
-    minWidth: "66px"
+    width: "70px",
+    fontSize: "9px"
   },
   sTable: {
     display: "block",
@@ -677,6 +680,10 @@ const generalStyle = {
     fontSize: "13px"
     
 
+  },
+  date: {
+    position: "absolute",
+    right: "0"
   }
 };
 

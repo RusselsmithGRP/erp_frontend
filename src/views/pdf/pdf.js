@@ -363,6 +363,7 @@ class Pdf extends Component {
                {/* <img src="https://careersome.com/img/career2.png" /> */}
 
                      {(this.state.po.reviewedBy) ? ( <span dangerouslySetInnerHTML={{__html: this.state.po.reviewedBy.signature}}  style={generalStyle.signature} />): ""}
+                     {(this.state.po.reviewedByDate) ? ( <span style={generalStyle.date}>{moment(this.state.po.reviewedByDate).format("DD-MM-YYYY")}</span>): ""}
 
                       <div style={generalStyle.space10} />
                     </div>
@@ -382,6 +383,8 @@ class Pdf extends Component {
 
                       />
                      {(this.state.po.authorizedBy) ? ( <span dangerouslySetInnerHTML={{__html: this.state.po.authorizedBy.signature}}  style={generalStyle.signature} />): ""}
+                     {(this.state.po.authorizedByDate) ? ( <span style={generalStyle.date}>{moment(this.state.po.authorizedByDate).format("DD-MM-YYYY")}</span>): ""}
+
                     </div>
                     <div style={generalStyle.pr}>
                       <label style={generalStyle.POLabel2} for="input">
@@ -394,6 +397,8 @@ class Pdf extends Component {
                         value={(this.state.po.approvedBy)? (this.state.po.approvedBy.lastname + " "+ this.state.po.approvedBy.firstname): "" }
                       />
                       {(this.state.po.approvedBy) ? ( <span dangerouslySetInnerHTML={{__html: this.state.po.approvedBy.signature}}  style={generalStyle.signature} />): ""}
+                      {(this.state.po.approvedByDate) ? ( <span style={generalStyle.date}>{moment(this.state.po.approvedByDate).format("DD-MM-YYYY")}</span>): ""}
+
                     </div>
                     <div>
                       <div style={generalStyle.space10} />
