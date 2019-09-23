@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import Grid from "@material-ui/core/Grid";
 import GridItem from "components/Grid/GridItem.jsx";
 import CustomInput from "components/CustomInput/CustomInput.jsx";
@@ -22,8 +22,8 @@ const BankDetails = ({ data }) => {
                       fullWidth: true
                     }}
                     inputProps={{
-                      value: data.account_name,
-                      disabled: true
+                      disabled: true,
+                      value: data.account_name
                     }}
                   />
                 </GridItem>
@@ -36,8 +36,8 @@ const BankDetails = ({ data }) => {
                       fullWidth: true
                     }}
                     inputProps={{
-                      value: data.account_number,
-                      disabled: true
+                      disabled: true,
+                      value: data.account_number
                     }}
                   />
                 </GridItem>
@@ -50,8 +50,8 @@ const BankDetails = ({ data }) => {
                       fullWidth: true
                     }}
                     inputProps={{
-                      value: data.bank,
-                      disabled: true
+                      disabled: true,
+                      value: data.bank
                     }}
                   />
                 </GridItem>
@@ -64,8 +64,8 @@ const BankDetails = ({ data }) => {
                       fullWidth: true
                     }}
                     inputProps={{
-                      value: data.sort_code,
-                      disabled: true
+                      disabled: true,
+                      value: data.sort_code
                     }}
                   />
                 </GridItem>
@@ -78,8 +78,8 @@ const BankDetails = ({ data }) => {
                       fullWidth: true
                     }}
                     inputProps={{
-                      value: data.branch,
-                      disabled: true
+                      disabled: true,
+                      value: data.branch
                     }}
                   />
                 </GridItem>
@@ -92,8 +92,8 @@ const BankDetails = ({ data }) => {
                       fullWidth: true
                     }}
                     inputProps={{
-                      value: data.contact_phone,
-                      disabled: true
+                      disabled: true,
+                      value: data.contact_phone
                     }}
                   />
                 </GridItem>

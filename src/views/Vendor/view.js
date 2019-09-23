@@ -26,10 +26,8 @@ import * as vendorActions from "../../actions/vendor";
 import GeneralInfoView from "./view/generalInfoView";
 
 // Material UI Multistep package starts here
-import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
-import StepLabel from "@material-ui/core/StepLabel";
 import StepButton from "@material-ui/core/StepButton";
 // Material UI Multistep package ends here
 
@@ -37,11 +35,15 @@ const styles = {
   root: {
     flexGrow: 1
   },
-  marginRight: "20px",
+  marginRight: {
+    marginRight: "20px"
+  },
   maxSize: {
     width: "90%"
   },
-  marginTop: "10px"
+  marginTop: {
+    marginTop: "10px"
+  }
 };
 
 // Custom styles
@@ -280,7 +282,7 @@ class View extends React.Component {
             /> */}
 
             {/* Multistep Starts here */}
-            <div style={{ width: "90%" }}>
+            <div style={styles.maxSize}>
               <Stepper nonLinear activeStep={activeStep}>
                 {steps.map((label, index) => (
                   <Step key={label}>
@@ -293,10 +295,10 @@ class View extends React.Component {
                   </Step>
                 ))}
               </Stepper>
-              <div>
+              <div style={styles.marginTop}>
                 {this.allStepsCompleted() ? (
                   <div>
-                    <Typography style={{ marginTop: "20px" }}>
+                    <Typography style={styles.marginTop}>
                       Step Complete
                     </Typography>
                     <Button onClick={this.handleReset}>Reset</Button>
@@ -309,7 +311,7 @@ class View extends React.Component {
                       <Button
                         disabled={activeStep === 0}
                         onClick={this.handleBack}
-                        style={{ marginRight: "10px" }}
+                        style={styles.marginRight}
                       >
                         Prev
                       </Button>
@@ -317,7 +319,7 @@ class View extends React.Component {
                         variant="contained"
                         color="primary"
                         onClick={this.handleNext}
-                        style={{ marginRight: "10px" }}
+                        style={styles.marginRight}
                       >
                         Next
                       </Button>
@@ -325,7 +327,7 @@ class View extends React.Component {
                         (completed[activeStep] ? (
                           <Typography
                             variant="caption"
-                            style={{ marginTop: "20px" }}
+                            style={styles.marginTop}
                           >
                             Step {activeStep + 1} already completed
                           </Typography>
