@@ -3,3 +3,8 @@
     flex-grow: 0 !important;
   }
 }
+
+.MuiStepper-horizontal-689 {
+  overflow-x: scroll !important;
+  width: 100% !important;
+}

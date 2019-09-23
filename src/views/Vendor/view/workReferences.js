@@ -9,11 +9,11 @@ class WorkReferences extends Component {
   render() {
     const { data } = this.props;
     return (
-      <Grid container>
+      <Grid container style={{ width: "100%" }}>
         <GridItem xs={12} sm={12} md={12}>
           <form noValidate autoComplete="off">
             <Card>
-              <CardBody>
+              <CardBody style={{ width: "100%" }}>
                 <Grid container>
                   <GridItem xs={12} sm={12} md={6}>
                     <CustomInput

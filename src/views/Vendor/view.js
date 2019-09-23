@@ -43,6 +43,12 @@ const styles = {
   },
   marginTop: {
     marginTop: "10px"
+  },
+  marginBottom: {
+    marginBottom: "10px"
+  },
+  margin: {
+    margin: "10px 10px"
   }
 };
 
@@ -283,7 +289,11 @@ class View extends React.Component {
 
             {/* Multistep Starts here */}
             <div style={styles.maxSize}>
-              <Stepper nonLinear activeStep={activeStep}>
+              <Stepper
+                nonLinear
+                activeStep={activeStep}
+                style={{ width: "100%", overflowX: "auto" }}
+              >
                 {steps.map((label, index) => (
                   <Step key={label}>
                     <StepButton
@@ -311,7 +321,7 @@ class View extends React.Component {
                       <Button
                         disabled={activeStep === 0}
                         onClick={this.handleBack}
-                        style={styles.marginRight}
+                        // style={styles.margin}
                       >
                         Prev
                       </Button>
@@ -319,7 +329,7 @@ class View extends React.Component {
                         variant="contained"
                         color="primary"
                         onClick={this.handleNext}
-                        style={styles.marginRight}
+                        style={styles.margin}
                       >
                         Next
                       </Button>
