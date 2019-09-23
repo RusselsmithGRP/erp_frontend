@@ -223,7 +223,7 @@ class AddTabs extends React.Component {
               ]}
             /> */}
             {/* Multistep form starts here */}
-            <div>
+            <div style={styles.maxSize}>
               <Stepper nonLinear activeStep={activeStep}>
                 {steps.map((label, index) => (
                   <Step key={label}>
