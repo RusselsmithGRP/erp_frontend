@@ -259,6 +259,8 @@ class AddTabs extends React.Component {
                       <Button
                         disabled={activeStep === 0}
                         onClick={this.handleBack}
+                        variant="contained"
+                        color="primary"
                       >
                         Prev
                       </Button>

@@ -321,6 +321,8 @@ class View extends React.Component {
                       <Button
                         disabled={activeStep === 0}
                         onClick={this.handleBack}
+                        color="primary"
+                        variant="contained"
                         // style={styles.margin}
                       >
                         Prev
