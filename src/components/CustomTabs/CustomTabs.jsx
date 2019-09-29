@@ -21,7 +21,6 @@ class CustomTabs extends React.Component {
   };
 
   handleChange = (event, value) => {
-    
     this.setState({ value });
   };
 
@@ -106,7 +105,8 @@ CustomTabs.propTypes = {
     PropTypes.shape({
       tabName: PropTypes.string.isRequired,
       tabIcon: PropTypes.func,
-      tabContent: PropTypes.node.isRequired
+      tabContent: PropTypes.node.isRequired,
+      tabFunction: PropTypes.func
     })
   ),
   rtlActive: PropTypes.bool,

@@ -178,8 +178,22 @@ class View extends React.Component {
     action: "",
     open: false,
     additional_terms: "",
-    currency: ""
+    currency: "",
+    disabled: false
+
   };
+
+  renderRedirect = () => {
+    if(this.state.error) {
+      this.setState({disabled: false})
+    }
+    if(this.state.error === false) {
+      setTimeout(function() {
+        window.location.href = "/order";
+      }, 3000);
+    }
+  };
+
 
   handleOpen = () => {
     this.setState({ open: true });
@@ -215,6 +229,7 @@ class View extends React.Component {
   };
 
   submitForm = e => {
+    this.setState({disabled: true});
     let data = {};
     let message = "";
     if (this.state.action == "approve") {
@@ -290,6 +305,7 @@ class View extends React.Component {
     const { classes, tableHeaderColor } = this.props;
     return (
       <div>
+       {this.renderRedirect()}
         <Notification error={this.state.error} message={this.state.message} />
         <Grid container>
           <GridItem xs={12} sm={12} md={12}>
@@ -314,7 +330,7 @@ class View extends React.Component {
                       <li className={classes.liStyle}>
                         EID: <br />
                         <span className={classes.ap}>
-                          {this.state.doc.po.requestor.eid}
+                          {( this.state.doc.po.requestor != null) ? this.state.doc.po.requestor.eid: ""}
                         </span>
                       </li>
                       <li className={classes.liStyle}>
@@ -567,7 +583,8 @@ class View extends React.Component {
                     </div>
                   </Modal>
                 </CardBody>
-                {this.props.user._id != this.state.doc.po.requestor._id ? (
+                
+                {this.props.user._id != ((this.state.doc.po.requestor)? this.state.doc.po.requestor._id: "") ? (
                   <CardFooter>
                     <Grid container>
                       {this.state.showReason ? (
@@ -631,8 +648,8 @@ class View extends React.Component {
                         </FormControl>
                       </GridItem>
                       <GridItem xs={12} sm={6} md={6}>
-                        <Button color="yellowgreen" onClick={this.submitForm}>
-                          Submit
+                        <Button color="yellowgreen" onClick={this.submitForm} disabled={this.state.disabled}>
+                          Submit 
                         </Button>
                       </GridItem>
                     </Grid>

@@ -114,7 +114,7 @@ class Index extends React.Component {
   processJson = (responseJson) => {
     return responseJson.map((prop) => {
       let date = new Date(prop.created);
-      let types = prop.types.map(v => v.toLowerCase());
+      let types = (prop.types.some(x => x != null))? prop.types.map(v => v.toLowerCase()): [];
       return {
         id: prop.no,
         vendor: prop.vendor.general_info.company_name,

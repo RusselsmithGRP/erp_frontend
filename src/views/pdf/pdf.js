@@ -15,6 +15,7 @@ import * as Status from "utility/Status";
 import * as Util from "utility/Util";
 import moment from "moment";
 import * as currencies from "../../utility/Currencies.js";
+import logo from "../../assets/img/rs-logo.png"
 
 const styles = {
   cardCategoryWhite: {
@@ -60,14 +61,15 @@ class Pdf extends Component {
 
   }
 
-//   convertSVGToImage = () => {
-//     // if FontAwesome, run this next part
-//     let htmlString = ReactDOMServer.renderToStaticMarkup(
-//       this.state.po.reviewedBy.signature);
-//     // for both FontAwesome and regular SVG:
-//     canvg(this.refs.canvas, htmlString);
-//     this.reviewedBy = this.refs.canvas.toDataURL('image/png')
-// }
+  convertSVGToImage = () => {
+    // if FontAwesome, run this next part
+    let htmlString = ReactDOMServer.renderToStaticMarkup(
+      this.state.po.reviewedBy.signature);
+    // for both FontAwesome and regular SVG:
+    canvg(this.refs.canvas, htmlString);
+    this.reviewedBy = this.refs.canvas.toDataURL('image/png')
+    console.log(this.reviewedBy)
+}
 
   exportPDF = () => {
     this.po_doc.save();
@@ -98,16 +100,17 @@ class Pdf extends Component {
       this.props.match.params.id,
       doc => {
         this.setState({ po: doc.po, items: doc.items });
+        sessionStorage.setItem('effectiveDate', doc.po.approvedByDate)
       }
     );
   }
 
   componentDidMount() {
-    // this.convertSVGToImage();
+    this.convertSVGToImage();
 }
 
   render() {
-    console.log(this.reviewedBy, "hello")
+    console.log( this.state.po, "HELLO")
     const { classes, data } = this.props;
     let currency = "";
     const numberWords = require("number-words");
@@ -130,6 +133,7 @@ class Pdf extends Component {
         </tr>
       );
     });
+
 
     return (
       <div
@@ -224,6 +228,7 @@ class Pdf extends Component {
                       style={generalStyle.POinput3}
                       type="text"
                       id="your-input"
+                      value={this.state.po.creditterms}
                     />
                   </div>
                   <div style={generalStyle.space20} />
@@ -246,7 +251,7 @@ class Pdf extends Component {
                 </GridItem>
                 <GridItem xs={5}>
                   <span style={generalStyle.strong7}>Ship To:</span>
-                  <br /> Russelsmith Nig Ltd <br />
+                  <br /> RusselSmith Nig Ltd <br />
                   KM 14 Lekki - Epe Express Road,
                   <br /> Lekki Phase 1, Lekki
                 </GridItem>
@@ -333,20 +338,20 @@ class Pdf extends Component {
                     <div>
                       <div style={generalStyle.space30} />
 
-                      <label style={generalStyle.POLabel2} for="input">
+                      <label style={generalStyle.strong7} for="input">
                         Prepared by:
                       </label>
                       <input
                         style={generalStyle.POinput2}
                         type="text"
                         id="your-input"
-                        value={this.state.po.requestor.lastname + " "+ this.state.po.requestor.firstname}
+                        value={ (this.state.po.requestor)? (this.state.po.requestor.lastname + " "+ this.state.po.requestor.firstname) : ""}
                       />
                       <div style={generalStyle.space10} />
                     </div>
 
-                      <div>
-                        <strong>Reviewed by:</strong>
+                      <div style={generalStyle.strong7}>
+                       Reviewed by:
 
                         <br />
                       </div>
@@ -362,14 +367,19 @@ class Pdf extends Component {
                       />
                {/* <img src="https://careersome.com/img/career2.png" /> */}
 
-                     {(this.state.po.reviewedBy) ? ( <span dangerouslySetInnerHTML={{__html: this.state.po.reviewedBy.signature}}  style={generalStyle.signature} />): ""}
+                     {(this.state.po.reviewedBy) ? (<img
+                    ref={image => (this.image = image)}
+                    style={generalStyle.signature}
+                    src={`data:image/svg+xml, ${encodeURIComponent(this.state.po.reviewedBy.signature)}`}
+                    //height="100px"
+                  />): ""}
                      {(this.state.po.reviewedByDate) ? ( <span style={generalStyle.date}>{moment(this.state.po.reviewedByDate).format("DD-MM-YYYY")}</span>): ""}
 
                       <div style={generalStyle.space10} />
                     </div>
                     <div style={generalStyle.pr}>
-                      <span>
-                        <strong>Authorized and Approved By:</strong>
+                      <span style={generalStyle.strong7}>
+                     Authorized and Approved By:
                         <br />
                       </span>
                       <label style={generalStyle.POLabel2} for="input">
@@ -382,7 +392,12 @@ class Pdf extends Component {
                         value={(this.state.po.authorizedBy)? (this.state.po.authorizedBy.lastname + " "+ this.state.po.authorizedBy.firstname): "" }
 
                       />
-                     {(this.state.po.authorizedBy) ? ( <span dangerouslySetInnerHTML={{__html: this.state.po.authorizedBy.signature}}  style={generalStyle.signature} />): ""}
+                     {(this.state.po.authorizedBy) ? (<img
+                    ref={image => (this.image = image)}
+                    style={generalStyle.signature}
+                    src={`data:image/svg+xml, ${encodeURIComponent(this.state.po.authorizedBy.signature)}`}
+                    //height="100px"
+                  />): ""}
                      {(this.state.po.authorizedByDate) ? ( <span style={generalStyle.date}>{moment(this.state.po.authorizedByDate).format("DD-MM-YYYY")}</span>): ""}
 
                     </div>
@@ -396,7 +411,12 @@ class Pdf extends Component {
                         id="your-input"
                         value={(this.state.po.approvedBy)? (this.state.po.approvedBy.lastname + " "+ this.state.po.approvedBy.firstname): "" }
                       />
-                      {(this.state.po.approvedBy) ? ( <span dangerouslySetInnerHTML={{__html: this.state.po.approvedBy.signature}}  style={generalStyle.signature} />): ""}
+                      {(this.state.po.approvedBy) ? (<img
+                    ref={image => (this.image = image)}
+                    style={generalStyle.signature}
+                    src={`data:image/svg+xml, ${encodeURIComponent(this.state.po.approvedBy.signature)}`}
+                    //height="100px"
+                  /> ): ""}
                       {(this.state.po.approvedByDate) ? ( <span style={generalStyle.date}>{moment(this.state.po.approvedByDate).format("DD-MM-YYYY")}</span>): ""}
 
                     </div>
@@ -415,6 +435,7 @@ class Pdf extends Component {
                         type="text"
                         id="your-input"
                       />
+                  
                     </div>
                   </GridItem>
                   {/* <GridItem xs={5}>

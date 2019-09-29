@@ -69,8 +69,9 @@ class Edit extends React.Component {
     table_data:[],
     checkeditems:[],
     checkeditemsprice:{},
-    cummulativeprice: 0
+    cummulativeprice: 0,
   };
+
 
 handleChange = event => {
     let data = this.state.data;
@@ -340,7 +341,7 @@ render() {
                   <Button color="primary" onClick={this.handleSave}>Save</Button>
                 </GridItem>
                 <GridItem xs={12} sm={12} md={2}>
-                  <Button color="yellowgreen" onClick={this.handleSubmit}>Submit</Button>
+                  <Button color="yellowgreen" onClick={this.handleSubmit} disabled={true}>Submit</Button>
                 </GridItem>
               </Grid>
             </CardFooter>

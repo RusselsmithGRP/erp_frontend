@@ -1,16 +1,17 @@
-import React from "react";
+import React, { Component } from "react";
 import Grid from "@material-ui/core/Grid";
 import GridItem from "../../../components/Grid/GridItem.jsx";
 import CustomInput from "../../../components/CustomInput/CustomInput.jsx";
 import Card from "../../../components/Card/Card.jsx";
 import CardBody from "../../../components/Card/CardBody.jsx";
 
-const WorkReferences =({data})=> {
-
+class WorkReferences extends Component {
+  render() {
+    const { data } = this.props;
     return (
       <Grid container>
         <GridItem xs={12} sm={12} md={12}>
-          <form  noValidate autoComplete="off">
+          <form noValidate autoComplete="off">
             <Card>
               <CardBody>
                 <Grid container>
@@ -152,7 +153,7 @@ const WorkReferences =({data})=> {
         </GridItem>
       </Grid>
     );
+  }
 }
-
 
 export default WorkReferences;

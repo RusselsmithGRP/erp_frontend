@@ -85,8 +85,8 @@ class Index extends React.Component {
       arry.push(
         row._id,
         row.requisitionno,
-        row.requestor.firstname,
-        row.requestor.lastname,
+         (row.requestor != null) ? row.requestor.firstname: "",
+         (row.requestor != null) ? row.requestor.lastname: "",
         row.department.name,
         row.status
       );

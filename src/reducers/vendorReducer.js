@@ -26,11 +26,12 @@ export default function vendor(state = data, action) {
       return { ...state, data: action.data };
     case types.FETCH_VENDOR:
       return action.data;
-      case types.CLEAR:
+    case types.CLEAR:
       return {};
+
     case types.RECIEVE_GENERAL_INFO_DATA:
       return {
-        ...state, 
+        ...state,
         general_info: { ...state.general_info, ...action.data }
       };
     case types.RECIEVE_BUSINESS_INFO_DATA:
