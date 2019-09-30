@@ -15,19 +15,6 @@ export function findDepartmentById(props, departmentId, callback) {
     });
 }
 
-/**
- * @author Idowu
- * @param {*} callback
- */
-export function getDepartments(callback) {
-  let middleware = new MiddleWare();
-  middleware
-    .makeConnection("/departments", "GET")
-    .then(res => res.json())
-    .then(data => callback(data))
-    .catch(e => console.log("The error", e));
-}
-
 export function updateDepartment(props, data, callback) {
   let middleware = new MiddleWare(props.user.token);
   middleware
