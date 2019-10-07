@@ -263,7 +263,8 @@ const generalStyle = {
     maxWidth: "70px",
     margin: "2px 0",
     fontSize: "10px",
-    padding: "0 4px"
+    padding: "0 4px",
+    fontFamily: "arial, helvetica, sans-serif",
   },
   space10: {
     height: "10px"
@@ -304,8 +305,7 @@ const generalStyle = {
     float: "right",
     maxWidth: "290px",
     width: "100%",
-    fontSize: "9px"
-
+    fontSize: "9px",
   },
   divider: {
     height: "1px",

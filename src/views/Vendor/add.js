@@ -43,6 +43,9 @@ const styles = {
   },
   marginTop: {
     marginTop: "10px"
+  },
+  margin: {
+    margin: "10px 10px"
   }
 };
 
@@ -223,8 +226,12 @@ class AddTabs extends React.Component {
               ]}
             /> */}
             {/* Multistep form starts here */}
-            <div>
-              <Stepper nonLinear activeStep={activeStep}>
+            <div style={styles.maxSize}>
+              <Stepper
+                nonLinear
+                activeStep={activeStep}
+                style={{ width: "100%", overflowX: "auto" }}
+              >
                 {steps.map((label, index) => (
                   <Step key={label}>
                     <StepButton
@@ -252,15 +259,16 @@ class AddTabs extends React.Component {
                       <Button
                         disabled={activeStep === 0}
                         onClick={this.handleBack}
-                        style={styles.marginRight}
+                        variant="contained"
+                        color="primary"
                       >
-                        Back
+                        Prev
                       </Button>
                       <Button
                         variant="contained"
                         color="primary"
                         onClick={this.handleNext}
-                        style={styles.marginRight}
+                        style={styles.margin}
                       >
                         Next
                       </Button>
