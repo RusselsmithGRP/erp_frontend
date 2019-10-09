@@ -32,6 +32,7 @@ import * as Uom from "../../utility/Uom";
 import moment from "moment";
 import Notification from "views/Notifications/Index.jsx";
 import Clear from "@material-ui/icons/Clear";
+import { TextField } from "@material-ui/core";
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -51,10 +52,10 @@ const styles = theme => ({
 });
 
 const shipvia = [
-  {slug: 'digital', name:'Digital (Download)'},
-  {slug: 'vendor', name:'Vendor Delivery'},
-  {slug: 'courier', name:'Courier'},
-]
+  { slug: "digital", name: "Digital (Download)" },
+  { slug: "vendor", name: "Vendor Delivery" },
+  { slug: "courier", name: "Courier" }
+];
 
 /* const shipvia = [
   {slug: 'lagos', name:'Lagos Office'},
@@ -76,15 +77,19 @@ class PurchaseRequisition extends React.Component {
       dateneeded: "",
       status: 1,
       shipvia: "",
-      isextrabudget: false
+      isextrabudget: false,
+      purchaseType: "",
+      justification: ""
     },
     lineItems: [],
     startDate: moment(),
     departments: [],
-    error: {lineitems:[]},
+    error: { lineitems: [] },
     errorState: false,
-    message:"",
-    redirect: ""
+    message: "",
+    redirect: "",
+    vendors: [],
+    vendor: ""
   };
 
   handleChange = event => {
@@ -113,11 +118,16 @@ class PurchaseRequisition extends React.Component {
     let lineItemsError = this.state.error.lineitems;
     let lineItems = this.state.lineItems;
     rowArray.push(Date.now());
-    lineItems.push({itemdescription:"",category:"", quantity:"", uom:"" })
+    lineItems.push({
+      itemdescription: "",
+      category: "",
+      quantity: "",
+      uom: ""
+    });
     let error = this.state.error;
     lineItemsError.push(this.computeLineItemError());
     error.lineitems = lineItemsError;
-    this.setState({ rowArray, error , lineItems});
+    this.setState({ rowArray, error, lineItems });
   };
 
   removeRow = i => event => {
@@ -125,26 +135,26 @@ class PurchaseRequisition extends React.Component {
     let lineItemsError = this.state.error.lineitems;
     let lineItems = this.state.lineItems;
     lineItemsError.splice(i, 1);
-    lineItems.splice(i,1);
+    lineItems.splice(i, 1);
     let error = this.state.error;
     error.lineitems = lineItemsError;
     rowArray.splice(i, 1);
-    this.setState({ rowArray,error,lineItems});
+    this.setState({ rowArray, error, lineItems });
   };
 
   handleLineItemChange = i => event => {
     let lineItems = this.state.lineItems;
     let lineItemsError = this.state.error.lineitems;
     let lineItemsKey;
-    let lineItemsKeyError=lineItemsError[i];
-    lineItemsKey = (lineItems[i])?lineItems[i]:{};
-    lineItemsKeyError[[event.target.name]] = (event.target.value)? false: true;
+    let lineItemsKeyError = lineItemsError[i];
+    lineItemsKey = lineItems[i] ? lineItems[i] : {};
+    lineItemsKeyError[[event.target.name]] = event.target.value ? false : true;
     lineItemsKey[[event.target.name]] = event.target.value;
     lineItems[i] = lineItemsKey;
     lineItemsError[i] = lineItemsKeyError;
-    let error = this.state.error ;
+    let error = this.state.error;
     error.lineitems = lineItemsError;
-    this.setState({lineItems, error});
+    this.setState({ lineItems, error });
   };
 
   handleSelectItem = event => {
@@ -170,6 +180,18 @@ class PurchaseRequisition extends React.Component {
     this.setState({ data: data });
   };
 
+  handleVendor = e => {
+    this.setState({
+      vendor: e.target.value
+    });
+  };
+
+  handlePurchaseType = event => {
+    let data = this.state.data;
+    data["purchaseType"] = event.target.value;
+    this.setState({ data: data });
+  };
+
   renderRedirect = () => {
     if (this.state.redirect == "yes") {
       setTimeout(function() {
@@ -178,69 +200,77 @@ class PurchaseRequisition extends React.Component {
     }
   };
 
-  formHasError = e =>{
+  formHasError = e => {
     let error = false;
     let lineItemsError = this.state.error.lineitems;
-    if(this.state.lineItems.length < 1){
+    if (this.state.lineItems.length < 1) {
       error = true;
     }
-    this.state.lineItems.map((e,i)=>{
-      let lineItemsKeyError=lineItemsError[i];
-      if(!e.itemdescription){
-        lineItemsKeyError['itemdescription'] = true
+    this.state.lineItems.map((e, i) => {
+      let lineItemsKeyError = lineItemsError[i];
+      if (!e.itemdescription) {
+        lineItemsKeyError["itemdescription"] = true;
         error = true;
       }
-      if(!e.category){
-        lineItemsKeyError['category'] = true
-        error = true;        
+      if (!e.category) {
+        lineItemsKeyError["category"] = true;
+        error = true;
       }
-      if(!e.quantity){
-        lineItemsKeyError['quantity'] = true
-        error = true;         
+      if (!e.quantity) {
+        lineItemsKeyError["quantity"] = true;
+        error = true;
       }
-      if(!e.uom){
-        lineItemsKeyError['uom'] = true
-        error = true;           
+      if (!e.uom) {
+        lineItemsKeyError["uom"] = true;
+        error = true;
       }
       lineItemsError[i] = lineItemsKeyError;
     });
-    let errorState = this.state.error ;
-    if(!this.state.data.dateneeded){
+    let errorState = this.state.error;
+    if (!this.state.data.dateneeded) {
       errorState.dateneeded = true;
-      error = true;  
-    }else if(!this.state.data.department){
+      error = true;
+    } else if (!this.state.data.department) {
       errorState.department = true;
-      error = true;  
-    }else if(!this.state.data.shipvia){
+      error = true;
+    } else if (!this.state.data.shipvia) {
       errorState.shipvia = true;
-      error = true;  
-    }else if(!this.state.data.type){
+      error = true;
+    } else if (!this.state.data.type) {
       errorState.type = true;
-      error = true;  
+      error = true;
     }
 
-    if(error){
+    if (error) {
       errorState.lineitems = lineItemsError;
-      this.setState({error:errorState, showError:true, message:"Kindly fill all form fields"});
+      this.setState({
+        error: errorState,
+        showError: true,
+        message: "Kindly fill all form fields"
+      });
     }
     return error;
-  }
+  };
 
   handleSubmitForm = e => {
-    this.setState({message:""})
+    this.setState({ message: "" });
     let data = this.state.data;
     data.lineitems = this.state.lineItems;
+    data.vendor = this.state.vendor;
     data.status = "01";
-    if(this.formHasError()) return;
+    if (this.formHasError()) return;
     prActions.submitRequisition(this.props.user.token, data, isOk => {
       if (isOk) {
         this.setState({
           message: "Purchase requisition has been submitted.",
           showError: false,
-          redirect: "yes" 
+          redirect: "yes"
         });
-      } else{
-        this.setState({ message: "Error processing request.", showError: true });
+      } else {
+        this.setState({
+          message: "Error processing request.",
+          showError: true
+        });
       }
     });
   };
@@ -255,38 +285,45 @@ class PurchaseRequisition extends React.Component {
     });
   };
 
-  computeLineItemError = ()=>{
+  computeLineItemError = () => {
     let itemsError = {};
-    itemsError.category="";
-    itemsError.itemdescription="";
+    itemsError.category = "";
+    itemsError.itemdescription = "";
     itemsError.uom = "";
     itemsError.quantity = "";
     return itemsError;
-  }
+  };
 
   componentDidMount() {
     let data = this.state.data;
     data.requestor = this.props.user._id;
-    data.requestedby = this.props.user.firstname + " " + this.props.user.lastname;
+    data.requestedby =
+      this.props.user.firstname + " " + this.props.user.lastname;
     data.eid = this.props.user.eid;
-    let lineitemsError =[];
-    this.state.rowArray.map((i)=>{
+    let lineitemsError = [];
+    this.state.rowArray.map(i => {
       const itemsError = this.computeLineItemError();
       lineitemsError.push(itemsError);
-    })
-    let error = {lineitems:lineitemsError}
-    this.setState({ data: data,error });
+    });
+    let error = { lineitems: lineitemsError };
+    this.setState({ data: data, error });
     genericActions.fetchAll("departments", this.props.user.token, items => {
       this.setState({ departments: items });
     });
     genericActions.fetchAll("expenseheader", this.props.user.token, items => {
       this.setState({ expenseheaders: items });
     });
+
+    genericActions.fetchAll("vendors", this.props.user.token, vendors => {
+      this.setState({ vendors });
+    });
   }
 
   render() {
     console.log(this.state.data, "data");
     console.log(this.state.departments, "departments");
+    console.log(this.state.vendor);
+    console.log(this.state.data.justification);
 
     const { classes, tableHeaderColor } = this.props;
     var today = new Date();
@@ -309,7 +346,9 @@ class PurchaseRequisition extends React.Component {
       } else {
         value = {};
       }
-      const error = (this.state.error.lineitems[key])? this.state.error.lineitems[key]: {};
+      const error = this.state.error.lineitems[key]
+        ? this.state.error.lineitems[key]
+        : {};
       return (
         <TableRow key={key}>
           <TableCell
@@ -321,7 +360,11 @@ class PurchaseRequisition extends React.Component {
               textAlign: "center"
             }}
           >
-            <Clear className={classes.feedback + " " + classes.labelRootError} onClick={this.removeRow(key)}/> {key + 1} 
+            <Clear
+              className={classes.feedback + " " + classes.labelRootError}
+              onClick={this.removeRow(key)}
+            />{" "}
+            {key + 1}
           </TableCell>
           <TableCell style={generalStyle.removeBorder}>
             <CustomSelect
@@ -332,7 +375,7 @@ class PurchaseRequisition extends React.Component {
               onChange={this.handleLineItemChange(key)}
               onBlur={this.handleLineItemChange(key)}
               value={value.category}
-              error={(error.category)? true: false}
+              error={error.category ? true : false}
               formControlProps={{
                 style: { width: "130px", padding: "0", margin: "0" }
               }}
@@ -353,7 +396,7 @@ class PurchaseRequisition extends React.Component {
               formControlProps={{
                 style: { width: "300px", padding: "0", margin: "0" }
               }}
-              error={(error.itemdescription)? true: false}
+              error={error.itemdescription ? true : false}
               inputProps={{
                 name: "itemdescription",
                 onChange: this.handleLineItemChange(key),
@@ -370,7 +413,7 @@ class PurchaseRequisition extends React.Component {
               formControlProps={{
                 style: { width: "100px", padding: "0", margin: "0" }
               }}
-              error={(error.quantity)? true: false}
+              error={error.quantity ? true : false}
               inputProps={{
                 name: "quantity",
                 onChange: this.handleLineItemChange(key),
@@ -391,7 +434,7 @@ class PurchaseRequisition extends React.Component {
               formControlProps={{
                 style: { width: "130px", padding: "0", margin: "0" }
               }}
-              error={(error.uom)? true: false}
+              error={error.uom ? true : false}
               inputProps={{
                 margin: "normal",
                 id: "uom",
@@ -409,15 +452,19 @@ class PurchaseRequisition extends React.Component {
         </TableRow>
       );
     });
-    const error = (this.state.error)? this.state.error: {};
+    const error = this.state.error ? this.state.error : {};
     return (
       <div>
-      {this.renderRedirect()}
+        {this.renderRedirect()}
         <Grid container>
-          {
-            (this.state.showError == true)?
-              <Notification error={this.state.showError} message={this.state.message} /> : ""
-          }
+          {this.state.showError == true ? (
+            <Notification
+              error={this.state.showError}
+              message={this.state.message}
+            />
+          ) : (
+            ""
+          )}
           <GridItem xs={12} sm={12} md={12}>
             <form className={classes.container} noValidate autoComplete="off">
               <Card>
@@ -455,7 +502,7 @@ class PurchaseRequisition extends React.Component {
                             name: "simpleSelect",
                             id: "type"
                           }}
-                          error={(error.type)? true: false}
+                          error={error.type ? true : false}
                         >
                           <MenuItem
                             disabled
@@ -485,8 +532,158 @@ class PurchaseRequisition extends React.Component {
                           </MenuItem>
                         </Select>
                       </FormControl>
+
+                      <FormControl
+                        fullWidth
+                        className={classes.selectFormControl}
+                        style={{ marginTop: "10px" }}
+                      >
+                        <InputLabel
+                          htmlFor="purchase-type"
+                          className={classes.selectLabel}
+                        >
+                          Purchase Type
+                        </InputLabel>
+                        <Select
+                          MenuProps={{
+                            className: classes.selectMenu
+                          }}
+                          classes={{
+                            select: classes.select
+                          }}
+                          value={this.state.data.purchaseType}
+                          onChange={this.handlePurchaseType}
+                          inputProps={{
+                            name: "purchaseType",
+                            id: "purchase-type"
+                          }}
+                          error={error.type ? true : false}
+                        >
+                          <MenuItem
+                            disabled
+                            classes={{
+                              root: classes.selectMenuItem
+                            }}
+                          >
+                            Choose Purchase Type
+                          </MenuItem>
+                          <MenuItem
+                            classes={{
+                              root: classes.selectMenuItem,
+                              selected: classes.selectMenuItemSelected
+                            }}
+                            value="Contract"
+                          >
+                            Contract
+                          </MenuItem>
+                          <MenuItem
+                            classes={{
+                              root: classes.selectMenuItem,
+                              selected: classes.selectMenuItemSelected
+                            }}
+                            value="Sole Source"
+                          >
+                            Sole Source
+                          </MenuItem>
+                          <MenuItem
+                            classes={{
+                              root: classes.selectMenuItem,
+                              selected: classes.selectMenuItemSelected
+                            }}
+                            value="Regular"
+                          >
+                            Regular (3 quotes)
+                          </MenuItem>
+                          <MenuItem
+                            classes={{
+                              root: classes.selectMenuItem,
+                              selected: classes.selectMenuItemSelected
+                            }}
+                            value="Open Market"
+                          >
+                            Open Market
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
+
+                      {this.state.data.purchaseType === "Contract" ? (
+                        <FormControl
+                          fullWidth
+                          className={classes.selectFormControl}
+                          style={{ marginTop: "10px" }}
+                        >
+                          <InputLabel
+                            htmlFor="vendor"
+                            className={classes.selectLabel}
+                          >
+                            Select Vendor
+                          </InputLabel>
+                          <Select
+                            MenuProps={{
+                              className: classes.selectMenu
+                            }}
+                            classes={{
+                              select: classes.select
+                            }}
+                            value={this.state.vendor}
+                            onChange={this.handleVendor}
+                            inputProps={{
+                              name: "vendor",
+                              id: "vendor"
+                            }}
+                            error={error.type ? true : false}
+                          >
+                            <MenuItem
+                              disabled
+                              classes={{
+                                root: classes.selectMenuItem
+                              }}
+                            >
+                              Select Vendor
+                            </MenuItem>
+                            {this.state.vendors.map((vendor, i) => (
+                              <MenuItem
+                                classes={{
+                                  root: classes.selectMenuItem,
+                                  selected: classes.selectMenuItemSelected
+                                }}
+                                value={vendor._id}
+                                key={i}
+                              >
+                                {vendor.general_info.company_name}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      ) : (
+                        ""
+                      )}
+
+                      {this.state.data.purchaseType === "Sole Source" ? (
+                        <FormControl
+                          fullWidth
+                          className={classes.selectFormControl}
+                          style={{ marginTop: "10px" }}
+                        >
+                          <TextField
+                            id="justification"
+                            placeholder="Justification"
+                            fullWidth
+                            onChange={this.handleChange}
+                            value={this.state.data.justification}
+                            margin="normal"
+                            InputLabelProps={{
+                              shrink: true
+                            }}
+                          />
+                        </FormControl>
+                      ) : (
+                        ""
+                      )}
                     </GridItem>
+
                     <GridItem xs={12} sm={12} md={4} />
+
                     <GridItem xs={12} sm={12} md={4} style={generalStyle.text2}>
                       Requisition No:
                     </GridItem>
@@ -542,7 +739,7 @@ class PurchaseRequisition extends React.Component {
                         formControlProps={{
                           style: { width: "130px", padding: "0", margin: "0" }
                         }}
-                        error={(error.department)? true: false}
+                        error={error.department ? true : false}
                         value={this.state.data.department}
                         inputProps={{ margin: "normal" }}
                         style={{ marginTop: "-3px", borderBottomWidth: " 1px" }}
@@ -575,7 +772,7 @@ class PurchaseRequisition extends React.Component {
                         formControlProps={{
                           fullWidth: true
                         }}
-                        error={(error.dateneeded)? true: false}
+                        error={error.dateneeded ? true : false}
                         onFocus={this.toggleCalendar}
                         inputProps={{
                           value: this.state.startDate.format("MM/DD/YYYY"),
@@ -611,7 +808,7 @@ class PurchaseRequisition extends React.Component {
                         name="shipvia"
                         required
                         onChange={e => this.handleSelectItem(e)}
-                        error={(error.shipvia)? true: false}
+                        error={error.shipvia ? true : false}
                         formControlProps={{
                           style: { width: "130px", padding: "0", margin: "0" }
                         }}
@@ -739,14 +936,25 @@ class PurchaseRequisition extends React.Component {
                   </div>
                   <div style={generalStyle.mt3}>
                     <span>Add New Line</span>
-                    <Button justIcon round color="twitter" className={classes.marginRight} onClick={this.increaseRow}>
+                    <Button
+                      justIcon
+                      round
+                      color="twitter"
+                      className={classes.marginRight}
+                      onClick={this.increaseRow}
+                    >
                       <Add className={classes.icons} />
                     </Button>
                   </div>
                 </CardBody>
                 <CardFooter>
                   <Grid container>
-                    <GridItem xs={12} sm={6} md={2} additionalclass={classes.removeDivPadding}>
+                    <GridItem
+                      xs={12}
+                      sm={6}
+                      md={2}
+                      additionalclass={classes.removeDivPadding}
+                    >
                       <Button color="primary" onClick={this.handleSaveForm}>
                         Save
                       </Button>
