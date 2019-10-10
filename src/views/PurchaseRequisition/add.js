@@ -532,11 +532,12 @@ class PurchaseRequisition extends React.Component {
                           </MenuItem>
                         </Select>
                       </FormControl>
+                    </GridItem>
 
+                    <GridItem xs={12} sm={12} md={4}>
                       <FormControl
                         fullWidth
                         className={classes.selectFormControl}
-                        style={{ marginTop: "10px" }}
                       >
                         <InputLabel
                           htmlFor="purchase-type"
@@ -682,7 +683,7 @@ class PurchaseRequisition extends React.Component {
                       )}
                     </GridItem>
 
-                    <GridItem xs={12} sm={12} md={4} />
+                    {/* <GridItem xs={12} sm={12} md={4} /> */}
 
                     <GridItem xs={12} sm={12} md={4} style={generalStyle.text2}>
                       Requisition No:
