@@ -28,6 +28,8 @@ import generalStyle from "assets/jss/material-dashboard-pro-react/generalStyle.j
 import DatePicker from "react-datepicker";
 import * as prActions from "../../actions/purchaserequisition";
 import * as genericActions from "actions/generic.js";
+import * as vendorActions from "../../actions/vendor";
+
 import * as Uom from "../../utility/Uom";
 import moment from "moment";
 import Notification from "views/Notifications/Index.jsx";
@@ -322,7 +324,7 @@ class PurchaseRequisition extends React.Component {
   render() {
     console.log(this.state.data, "data");
     console.log(this.state.departments, "departments");
-    console.log(this.state.vendor);
+    console.log(this.state.vendors);
     console.log(this.state.data.justification);
 
     const { classes, tableHeaderColor } = this.props;
@@ -642,18 +644,21 @@ class PurchaseRequisition extends React.Component {
                             >
                               Select Vendor
                             </MenuItem>
-                            {this.state.vendors.map((vendor, i) => (
-                              <MenuItem
-                                classes={{
-                                  root: classes.selectMenuItem,
-                                  selected: classes.selectMenuItemSelected
-                                }}
-                                value={vendor._id}
-                                key={i}
-                              >
-                                {vendor.general_info.company_name}
-                              </MenuItem>
-                            ))}
+                            {this.state.vendors.map(
+                              (vendor, i) =>
+                                vendor.contracts.length >= 1 && (
+                                  <MenuItem
+                                    classes={{
+                                      root: classes.selectMenuItem,
+                                      selected: classes.selectMenuItemSelected
+                                    }}
+                                    value={vendor._id}
+                                    key={i}
+                                  >
+                                    {vendor.general_info.company_name}
+                                  </MenuItem>
+                                )
+                            )}
                           </Select>
                         </FormControl>
                       ) : (

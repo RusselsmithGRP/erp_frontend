@@ -407,7 +407,7 @@ export const AdminMenu = [
       },
       {
         path: "/setup/vendor/update",
-        name: "Vendor Update",
+        name: "Vendor Contracts",
         mini: "V",
         component: updateVendorType,
         actions: ["add", "edit", "view", "delete"]

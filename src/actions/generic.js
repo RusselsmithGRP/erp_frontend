@@ -14,7 +14,7 @@ export function fetchAll(type, token, callback) {
       return response.json();
     })
     .then(responseJson => {
-      console.log(responseJson);
+      // console.log(responseJson);
       callback(responseJson);
     });
 }
