@@ -49,7 +49,7 @@ import EditDepartment from "views/Departments/index.js";
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import ChangePassword from "../views/UserProfile/ChangePassword.jsx";
 import importRecords from "../views/importRecords/index";
-import updateVendorType from "../views/Vendor/updateVendorType";
+import updateVendorContract from "../views/Vendor/updateVendorContract";
 
 /* import Typography from "views/Typography/Typography.jsx";
 import Icons from "views/Icons/Icons.jsx";
@@ -200,7 +200,7 @@ export const dashboardRoutes = [
   },
   {
     path: "/setup/vendor/update",
-    component: updateVendorType
+    component: updateVendorContract
   },
   { redirect: true, path: "/", to: "/dashboard", navbarName: "Redirect" }
 ];
@@ -409,7 +409,7 @@ export const AdminMenu = [
         path: "/setup/vendor/update",
         name: "Vendor Contracts",
         mini: "V",
-        component: updateVendorType,
+        component: updateVendorContract,
         actions: ["add", "edit", "view", "delete"]
       }
     ]

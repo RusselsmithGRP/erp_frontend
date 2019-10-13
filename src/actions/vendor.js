@@ -160,7 +160,7 @@ export function updateVendorType(props, data, callback) {
   let middleware = new MiddleWare();
   props.dispatch(loadAction.Loading());
   return middleware
-    .makeConnection("/vendors/updatetype", "PATCH", data)
+    .makeConnection("/vendors/update/contracts", "PATCH", data)
     .then(response => response.json())
     .then(responseJson => {
       callback(responseJson);
