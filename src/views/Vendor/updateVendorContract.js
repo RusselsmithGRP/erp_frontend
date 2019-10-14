@@ -89,7 +89,8 @@ export class updateVendorType extends Component {
       duration: "",
       vendor: "",
       endDate: ""
-    }
+    },
+    responseMessage: ""
   };
 
   componentDidMount() {
@@ -195,6 +196,9 @@ export class updateVendorType extends Component {
         });
       }
       console.log(result);
+      this.setState({
+        responseMessage: result.message
+      });
     });
   };
 
@@ -202,6 +206,11 @@ export class updateVendorType extends Component {
     return (
       <div style={{ fontFamily: styles.cardTitleWhite.fontFamily }}>
         <Grid container>
+          {this.state.responseMessage ? (
+            <Notification error={false} message={this.state.responseMessage} />
+          ) : (
+            ""
+          )}
           <GridItem xs={12} sm={12} md={8}>
             <form>
               <Card>
