@@ -236,7 +236,7 @@ class Edit extends React.Component {
         data.requestor.firstname + " " + data.requestor.lastname;
       data.eid = data.requestor.eid;
       const department = data.department;
-      data.department = data.department._id;
+      data.department = data.department.name;
       const disabled = data.status == "010" ? false : true;
       let rowArray = [];
 
@@ -251,7 +251,7 @@ class Edit extends React.Component {
   }
 
   render() {
-    console.log(this.state.data, "data")
+    console.log(this.state.data.department, "data")
     console.log(this.props, "props")
 
     const { classes, tableHeaderColor } = this.props;
@@ -374,7 +374,7 @@ class Edit extends React.Component {
               <Card>
                 <CardHeader color="primary">
                   <h4 className={classes.cardTitleWhite}>
-                    Purchase Requisition
+                    Purchase Requisition 
                   </h4>
                 </CardHeader>
                 <CardBody>
@@ -443,7 +443,7 @@ class Edit extends React.Component {
                     </GridItem>
                     <GridItem xs={12} sm={12} md={4}>
                       <CustomInput
-                        labelText="Required By"
+                        labelText="Name"
                         id="requestedby"
                         formControlProps={{
                           fullWidth: true
@@ -451,7 +451,7 @@ class Edit extends React.Component {
                         inputProps={{
                           disabled: true,
                           value:
-                            "Required: " +
+                            " " +
                             this.state.data.requestor.firstname +
                             " " +
                             this.state.data.requestor.lastname
@@ -467,45 +467,35 @@ class Edit extends React.Component {
                         }}
                         inputProps={{
                           disabled: true,
-                          value: "Employee ID: " + this.state.data.requestor.eid
+                          value: " " + this.state.data.requestor.eid
                         }}
                       />
                     </GridItem>
                     <GridItem xs={12} sm={12} md={4}>
                       <CustomInput
+                       labelText="Date Created"
                         required
                         formControlProps={{
                           fullWidth: true
                         }}
                         inputProps={{
                           disabled: true,
-                          value: today
+                          value:  " " + moment(this.state.data.created).format("DD-MM-YYYY") 
                         }}
                       />
                     </GridItem>
                     <GridItem xs={12} sm={4} md={4}>
-                      <CustomSelect
-                        labelText="Select"
+                    <CustomInput
+                        labelText="Department"
                         id="department"
-                        name="department"
-                        required
-                        onChange={e => this.handleSelectItem(e)}
                         formControlProps={{
-                          style: { width: "100%", padding: "0", margin: "0" }
+                          fullWidth: true
                         }}
-                        value={this.state.data.department}
                         inputProps={{
-                          margin: "normal",
-                          disabled: this.state.disabled
+                          value: " " + this.state.data.department,
+                          disabled: true
                         }}
-                        style={{ marginTop: "-3px", borderBottomWidth: " 1px" }}
-                      >
-                        {this.state.departments.map(option => (
-                          <MenuItem key={option._id} value={option._id}>
-                            {option.name}
-                          </MenuItem>
-                        ))}
-                      </CustomSelect>
+                      />
                     </GridItem>
                     <GridItem xs={12} sm={4} md={4}>
                       <CustomInput
@@ -529,7 +519,7 @@ class Edit extends React.Component {
                         }}
                         onFocus={this.toggleCalendar}
                         inputProps={{
-                          value: this.state.startDate.format("DD-MM-YYYY"),
+                          value:  " " + moment(this.state.data.dateneeded).format("DD-MM-YYYY"),
                           disabled: this.state.disabled,
                           onFocus: this.toggleCalendar
                         }}

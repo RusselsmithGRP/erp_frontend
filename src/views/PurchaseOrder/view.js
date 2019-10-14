@@ -240,7 +240,6 @@ class View extends React.Component {
       data.type = this.state.action;
       message = "Purchase Order has been disapproved.";
     }
-    //console.log(data, "wik")
     poActions.editPurchaseOrder(
       this.props.user.token,
       this.props.match.params.id,
@@ -258,14 +257,32 @@ class View extends React.Component {
     win.focus();
   };
 
-  parseRow() {
-    const { classes } = this.props;
-    let currency = "";
-    const table_data = this.state.doc.items.map((prop, key) => {
-      const uom = Uom.getUom(prop.uom);
-      currency = prop.currency;
-      return (
-        <TableRow key={key}>
+  // parseRow() {
+  //   const { classes } = this.props;
+  //   let currency = "";
+  // );
+  //   this.setState({ table_data, currency });
+  // }
+
+  componentDidMount() {
+    poActions.fetchPurchaseOrderById(
+      this.props.user.token,
+      this.props.match.params.id,
+      doc => {
+        this.setState({ doc });
+        this.parseRow();
+      }
+    );
+  }
+
+  render() {
+    console.log(this.state.doc.items, "wik")
+    const { classes, tableHeaderColor } = this.props;
+    const table_data = this.state.doc.items.length ? (
+      this.state.doc.items.map((prop, key) => {
+        const uom = Uom.getUom(prop.uom);
+        return (
+          <TableRow key={key}>
           <TableCell
             component="th"
             style={{
@@ -280,29 +297,17 @@ class View extends React.Component {
           <TableCell className={classes.td}>{prop.description}</TableCell>
           <TableCell className={classes.td}>{prop.quantity}</TableCell>
           <TableCell className={classes.td}>{uom.name}</TableCell>
-          <TableCell className={classes.td}>{currencies.getCurrency(prop.currency)}{" "}{prop.price/100}</TableCell>
+          <TableCell className={classes.td}>{currencies.getCurrencyCode(prop.currency)}{" "}{prop.price/100}</TableCell>
           <TableCell className={classes.td}>
-            {currencies.getCurrency(prop.currency)}{" "}{(prop.price * prop.quantity)/100}
+            {currencies.getCurrencyCode(prop.currency)}{" "}{(prop.price * prop.quantity)/100}
           </TableCell>
         </TableRow>
-      );
-    });
-    this.setState({ table_data, currency });
-  }
-
-  componentDidMount() {
-    poActions.fetchPurchaseOrderById(
-      this.props.user.token,
-      this.props.match.params.id,
-      doc => {
-        this.setState({ doc });
-        this.parseRow();
-      }
+        );
+      })
+    ) : (
+      <div>No Items!</div>
     );
-  }
 
-  render() {
-    const { classes, tableHeaderColor } = this.props;
     return (
       <div>
        {this.renderRedirect()}
@@ -356,7 +361,7 @@ class View extends React.Component {
                       <li className={classes.liStyle}>
                         Vendor: <br />
                         <span className={classes.ap}>
-                          {this.state.doc.po.vendor.general_info.company_name}
+                          {(this.state.doc.po.vendor)? this.state.doc.po.vendor.general_info.company_name: ""}
                         </span>
                       </li>
                       <li className={classes.liStyle}>
@@ -463,9 +468,10 @@ class View extends React.Component {
                           </TableCell>
                         </TableRow>
                       </TableHead>
+                        
                       <div />
 
-                      <TableBody>{this.state.table_data}</TableBody>
+                      <TableBody>{table_data}</TableBody>
                     </Table>
                   </div>
                   <div />
@@ -543,9 +549,9 @@ class View extends React.Component {
                      {currencies.getCurrencyCode(this.state.currency)}{" "} {this.state.doc.po.grand_total}
                     </span>
                   </div>
-                  <Button onClick={this.handleOpen} color="yellowgreen">
+                  {/* <Button onClick={this.handleOpen} color="yellowgreen">
                     Add Additional Terms
-                  </Button>
+                  </Button> */}
                   <Modal
                     aria-labelledby="simple-modal-title"
                     aria-describedby="simple-modal-description"

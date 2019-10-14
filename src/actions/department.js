@@ -17,7 +17,8 @@ export function findDepartmentById(props, departmentId, callback) {
 
 export function updateDepartment(props, data, callback) {
   let middleware = new MiddleWare(props.user.token);
-  middleware.makeConnection("/departments/update", "PUT", data)
+  middleware
+    .makeConnection("/departments/update", "PUT", data)
     .then(res => {
       return res.json();
     })
@@ -29,22 +30,23 @@ export function updateDepartment(props, data, callback) {
     });
 }
 
-export function saveDepartment(token, departmentId, data, callback){
-    let m = new MiddleWare(token);
-    return m.makeConnection('/departments/edit/'+departmentId, m.POST, data).then((result) =>
-      {
-        callback(result);
-      });   
+export function saveDepartment(token, departmentId, data, callback) {
+  let m = new MiddleWare(token);
+  return m
+    .makeConnection("/departments/edit/" + departmentId, m.POST, data)
+    .then(result => {
+      callback(result);
+    });
 }
 
-export function fectchDeptHod(token, departmentId, callback){
-    let m = new MiddleWare(token);
-    return m.makeConnection('/departments/gethod/'+departmentId, m.GET, data).then((result) =>
-      {
-        return response.json()
-    }).then(        
-        (json)=>{
-            callback(json);
-        }
-    );  
+export function fectchDeptHod(token, departmentId, callback) {
+  let m = new MiddleWare(token);
+  return m
+    .makeConnection("/departments/gethod/" + departmentId, m.GET, data)
+    .then(result => {
+      return response.json();
+    })
+    .then(json => {
+      callback(json);
+    });
 }

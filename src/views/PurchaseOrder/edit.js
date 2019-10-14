@@ -238,7 +238,7 @@ render() {
                         >
                             {this.state.vendors.map(option => (
                             <MenuItem key={option.vendor._id} value={option.vendor._id} >
-                                {option.vendor.general_info.company_name}
+                                {( option.vendor)? option.vendor.general_info.company_name: " "}
                             </MenuItem>
                             ))}
                     </CustomSelect>

@@ -45,7 +45,14 @@ export default class PdfTemplate extends React.Component {
               </tr>
             </tbody>
           </table>
+          <br/>
+              <div style={generalStyle.POtitle}>
+                RS-PMG-PUR-P-1016–4 PURCHASE ORDER FORM
+              </div>
         </div>
+
+
+
         <div style={generalStyle.footer}>
           <div style={{ borderTop: "1px solid #000" }}>
             <span>RS-PMG-PUR-P-1016 Procurement</span>{" "}
@@ -54,6 +61,7 @@ export default class PdfTemplate extends React.Component {
             </span>
           </div>
         </div>
+        
       </div>
     );
   }

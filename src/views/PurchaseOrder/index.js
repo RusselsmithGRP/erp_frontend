@@ -67,7 +67,7 @@ class Index extends React.Component {
       let date = new Date(prop.created);
       return {
         id: prop.no,
-        vendor: prop.vendor.general_info.company_name,
+        vendor: (prop.vendor)? prop.vendor.general_info.company_name: " ",
         order_date: date.toISOString().split("T")[0],
         credit_terms: prop.credit_terms,
         status: Status.getStatus(prop.status),

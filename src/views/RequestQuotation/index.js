@@ -410,6 +410,7 @@ class Index extends React.Component {
                         </FormControl>
                       </GridItem>
                     </GridContainer>
+                    <span style={{fontSize: "11px", color: "red", fontStyle:"oblique"}}>Please select a Purchase requisition before requesting for Qoute</span>
 
                     <div className={classes.sidebar}>
                       <div className={classes.boxer}>
@@ -427,6 +428,7 @@ class Index extends React.Component {
                         color="twitter"
                         size="sm"
                         onClick={this.showQuoteForm}
+                        disabled={(!this.state.selectedPr)? true: false}
                       >
                         Request For Quote
                       </Button>

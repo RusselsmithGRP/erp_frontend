@@ -34,9 +34,15 @@ const generalStyle = {
     marginLeft: "2.6%"
   },
   divider: {
-    height: "10px",
+    height: "1px",
     width: "100%",
     backgroundColor: "#333"
+  },
+  divider2: {
+    height: "1px",
+    width: "100%",
+    backgroundColor: "#333",
+    margin: "50px 0" 
   },
   tableHeadSpace: {
     padding: "10px"
@@ -210,6 +216,17 @@ const generalStyle = {
     fontSize: "10px",
 
   },
+  strong: {
+    fontSize: "8px",
+    lineHeight: "250%"
+
+  },
+  termsStyle: {
+    fontSize: "7px",
+    fontFamily:" Arial",
+    lineHeight: "1.3",
+    padding: "5px 1%"
+  },
   text13: {
     fontSize: "11px",
     fontWeight: "bold",
@@ -289,7 +306,7 @@ const generalStyle = {
   POtitle: {
     fontWeight: "bold",
     padding: "10px 0",
-    marginTop: "-30px"
+    marginTop: "-15px"
   },
   POtitle2: {
     fontWeight: "bold",
@@ -318,7 +335,7 @@ const generalStyle = {
     right: "2px",
     fontFamily: "arial, helvetica, sans-serif",
     fontSize: "9px",
-    padding: "10px 25px"
+    padding: "10px 25px",
   },
   fixedHeader: {
     position: "absolute",
