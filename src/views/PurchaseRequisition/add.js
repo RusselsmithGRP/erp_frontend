@@ -261,6 +261,7 @@ class PurchaseRequisition extends React.Component {
     data.vendor = this.state.vendor;
     data.status = "01";
     if (this.formHasError()) return;
+
     prActions.submitRequisition(this.props.user.token, data, isOk => {
       if (isOk) {
         this.setState({
@@ -322,10 +323,11 @@ class PurchaseRequisition extends React.Component {
   }
 
   render() {
-    console.log(this.state.data, "data");
-    console.log(this.state.departments, "departments");
-    console.log(this.state.vendors);
-    console.log(this.state.data.justification);
+    // console.log(this.state.data, "data");
+    // console.log(this.state.departments, "departments");
+    // console.log(this.state.vendors);
+    // console.log(this.state.data.justification);
+    console.log(this.state.data.purchaseType);
 
     const { classes, tableHeaderColor } = this.props;
     var today = new Date();
@@ -609,7 +611,7 @@ class PurchaseRequisition extends React.Component {
                         </Select>
                       </FormControl>
 
-                      {this.state.data.purchaseType === "Contract" ? (
+                      {this.state.data.purchaseType === "Contract" && (
                         <FormControl
                           fullWidth
                           className={classes.selectFormControl}
@@ -661,11 +663,9 @@ class PurchaseRequisition extends React.Component {
                             )}
                           </Select>
                         </FormControl>
-                      ) : (
-                        ""
                       )}
 
-                      {this.state.data.purchaseType === "Sole Source" ? (
+                      {this.state.data.purchaseType === "Sole Source" && (
                         <FormControl
                           fullWidth
                           className={classes.selectFormControl}
@@ -683,8 +683,6 @@ class PurchaseRequisition extends React.Component {
                             }}
                           />
                         </FormControl>
-                      ) : (
-                        ""
                       )}
                     </GridItem>
 
