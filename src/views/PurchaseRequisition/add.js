@@ -646,7 +646,7 @@ class PurchaseRequisition extends React.Component {
                             </MenuItem>
                             {this.state.vendors.map(
                               (vendor, i) =>
-                                vendor.contracts.length >= 1 && (
+                                vendor.isContracted === true && (
                                   <MenuItem
                                     classes={{
                                       root: classes.selectMenuItem,
