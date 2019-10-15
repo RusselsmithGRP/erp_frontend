@@ -79,7 +79,7 @@ class Edit extends React.Component {
       requestor: {},
       department: {},
       comment: "",
-      price: 0
+      price: ""
     },
     lineItems: [],
     startDate: moment(),
@@ -90,14 +90,12 @@ class Edit extends React.Component {
     expenseheaders: [],
     disabled: true,
     department: {},
-    redirect: "",
-    message: ""
+    redirect: ""
   };
 
   handleAction = e => {
     const action = e.target.value;
-    let showReason = action == "disapprove" ? true : false;
-    this.setState({ showReason, action });
+    this.setState({ action });
   };
 
   handleFormChange = e => {
@@ -200,16 +198,16 @@ class Edit extends React.Component {
   };
 
   submitForm = e => {
+    e.preventDefault();
+    let { action } = this.state;
     let data = {};
     let message = "";
-    if (this.state.action == "approve") {
-      data.status = "011";
-      message = "Purchase requisition approved.";
-    } else {
-      data.status = "010";
-      data.reason = this.state.reason;
-      message = "Purchase requisition has been disapproved.";
-    }
+    data.closeoutmethod = action;
+    data.price = this.state.data.price;
+    data.comment = this.state.data.comment;
+    data.status = "011";
+
+    // console.log(data);
     prActions.editRequisition(
       this.props.user.token,
       this.state.data._id,
@@ -249,7 +247,10 @@ class Edit extends React.Component {
   }
 
   render() {
-    console.log(this.state.simpleSelect);
+    // console.log(this.state.action);
+    // console.log(this.state.data.comment);
+    // console.log(this.state.data.price);
+
     const { classes, tableHeaderColor } = this.props;
     var today = new Date();
     var dd = today.getDate();
@@ -367,7 +368,7 @@ class Edit extends React.Component {
                 style: { width: "100px", padding: "0", margin: "0" }
               }}
               inputProps={{
-                onChange: this.handleLineItemChange(key),
+                onChange: this.handleChange,
                 value: this.state.data.price,
                 name: "price"
               }}
@@ -607,7 +608,10 @@ class Edit extends React.Component {
                             Status.getStatus(this.state.data.status) ===
                             "AWAITING HOD APPROVAL"
                               ? "AWAITING CLOSE OUT"
-                              : Status.getStatus(this.state.data.status),
+                              : Status.getStatus(this.state.data.status) ===
+                                "HOD APPROVED"
+                              ? "CLOSED OUT"
+                              : "",
                           disabled: true
                         }}
                       />
@@ -833,7 +837,9 @@ class Edit extends React.Component {
                               fullWidth: true
                             }}
                             inputProps={{
-                              value: this.state.data.comment
+                              value: this.state.data.comment,
+                              name: "comment",
+                              onChange: this.handleChange
                             }}
                           />
                         </GridItem>
