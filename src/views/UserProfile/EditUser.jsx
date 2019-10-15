@@ -7,6 +7,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import GridItem from "../../components/Grid/GridItem.jsx";
 import CustomSelect from "../../components/CustomInput/CustomSelect.jsx";
 import CustomInput from "../../components/CustomInput/CustomInput.jsx";
+import TextField from '@material-ui/core/TextField';
 import Button from "../../components/CustomButtons/Button.jsx";
 import MenuItem from "@material-ui/core/MenuItem";
 import Card from "../../components/Card/Card.jsx";
@@ -136,7 +137,7 @@ class EditUser extends React.Component {
           <GridItem xs={12} sm={12} md={8}>
             <Card>
               <CardHeader color="primary">
-                <h4 className={classes.cardTitleWhite}>Edit Staff Profile</h4>
+                <h4 className={classes.cardTitleWhite}>Edit Staff Profile </h4>
               </CardHeader>
               <CardBody>
                 <form
@@ -288,10 +289,28 @@ class EditUser extends React.Component {
                         })}
                       </CustomSelect>
                     </GridItem>
+                    <GridItem xs={12} sm={12} md={6}>
+                    <label >Signature</label>
+                    <textarea 
+                    name="signature"
+                    id="signature"
+                    style={{
+                      "width": "100%",
+                      "minHeight": "100px",
+                      "outline": "none",
+                      "padding": "7px"
+                    }}
+                    onChange = {this.handleChange.bind(this)}
+                    value={this.state.data.signature}
+                    />
+                    </GridItem>
+                  {/* <div dangerouslySetInnerHTML={{__html: this.state.data.signature}} style={{width: "70px"}}/> */}
+
                   </Grid>
                 </form>
               </CardBody>
               <CardFooter>
+
                 <Button color="primary" onClick={this.handleSave}>
                   Update Profile
                 </Button>

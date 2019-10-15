@@ -70,7 +70,7 @@ class LoginInfo extends React.Component {
           this.setState({
             showError: true,
             errorMsg:
-              "your account is not verified! please log into your email and follow the link sent to you."
+              "Your account is not verified! Please log into your email and follow the link sent to you."
           });
           return;
         } else if (err) {

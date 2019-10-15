@@ -142,7 +142,7 @@ class Index extends React.Component {
     } else if (this.state.data.length > 0) {
       vendors = this.processJson(this.state.data);
     }
-    let data = vendors.dataRows.map((prop, key) => {
+    let data = vendors.dataRows.reverse().map((prop, key) => {
       return {
         id: key,
         class: prop[6],
@@ -234,7 +234,7 @@ class Index extends React.Component {
                 <CardIcon color="primary">
                   <Assignment />
                 </CardIcon>
-                <h4 className={classes.cardIconTitle}>Vendors</h4>
+                <h4 className={classes.cardIconTitle}>Vendors </h4>
               </CardHeader>
               <CardBody>
                 {this.props.user.role == "iac" ||

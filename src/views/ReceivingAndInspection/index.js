@@ -18,11 +18,8 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import purple from "@material-ui/core/colors/purple";
 import * as poActions from "../../actions/purchaseorder";
 import * as riActions from "../../actions/receivingandinspection";
-import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.jsx";
-import generalStyle from "assets/jss/material-dashboard-pro-react/generalStyle.jsx";
-import * as Status from "utility/Status";
 import { connect } from "react-redux";
 
 
@@ -36,24 +33,27 @@ const styles = {
 class Index extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      data: [],
-      workCompletions: [],
-      recievedItems: []
-    };
+ 
   }
 
-  componentDidMount() {
-    poActions.fetchAllPurchaseOrder(this.props.user.token, docs => {
-      this.setState({ data: docs });
-    });
-    riActions.fetchAllRecievedItems(this.props.user.token, docs => {
-      this.setState({ recievedItems: docs });
-    });
-    riActions.fetchAllWorkCompletion(this.props.user.token, docs => {
-      this.setState({ workCompletions: docs });
-    });
-  }
+  state = {
+    data: [],
+    workCompletions: [],
+    recievedItems: []
+  };
+
+// checkSetState = (data)=> {
+//   if(data.every(x => x == true)){
+//     return "completed"
+//   }
+//   else if(data.some(x => x == true)) {
+//     return "in progress"
+//   }
+//   else {
+//    return "pending"
+// }
+// }
+
 
   componentDidUpdate(prevProps) {
     if (this.props.match.params.type !== prevProps.match.params.type) {
@@ -62,25 +62,57 @@ class Index extends React.Component {
   }
 
  checKStatus = (poID) => {
-   if(this.state.recievedItems.some(x => x.purchaseOrder === poID) || this.state.workCompletions.some(x => x.purchaseOrder === poID)){
-      let item = this.state.workCompletions.find(x => x.purchaseOrder === poID) || this.state.recievedItems.find(x => x.purchaseOrder === poID) ;
-      let stage = (item != undefined)? item.inspection_stage: "";
-      let arr = (stage != undefined)? [stage.inspected, stage.reviewed, stage.approved]: [];
-      if (arr.every(x => {x == true})){
-        return "completed"
+    if(this.state.workCompletions && this.state.recievedItems){ 
+      const data = [this.state.workCompletions, this.state.recievedItems];
+      let products = data[1].find(x => x.purchaseOrder === poID) || "";
+      let services = data[0].find(x => x.purchaseOrder === poID) || "";
+      let arr;
+      if(products._id && services._id) {
+        arr = [services.work_completion.inspected, services.work_completion.reviewed, services.work_completion.approved];
+        if(arr.every(x => x == true)){
+          return "completed"
+        }
+        else if(arr.some(x => x == true)) {
+          return "in progress"
+        }
+        else {
+         return "pending"
       }
-      else {
-        return "in progress"
       }
-   }
+      else if(!products._id && services._id) {
+        arr = [services.work_completion.inspected, services.work_completion.reviewed, services.work_completion.approved];
+        if(arr.every(x => x == true)){
+          return "completed"
+        }
+        else if(arr.some(x => x == true)) {
+          return "in progress"
+        }
+        else {
+         return "pending"
+      }
+      }
+
+      else if(products._id && !services._id) {
+        arr = [products.inspection_stage.inspected, products.inspection_stage.reviewed, products.inspection_stage.approved];
+        if(arr.every(x => x == true)){
+          return "completed"
+        }
+        else if(arr.some(x => x == true)) {
+          return "in progress"
+        }
+        else {
+         return "pending"
+      }
+      }
    else {
      return "pending"
    }
   }
+  }
 
 
-  processJson(responseJson) {
-    return responseJson.map((prop, key) => {
+  processJson = (responseJson) => {
+    return responseJson.map((prop) => {
       let date = new Date(prop.created);
       let types = prop.types.map(v => v.toLowerCase());
       return {
@@ -103,6 +135,18 @@ class Index extends React.Component {
           </div>
         )
       };
+    });
+  }
+
+  componentDidMount() {
+    poActions.fetchAllPurchaseOrder(this.props.user.token, docs => {
+      this.setState({ data: docs });
+    });
+    riActions.fetchAllRecievedItems(this.props.user.token, docs => {
+      this.setState({ recievedItems: docs });
+    });
+    riActions.fetchAllWorkCompletion(this.props.user.token, docs => {
+      this.setState({ workCompletions: docs });
     });
   }
 

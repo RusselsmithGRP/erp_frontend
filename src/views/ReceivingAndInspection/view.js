@@ -184,7 +184,7 @@ class View extends React.Component {
               type="text"
               name="rejectedQuantity"
               style={generalStyle.iw}
-              defaultValue={0}
+              defaultValue={this.state.productsData[key].rejectedQuantity}
             />
           </td>
         </tr>
@@ -242,7 +242,6 @@ class View extends React.Component {
   }
 
   CheckOnTimeDelivery = () => {
-   
     this.setState({ on_time_delivery: !this.state.on_time_delivery });
   };
 
@@ -269,10 +268,7 @@ class View extends React.Component {
     productsData[e.target.getAttribute("data-tag")][e.target.name] =
       e.target.value;
     this.setState(newState);
-    if (
-      productsData[e.target.getAttribute("data-tag")].rejectedQuantity != 0 ||
-      ""
-    ) {
+    if (productsData[e.target.getAttribute("data-tag")].rejectedQuantity != 0 ||"") {
       this.setState({ showRejectionLog: true });
     } else {
       this.setState({ showRejectionLog: false });
@@ -310,7 +306,6 @@ class View extends React.Component {
       this.props.user.token,
       this.props.match.params.id,
       (json) => {
-        console.log(json);
         if(json.result != "nothing") {
           this.setState({ 
             inspection_stage: json.result.inspection_stage, 
@@ -326,7 +321,6 @@ class View extends React.Component {
   }
 
   render() {
-    console.log(this.state)
     const { classes } = this.props;
     if (this.props.loader.loading) {
       return (
