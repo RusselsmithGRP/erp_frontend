@@ -39,6 +39,7 @@ const styles = {
 };
 
 const Types = [
+  { name: "Executive Chairman", value: "executive manager" },
   { name: "CEO", value: "ceo" },
   { name: "Head Of Department", value: "hod" },
   { name: "Manager", value: "manager" },

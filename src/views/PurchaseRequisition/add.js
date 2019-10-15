@@ -666,23 +666,73 @@ class PurchaseRequisition extends React.Component {
                       )}
 
                       {this.state.data.purchaseType === "Sole Source" && (
-                        <FormControl
-                          fullWidth
-                          className={classes.selectFormControl}
-                          style={{ marginTop: "10px" }}
-                        >
-                          <TextField
-                            id="justification"
-                            placeholder="Justification"
+                        <>
+                          <FormControl
                             fullWidth
-                            onChange={this.handleChange}
-                            value={this.state.data.justification}
-                            margin="normal"
-                            InputLabelProps={{
-                              shrink: true
-                            }}
-                          />
-                        </FormControl>
+                            className={classes.selectFormControl}
+                            style={{ marginTop: "10px" }}
+                          >
+                            <InputLabel
+                              htmlFor="vendor"
+                              className={classes.selectLabel}
+                            >
+                              Select Vendor
+                            </InputLabel>
+                            <Select
+                              MenuProps={{
+                                className: classes.selectMenu
+                              }}
+                              classes={{
+                                select: classes.select
+                              }}
+                              value={this.state.vendor}
+                              onChange={this.handleVendor}
+                              inputProps={{
+                                name: "vendor",
+                                id: "vendor"
+                              }}
+                              error={error.type ? true : false}
+                            >
+                              <MenuItem
+                                disabled
+                                classes={{
+                                  root: classes.selectMenuItem
+                                }}
+                              >
+                                Select Vendor
+                              </MenuItem>
+                              {this.state.vendors.map((vendor, i) => (
+                                <MenuItem
+                                  classes={{
+                                    root: classes.selectMenuItem,
+                                    selected: classes.selectMenuItemSelected
+                                  }}
+                                  value={vendor._id}
+                                  key={i}
+                                >
+                                  {vendor.general_info.company_name}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                          <FormControl
+                            fullWidth
+                            className={classes.selectFormControl}
+                            style={{ marginTop: "10px" }}
+                          >
+                            <TextField
+                              id="justification"
+                              placeholder="Justification"
+                              fullWidth
+                              onChange={this.handleChange}
+                              value={this.state.data.justification}
+                              margin="normal"
+                              InputLabelProps={{
+                                shrink: true
+                              }}
+                            />
+                          </FormControl>
+                        </>
                       )}
                     </GridItem>
 
