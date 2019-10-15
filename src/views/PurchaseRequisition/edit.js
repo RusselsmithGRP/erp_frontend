@@ -247,6 +247,7 @@ class Edit extends React.Component {
   }
 
   render() {
+    // console.log(this.state.data.requestor);
     const { classes, tableHeaderColor } = this.props;
     var today = new Date();
     var dd = today.getDate();
@@ -781,7 +782,7 @@ class Edit extends React.Component {
                 ) : (
                   ""
                 )}
-                {this.props.user._id &&
+                {this.state.data.requestor._id &&
                 Status.getStatus(this.state.data.status) === "HOD DECLINED" ? (
                   <div>
                     <CardFooter>
