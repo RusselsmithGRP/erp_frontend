@@ -139,8 +139,32 @@ export function getVendorIdByUserId(props, userId, callback) {
     .makeConnection("/vendors/details-by-userId/" + userId, "GET")
     .then(response => response.json())
     .then(responseJson => {
-      callback(responseJson)
+      callback(responseJson);
       props.dispatch(loadAction.LoadingSuccess());
+    });
+}
+
+export function getVendorByContracts(props, callback) {
+  let middleware = new MiddleWare(props.user.token);
+  props.dispatch(loadAction.Loading());
+  return middleware
+    .makeConnection("/vendors/contracts", "GET")
+    .then(response => response.json())
+    .then(responseJson => {
+      callback(responseJson);
+      props.dispatch(loadAction.LoadingSuccess());
+    });
+}
+
+export function updateVendorType(props, data, callback) {
+  let middleware = new MiddleWare();
+  props.dispatch(loadAction.Loading());
+  return middleware
+    .makeConnection("/vendors/update/contracts", "PATCH", data)
+    .then(response => response.json())
+    .then(responseJson => {
+      callback(responseJson);
+      props.dispatch(loadAction.LoadingSuccess("Vendor Updated successfully"));
     });
 }
 

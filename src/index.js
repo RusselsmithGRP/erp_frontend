@@ -26,7 +26,6 @@ ReactDOM.render(
         <Route path="/forgotpassword" exact component={ForgotPassword} />
         <Route path="/register" exact component={RegistrationPage} />
         <Route path="/confirm/:token" exact component={Confirm} />
-
         {indexRoutes.map((prop, key) => {
           return (
             <PrivateRoute

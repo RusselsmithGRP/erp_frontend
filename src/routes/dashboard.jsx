@@ -2,15 +2,15 @@
 import Dashboard from "@material-ui/icons/Dashboard";
 import Person from "@material-ui/icons/Person";
 import ContentPaste from "@material-ui/icons/ContentPaste";
-import GridOn from '@material-ui/icons/GridOn';
-import PaymentIcon from '@material-ui/icons/Payment';
-import HomeIcon from '@material-ui/icons/Home';
-import AddIcon from '@material-ui/icons/Add';
-import LibraryBooks from '@material-ui/icons/LibraryBooks';
-import Settings from '@material-ui/icons/Settings';
-import SdStorage from '@material-ui/icons/SdStorage';
-import AccountBalance from '@material-ui/icons/AccountBalanceWallet';
-import CreditCard from '@material-ui/icons/CreditCard';
+import GridOn from "@material-ui/icons/GridOn";
+import PaymentIcon from "@material-ui/icons/Payment";
+import HomeIcon from "@material-ui/icons/Home";
+import AddIcon from "@material-ui/icons/Add";
+import LibraryBooks from "@material-ui/icons/LibraryBooks";
+import Settings from "@material-ui/icons/Settings";
+import SdStorage from "@material-ui/icons/SdStorage";
+import AccountBalance from "@material-ui/icons/AccountBalanceWallet";
+import CreditCard from "@material-ui/icons/CreditCard";
 import VendorEvaluation from "../views/Vendor/evaluation";
 import RequestQuotation from "../views/RequestQuotation/index.js";
 import AddQuotation from "../views/RequestQuotation/add.js";
@@ -24,7 +24,7 @@ import ListUsers from "../views/UserProfile/ListUsers.jsx";
 import AddUser from "../views/UserProfile/AddUser.jsx";
 import EditUser from "../views/UserProfile/EditUser.jsx";
 import VendorList from "../views/Vendor/index.js";
-import AddVendor from "../views/Vendor/add.js"; 
+import AddVendor from "../views/Vendor/add.js";
 import ViewVendor from "../views/Vendor/view.js";
 import ReceivingAndInspection from "../views/ReceivingAndInspection/index.js";
 import WorkCompletion from "../views/ReceivingAndInspection/WorkCompletion.js";
@@ -47,8 +47,9 @@ import Registration from "../views/RegistrationPage/index.js";
 import Permission from "views/Roles/permission.js";
 import EditDepartment from "views/Departments/index.js";
 import DashboardIcon from "@material-ui/icons/Dashboard";
-import ChangePassword from "../views/UserProfile/ChangePassword.jsx"
-import importRecords from "../views/importRecords/index"
+import ChangePassword from "../views/UserProfile/ChangePassword.jsx";
+import importRecords from "../views/importRecords/index";
+import updateVendorContract from "../views/Vendor/updateVendorContract";
 
 /* import Typography from "views/Typography/Typography.jsx";
 import Icons from "views/Icons/Icons.jsx";
@@ -64,12 +65,12 @@ export const dashboardRoutes = [
   {
     path: "/import-records",
     component: importRecords
-   },
-   {
-     path: "/vendorevaluation",
-     component: VendorEvaluation
-   },
-   {
+  },
+  {
+    path: "/vendorevaluation",
+    component: VendorEvaluation
+  },
+  {
     path: "/user",
     component: UserProfile
   },
@@ -88,7 +89,8 @@ export const dashboardRoutes = [
   {
     path: "/vendor/view/:id",
     component: ViewVendor
-  },{
+  },
+  {
     path: "/vendor/type/:type",
     component: VendorList
   },
@@ -105,12 +107,12 @@ export const dashboardRoutes = [
     component: Permission
   },
   {
-  path: "/departments/edit/:id",
-  component: EditDepartment
+    path: "/departments/edit/:id",
+    component: EditDepartment
   },
   {
-  path: "/pdf/:id",
-  component: Pdf
+    path: "/pdf/:id",
+    component: Pdf
   },
   {
     path: "/requisition/add",
@@ -136,38 +138,38 @@ export const dashboardRoutes = [
     path: "/requisition",
     component: ListPurchaseRequisition
   },
-   {
+  {
     path: "/receiving",
     component: ReceivingAndInspection
-  }, 
+  },
   {
     path: "/rejection/log/index",
     component: rejectionLogIndex
-  }, 
+  },
   {
     path: "/rejection/log/:id",
     component: ViewRejectedLog
-  }, 
+  },
   {
     path: "/receiving/:id",
     component: receivingView
-    },
-    {
-      path: "/work/completion/:id",
-      component: WorkCompletion
-      },
-      {
-        path: "/log/:id",
-        component: RejectionLog
-        },
+  },
+  {
+    path: "/work/completion/:id",
+    component: WorkCompletion
+  },
+  {
+    path: "/log/:id",
+    component: RejectionLog
+  },
   {
     path: "/order",
     component: PurchaseOrder
-  },   
+  },
   {
     path: "/order/add",
     component: PurchaseOrderAdd
-  },  
+  },
   {
     path: "/order/view/:id",
     component: PurchaseOrderView
@@ -175,7 +177,7 @@ export const dashboardRoutes = [
   {
     path: "/changepassword",
     component: ChangePassword
-  }, 
+  },
   {
     path: "/log",
     component: Log
@@ -187,7 +189,7 @@ export const dashboardRoutes = [
   {
     path: "/crud/view/:type/:id",
     component: ViewCrud
-  },  
+  },
   {
     path: "/crud/edit/:type/:id",
     component: EditCrud
@@ -195,6 +197,10 @@ export const dashboardRoutes = [
   {
     path: "/crud/:type/",
     component: ListCrud
+  },
+  {
+    path: "/setup/vendor/update",
+    component: updateVendorContract
   },
   { redirect: true, path: "/", to: "/dashboard", navbarName: "Redirect" }
 ];
@@ -206,110 +212,110 @@ export const AdminMenu = [
     icon: DashboardIcon,
     component: Dashboard
   },
- {
-   path: "/vendor",
-   name: "Vendors List",
-   icon: ContentPaste,
-   component: VendorList
- },
- {
-   collapse: true,
-   path: "/budgets",
-   name: "Budgets",
-   state: "openBudgets",
-   icon: PaymentIcon,
-   views: [
-    {
-      path: "#",
-      name: "Annual Budget",
-      mini: "AB",
-      component: ListPurchaseRequisition
-    },
-    {
-      path: "#",
-      name: "Monthly Budget",
-      mini: "MB",
-      component: ListPurchaseRequisition
-    },
-    {
-      path: "#",
-      name: "Supplementary Budget",
-      mini: "SB",
-      component: ListPurchaseRequisition
-    }
-   ]
- },
- {
-   collapse: true,
-   path: "/inventorymgt",
-   name: "Inventory Mgt.",
-   state: "openInventoryMgt",
-   icon: SdStorage,
-   views: [
-    {
-      path: "#",
-      name: "Store Requisition",
-      mini: "SR",
-      component: ListPurchaseRequisition
-    },
-    {
-      path: "#",
-      name: "Gate Pass",
-      mini: "GP",
-      component: ListPurchaseRequisition
-    }
-   ]
- },
- {
-  collapse: true,
-  path: "/purchasing",
-  name: "Purchasing",
-  state: "openComponents",
-  icon: GridOn,
-  views: [
-    {
-      path: "/requisition",
-      name: "Purchase Requisition",
-      mini: "PR",
-      component: ListPurchaseRequisition,
-      actions: ['index','add', 'edit', 'delete', 'admin_view']
-    },
-    {
-      path: "/quotation",
-      name: "Request for Quotation",
-      mini: "RFQ",
-      component: RequestQuotation,
-      actions: ['index','add', 'edit', 'delete', 'admin_view' ]
-    },
-    {
-      path: "/quotation/myquotes",
-      name: "Quotation Request",
-      mini: "RFQ",
-      component: MyQuotation,
-      actions: [ 'edit' ]
-    },
-    {
-      path: "/order",
-      name: "Purchase Order",
-      mini: "PO",
-      component: PurchaseOrder,
-      actions: ['index','add', 'edit', 'delete', 'admin_view']
-    }, 
-    {
-      path: "/receiving",
-      name: "Receiving & Inspection",
-      mini: "RI",
-      component: ReceivingAndInspection,
-      actions: ['index']
-    }, 
-    {
-      path: "/rejection/log/index",
-      name: "Rejection Logs",
-      mini: "RL",
-      component: rejectionLogIndex,
-      actions: ['index']
-    }
-  ]
+  {
+    path: "/vendor",
+    name: "Vendors List",
+    icon: ContentPaste,
+    component: VendorList
+  },
+  {
+    collapse: true,
+    path: "/budgets",
+    name: "Budgets",
+    state: "openBudgets",
+    icon: PaymentIcon,
+    views: [
+      {
+        path: "#",
+        name: "Annual Budget",
+        mini: "AB",
+        component: ListPurchaseRequisition
+      },
+      {
+        path: "#",
+        name: "Monthly Budget",
+        mini: "MB",
+        component: ListPurchaseRequisition
+      },
+      {
+        path: "#",
+        name: "Supplementary Budget",
+        mini: "SB",
+        component: ListPurchaseRequisition
+      }
+    ]
+  },
+  {
+    collapse: true,
+    path: "/inventorymgt",
+    name: "Inventory Mgt.",
+    state: "openInventoryMgt",
+    icon: SdStorage,
+    views: [
+      {
+        path: "#",
+        name: "Store Requisition",
+        mini: "SR",
+        component: ListPurchaseRequisition
+      },
+      {
+        path: "#",
+        name: "Gate Pass",
+        mini: "GP",
+        component: ListPurchaseRequisition
+      }
+    ]
+  },
+  {
+    collapse: true,
+    path: "/purchasing",
+    name: "Purchasing",
+    state: "openComponents",
+    icon: GridOn,
+    views: [
+      {
+        path: "/requisition",
+        name: "Purchase Requisition",
+        mini: "PR",
+        component: ListPurchaseRequisition,
+        actions: ["index", "add", "edit", "delete", "admin_view"]
+      },
+      {
+        path: "/quotation",
+        name: "Request for Quotation",
+        mini: "RFQ",
+        component: RequestQuotation,
+        actions: ["index", "add", "edit", "delete", "admin_view"]
+      },
+      {
+        path: "/quotation/myquotes",
+        name: "Quotation Request",
+        mini: "RFQ",
+        component: MyQuotation,
+        actions: ["edit"]
+      },
+      {
+        path: "/order",
+        name: "Purchase Order",
+        mini: "PO",
+        component: PurchaseOrder,
+        actions: ["index", "add", "edit", "delete", "admin_view"]
+      },
+      {
+        path: "/receiving",
+        name: "Receiving & Inspection",
+        mini: "RI",
+        component: ReceivingAndInspection,
+        actions: ["index"]
+      },
+      {
+        path: "/rejection/log/index",
+        name: "Rejection Logs",
+        mini: "RL",
+        component: rejectionLogIndex,
+        actions: ["index"]
+      }
+    ]
   },
   {
     collapse: true,
@@ -318,93 +324,107 @@ export const AdminMenu = [
     state: "openQualityMgt",
     icon: ContentPaste,
     views: [
-          {
-            path: "/vendor",
-            name: "Vendors Mgt",
-            mini: "VM",
-            component: VendorList,
-            actions: ['index','add', 'edit','view', 'delete', 'admin_view', 'type' ]
-          },
+      {
+        path: "/vendor",
+        name: "Vendors Mgt",
+        mini: "VM",
+        component: VendorList,
+        actions: [
+          "index",
+          "add",
+          "edit",
+          "view",
+          "delete",
+          "admin_view",
+          "type"
+        ]
+      }
     ]
-  }, 
-   {
+  },
+  {
     collapse: true,
     path: "/salesmgt",
     name: "Sales Management",
     state: "openSalesMgt",
     icon: ContentPaste,
     views: [
-     {
-       path: "#",
-       name: "Sales Order",
-       mini: "SO",
-       component: ListPurchaseRequisition
-     },
-     {
-       path: "#",
-       name: "Quotation",
-       mini: "Q",
-       component: ListPurchaseRequisition
-     }
+      {
+        path: "#",
+        name: "Sales Order",
+        mini: "SO",
+        component: ListPurchaseRequisition
+      },
+      {
+        path: "#",
+        name: "Quotation",
+        mini: "Q",
+        component: ListPurchaseRequisition
+      }
     ]
   },
- {
-   path: "/Setup",
-   collapse: true,
-   name: "Setup",
-   icon:  Settings,
-   state: "openSetup",
-   views: [
-    {
-      path: "/crud/departments",
-      name: "Departments",
-      mini: "D",
-      component: ListCrud,
-      actions: ['add', 'edit','view', 'delete' ]
-    },{
-      path: "/crud/roles",
-      name: "Roles",
-      mini: "R",
-      component: ListCrud,
-      actions: ['add', 'edit','view', 'delete']
-    },
-    {
-      path: "/crud/expenseheader",
-      name: "Expense Header",
-      mini: "C",
-      component: ListCrud,
-      actions: ['add', 'edit','view', 'delete']
-    },
-    ,
-    {
-      path: "/crud/locations",
-      name: "Locations",
-      mini: "C",
-      component: ListCrud,
-      actions: ['add', 'edit','view', 'delete']
-    },
-    {
-      path: "/user/index",
-      name: "Users",
-      mini: "U",
-      component: ListUsers,
-      actions: ['add', 'edit','view', 'delete']
-    }
-  ]
- },
+  {
+    path: "/Setup",
+    collapse: true,
+    name: "Setup",
+    icon: Settings,
+    state: "openSetup",
+    views: [
+      {
+        path: "/crud/departments",
+        name: "Departments",
+        mini: "D",
+        component: ListCrud,
+        actions: ["add", "edit", "view", "delete"]
+      },
+      {
+        path: "/crud/roles",
+        name: "Roles",
+        mini: "R",
+        component: ListCrud,
+        actions: ["add", "edit", "view", "delete"]
+      },
+      {
+        path: "/crud/expenseheader",
+        name: "Expense Header",
+        mini: "C",
+        component: ListCrud,
+        actions: ["add", "edit", "view", "delete"]
+      },
+      ,
+      {
+        path: "/crud/locations",
+        name: "Locations",
+        mini: "C",
+        component: ListCrud,
+        actions: ["add", "edit", "view", "delete"]
+      },
+      {
+        path: "/user/index",
+        name: "Users",
+        mini: "U",
+        component: ListUsers,
+        actions: ["add", "edit", "view", "delete"]
+      },
+      {
+        path: "/setup/vendor/update",
+        name: "Vendor Contracts",
+        mini: "V",
+        component: updateVendorContract,
+        actions: ["add", "edit", "view", "delete"]
+      }
+    ]
+  }
 ];
 
 export const ProcurementMenu = [
   {
     path: "/dashboard",
     name: "Dashboard",
-    icon: HomeIcon,
-  },
+    icon: HomeIcon
+  }
   // {
   //   path: "/vendor/type/approved",
   //   name: "Approved Vendors",
   //   icon: LibraryBooks,
   // }
 ];
-
-

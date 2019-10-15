@@ -323,6 +323,7 @@ const generalStyle = {
     maxWidth: "290px",
     width: "100%",
     fontSize: "9px",
+    fontFamily: "Arial"
   },
   divider: {
     height: "1px",
