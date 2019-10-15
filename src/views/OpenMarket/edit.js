@@ -28,13 +28,11 @@ import generalStyle from "assets/jss/material-dashboard-pro-react/generalStyle.j
 import DatePicker from "react-datepicker";
 import * as prActions from "../../actions/purchaserequisition";
 import * as genericActions from "actions/generic.js";
-import * as vendorActions from "../../actions/vendor";
-
-import * as Uom from "../../utility/Uom";
-import moment from "moment";
 import Notification from "views/Notifications/Index.jsx";
-import Clear from "@material-ui/icons/Clear";
-import { TextField } from "@material-ui/core";
+import moment from "moment";
+import * as Status from "utility/Status";
+import * as Uom from "utility/Uom";
+import { Redirect } from "react-router-dom";
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -49,50 +47,62 @@ const styles = theme => ({
     fontWeight: "700",
     fontSize: "15px"
   },
-
   removeDivPadding: { maxWidth: "12%" }
 });
+
+const categories = [
+  { value: "0", label: "Select" },
+  { value: "1", label: "Category 1" },
+  { value: "2", label: "Category 2" },
+  { value: "3", label: "Category 3" }
+];
 
 const shipvia = [
   { slug: "digital", name: "Digital (Download)" },
   { slug: "vendor", name: "Vendor Delivery" },
-  { slug: "courier", name: "Courier" }
+  { slug: "dhl", name: "DHL" }
 ];
 
-/* const shipvia = [
-  {slug: 'lagos', name:'Lagos Office'},
-  {slug: 'portharcourt', name:'Port-Harcourt Office'}
-] */
-
-class PurchaseRequisition extends React.Component {
+class Edit extends React.Component {
   state = {
     simpleSelect: "",
     type: "",
-    expenseheaders: [],
-    rowArray: [1],
+    rowArray: [1, 2],
     data: {
       type: "",
       requestedby: "",
       eid: "",
-      department: "",
+      departmentname: "",
       chargeto: "",
       dateneeded: "",
-      status: 1,
-      shipvia: "",
-      isextrabudget: false,
-      purchaseType: "",
-      justification: ""
+      status: "01",
+      requestor: {},
+      department: {},
+      comment: "",
+      price: 0
     },
     lineItems: [],
     startDate: moment(),
     departments: [],
-    error: { lineitems: [] },
-    errorState: false,
+    action: "",
+    reason: "",
     message: "",
+    expenseheaders: [],
+    disabled: true,
+    department: {},
     redirect: "",
-    vendors: [],
-    vendor: "",
-    isAllowed: false
+    message: ""
+  };
+
+  handleAction = e => {
+    const action = e.target.value;
+    let showReason = action == "disapprove" ? true : false;
+    this.setState({ showReason, action });
+  };
+
+  handleFormChange = e => {
+    const reason = e.target.value;
+    this.setState({ reason });
   };
 
   handleChange = event => {
@@ -118,46 +128,29 @@ class PurchaseRequisition extends React.Component {
 
   increaseRow = event => {
     let rowArray = this.state.rowArray;
-    let lineItemsError = this.state.error.lineitems;
-    let lineItems = this.state.lineItems;
     rowArray.push(Date.now());
-    lineItems.push({
-      itemdescription: "",
-      category: "",
-      quantity: "",
-      uom: ""
-    });
-    let error = this.state.error;
-    lineItemsError.push(this.computeLineItemError());
-    error.lineitems = lineItemsError;
-    this.setState({ rowArray, error, lineItems });
+    this.setState({ rowArray: rowArray });
   };
 
   removeRow = i => event => {
     let rowArray = this.state.rowArray;
-    let lineItemsError = this.state.error.lineitems;
-    let lineItems = this.state.lineItems;
-    lineItemsError.splice(i, 1);
-    lineItems.splice(i, 1);
-    let error = this.state.error;
-    error.lineitems = lineItemsError;
     rowArray.splice(i, 1);
-    this.setState({ rowArray, error, lineItems });
+    this.setState({ rowArray: rowArray });
   };
 
   handleLineItemChange = i => event => {
     let lineItems = this.state.lineItems;
-    let lineItemsError = this.state.error.lineitems;
     let lineItemsKey;
-    let lineItemsKeyError = lineItemsError[i];
-    lineItemsKey = lineItems[i] ? lineItems[i] : {};
-    lineItemsKeyError[[event.target.name]] = event.target.value ? false : true;
+    if (lineItems[i]) {
+      lineItemsKey = lineItems[i];
+    } else {
+      lineItemsKey = {};
+    }
     lineItemsKey[[event.target.name]] = event.target.value;
     lineItems[i] = lineItemsKey;
-    lineItemsError[i] = lineItemsKeyError;
-    let error = this.state.error;
-    error.lineitems = lineItemsError;
-    this.setState({ lineItems, error });
+    this.setState({
+      lineItems: lineItems
+    });
   };
 
   handleSelectItem = event => {
@@ -182,164 +175,81 @@ class PurchaseRequisition extends React.Component {
     data["type"] = event.target.value;
     this.setState({ data: data });
   };
-
-  handleVendor = e => {
-    this.setState({
-      vendor: e.target.value
-    });
-  };
-
-  handlePurchaseType = event => {
-    let data = this.state.data;
-    data["purchaseType"] = event.target.value;
-    this.setState({ data: data });
-  };
-
   renderRedirect = () => {
     if (this.state.redirect == "yes") {
       setTimeout(function() {
-        window.location.href = "/requisition";
-      }, 3000);
+        window.location.href = "/openmarket";
+      }, 2000);
     }
   };
+  submitUpdate = () => {
+    let data = this.state.data;
+    data.status = "01";
+    prActions.updateRequisition(
+      this.props.user.token,
+      this.state.data._id,
+      data,
+      isOk => {
+        if (isOk) {
+          this.setState({ message: message, error: false });
+          this.props.history.push("/openmarket");
+        } else
+          this.setState({ message: "Error processing request.", error: true });
+      }
+    );
+  };
 
-  formHasError = e => {
-    let error = false;
-    let lineItemsError = this.state.error.lineitems;
-    if (this.state.lineItems.length < 1) {
-      error = true;
+  submitForm = e => {
+    let data = {};
+    let message = "";
+    if (this.state.action == "approve") {
+      data.status = "011";
+      message = "Purchase requisition approved.";
+    } else {
+      data.status = "010";
+      data.reason = this.state.reason;
+      message = "Purchase requisition has been disapproved.";
     }
-    this.state.lineItems.map((e, i) => {
-      let lineItemsKeyError = lineItemsError[i];
-      if (!e.itemdescription) {
-        lineItemsKeyError["itemdescription"] = true;
-        error = true;
+    prActions.editRequisition(
+      this.props.user.token,
+      this.state.data._id,
+      data,
+      isOk => {
+        if (isOk) this.setState({ message: message, error: false });
+        else
+          this.setState({ message: "Error processing request.", error: true });
       }
-      if (!e.category) {
-        lineItemsKeyError["category"] = true;
-        error = true;
-      }
-      if (!e.quantity) {
-        lineItemsKeyError["quantity"] = true;
-        error = true;
-      }
-      if (!e.uom) {
-        lineItemsKeyError["uom"] = true;
-        error = true;
-      }
-      lineItemsError[i] = lineItemsKeyError;
-    });
-    let errorState = this.state.error;
-    if (!this.state.data.dateneeded) {
-      errorState.dateneeded = true;
-      error = true;
-    } else if (!this.state.data.department) {
-      errorState.department = true;
-      error = true;
-    } else if (!this.state.data.shipvia) {
-      errorState.shipvia = true;
-      error = true;
-    } else if (!this.state.data.type) {
-      errorState.type = true;
-      error = true;
-    }
-
-    if (error) {
-      errorState.lineitems = lineItemsError;
+    );
+    if (this.state.action) {
       this.setState({
-        error: errorState,
-        showError: true,
-        message: "Kindly fill all form fields"
+        redirect: "yes"
       });
     }
-    return error;
-  };
-
-  handleSubmitForm = e => {
-    this.setState({ message: "" });
-    let data = this.state.data;
-    data.lineitems = this.state.lineItems;
-    data.vendor = this.state.vendor;
-    data.status = "01";
-    if (this.formHasError()) return;
-
-    prActions.submitRequisition(this.props.user.token, data, isOk => {
-      if (isOk) {
-        this.setState({
-          message: "Purchase requisition has been submitted.",
-          showError: false,
-          redirect: "yes"
-        });
-      } else {
-        this.setState({
-          message: "Error processing request.",
-          showError: true
-        });
-      }
-    });
-  };
-
-  handleSaveForm = e => {
-    let data = this.state.data;
-    data.lineitems = this.state.lineItems;
-    data.status = "00";
-    prActions.saveRequisition(this.props.user.token, data, isOk => {
-      if (isOk) this.setState({ data: {} });
-      else alert("Couldn't submit an error occur");
-    });
-  };
-
-  computeLineItemError = () => {
-    let itemsError = {};
-    itemsError.category = "";
-    itemsError.itemdescription = "";
-    itemsError.uom = "";
-    itemsError.quantity = "";
-    return itemsError;
   };
 
   componentDidMount() {
-    let data = this.state.data;
-    data.requestor = this.props.user._id;
-    data.requestedby =
-      this.props.user.firstname + " " + this.props.user.lastname;
-    data.eid = this.props.user.eid;
-    let lineitemsError = [];
-    this.state.rowArray.map(i => {
-      const itemsError = this.computeLineItemError();
-      lineitemsError.push(itemsError);
+    const id = this.props.match.params.id;
+    prActions.findRequisitionById(this.props.user.token, id, data => {
+      data.requestedby =
+        data.requestor.firstname + " " + data.requestor.lastname;
+      data.eid = data.requestor.eid;
+      const department = data.department;
+      data.department = data.department._id;
+      const disabled = data.status == "010" ? false : true;
+      let rowArray = [];
+
+      this.setState({ data, lineItems: data.lineitems, disabled, department });
     });
-    let error = { lineitems: lineitemsError };
-    this.setState({ data: data, error });
     genericActions.fetchAll("departments", this.props.user.token, items => {
       this.setState({ departments: items });
     });
     genericActions.fetchAll("expenseheader", this.props.user.token, items => {
       this.setState({ expenseheaders: items });
     });
-
-    genericActions.fetchAll("vendors", this.props.user.token, vendors => {
-      this.setState({ vendors });
-      this.state.vendors.map((vendor, i) => {
-        vendor.contracts.map((v, i) => {
-          v.associatedDept === this.props.user.department._id.toString()
-            ? this.setState({
-                isAllowed: true
-              })
-            : "";
-        });
-      });
-    });
   }
 
   render() {
-    // console.log(this.state.data, "data");
-    // console.log(this.state.departments, "departments");
-    // console.log(this.state.vendors);
-    // console.log(this.state.data.justification);
-    console.log(this.state.data.purchaseType);
-    // console.log(this.props.user);
-
+    console.log(this.state.simpleSelect);
     const { classes, tableHeaderColor } = this.props;
     var today = new Date();
     var dd = today.getDate();
@@ -353,17 +263,11 @@ class PurchaseRequisition extends React.Component {
     if (mm < 10) {
       mm = "0" + mm;
     }
+
     today = mm + "/" + dd + "/" + yyyy;
-    const tableData = this.state.rowArray.map((prop, key) => {
-      let value;
-      if (this.state.lineItems[key]) {
-        value = this.state.lineItems[key];
-      } else {
-        value = {};
-      }
-      const error = this.state.error.lineitems[key]
-        ? this.state.error.lineitems[key]
-        : {};
+    const tableData = this.state.lineItems.map((value, key) => {
+      const uom = Uom.getUom(value.uom);
+
       return (
         <TableRow key={key}>
           <TableCell
@@ -375,10 +279,6 @@ class PurchaseRequisition extends React.Component {
               textAlign: "center"
             }}
           >
-            <Clear
-              className={classes.feedback + " " + classes.labelRootError}
-              onClick={this.removeRow(key)}
-            />{" "}
             {key + 1}
           </TableCell>
           <TableCell style={generalStyle.removeBorder}>
@@ -388,13 +288,11 @@ class PurchaseRequisition extends React.Component {
               name="category"
               required
               onChange={this.handleLineItemChange(key)}
-              onBlur={this.handleLineItemChange(key)}
               value={value.category}
-              error={error.category ? true : false}
               formControlProps={{
                 style: { width: "130px", padding: "0", margin: "0" }
               }}
-              inputProps={{ margin: "normal" }}
+              inputProps={{ disabled: this.state.disabled, margin: "normal" }}
               style={{ marginTop: "-3px", borderBottomWidth: " 1px" }}
             >
               {this.state.expenseheaders.map(option => (
@@ -409,14 +307,20 @@ class PurchaseRequisition extends React.Component {
               id="itemdescription"
               required
               formControlProps={{
-                style: { width: "300px", padding: "0", margin: "0" }
+                style: {
+                  width: "300px",
+                  padding: "0",
+                  margin: "0",
+                  fontSize: "13px",
+                  fontWeight: "500"
+                }
               }}
-              error={error.itemdescription ? true : false}
               inputProps={{
-                name: "itemdescription",
+                disabled: this.state.disabled,
                 onChange: this.handleLineItemChange(key),
-                onBlur: this.handleLineItemChange(key),
-                value: value.itemdescription
+                name: "itemdescription",
+                value: value.itemdescription,
+                title: value.itemdescription
               }}
             />
           </TableCell>
@@ -428,64 +332,62 @@ class PurchaseRequisition extends React.Component {
               formControlProps={{
                 style: { width: "100px", padding: "0", margin: "0" }
               }}
-              error={error.quantity ? true : false}
               inputProps={{
-                name: "quantity",
+                disabled: this.state.disabled,
                 onChange: this.handleLineItemChange(key),
-                onBlur: this.handleLineItemChange(key),
+                name: "quantity",
                 value: value.quantity
               }}
             />
           </TableCell>
           <TableCell className={classes.td}>
-            <CustomSelect
-              labelText="Unit of Measure"
-              id="uom"
-              name="uom"
+            <CustomInput
+              name="unit"
+              id="unit"
               required
-              onChange={this.handleLineItemChange(key)}
-              onBlur={this.handleLineItemChange(key)}
-              value={value.uom}
               formControlProps={{
-                style: { width: "130px", padding: "0", margin: "0" }
+                style: { width: "100px", padding: "0", margin: "0" }
               }}
-              error={error.uom ? true : false}
               inputProps={{
-                margin: "normal",
-                id: "uom",
+                disabled: this.state.disabled,
+                onChange: this.handleLineItemChange(key),
+                value: uom.name,
                 name: "uom"
               }}
-              style={{ marginTop: "-3px", borderBottomWidth: " 1px" }}
-            >
-              {Uom.List.map(option => (
-                <MenuItem key={option.slug} value={option.slug}>
-                  {option.name}
-                </MenuItem>
-              ))}
-            </CustomSelect>
+            />
+          </TableCell>
+
+          <TableCell className={classes.td}>
+            <CustomInput
+              name="price"
+              id="price"
+              type="number"
+              required
+              formControlProps={{
+                style: { width: "100px", padding: "0", margin: "0" }
+              }}
+              inputProps={{
+                onChange: this.handleLineItemChange(key),
+                value: this.state.data.price,
+                name: "price"
+              }}
+            />
           </TableCell>
         </TableRow>
       );
     });
-    const error = this.state.error ? this.state.error : {};
+
     return (
       <div>
         {this.renderRedirect()}
         <Grid container>
-          {this.state.showError == true ? (
-            <Notification
-              error={this.state.showError}
-              message={this.state.message}
-            />
-          ) : (
-            ""
-          )}
+          <Notification error={this.state.error} message={this.state.message} />
           <GridItem xs={12} sm={12} md={12}>
             <form className={classes.container} noValidate autoComplete="off">
               <Card>
                 <CardHeader color="primary">
                   <h4 className={classes.cardTitleWhite}>
-                    Purchase Requisition
+                    Open Market Purchase Requisition
                   </h4>
                 </CardHeader>
                 <CardBody>
@@ -515,9 +417,9 @@ class PurchaseRequisition extends React.Component {
                           onChange={this.handleSimple}
                           inputProps={{
                             name: "simpleSelect",
-                            id: "type"
+                            id: "type",
+                            disabled: this.state.disabled
                           }}
-                          error={error.type ? true : false}
                         >
                           <MenuItem
                             disabled
@@ -548,211 +450,9 @@ class PurchaseRequisition extends React.Component {
                         </Select>
                       </FormControl>
                     </GridItem>
-
-                    <GridItem xs={12} sm={12} md={4}>
-                      <FormControl
-                        fullWidth
-                        className={classes.selectFormControl}
-                      >
-                        <InputLabel
-                          htmlFor="purchase-type"
-                          className={classes.selectLabel}
-                        >
-                          Purchase Type
-                        </InputLabel>
-                        <Select
-                          MenuProps={{
-                            className: classes.selectMenu
-                          }}
-                          classes={{
-                            select: classes.select
-                          }}
-                          value={this.state.data.purchaseType}
-                          onChange={this.handlePurchaseType}
-                          inputProps={{
-                            name: "purchaseType",
-                            id: "purchase-type"
-                          }}
-                          error={error.type ? true : false}
-                        >
-                          <MenuItem
-                            disabled
-                            classes={{
-                              root: classes.selectMenuItem
-                            }}
-                          >
-                            Choose Purchase Type
-                          </MenuItem>
-                          <MenuItem
-                            classes={{
-                              root: classes.selectMenuItem,
-                              selected: classes.selectMenuItemSelected
-                            }}
-                            value="Contract"
-                          >
-                            Contract
-                          </MenuItem>
-                          <MenuItem
-                            classes={{
-                              root: classes.selectMenuItem,
-                              selected: classes.selectMenuItemSelected
-                            }}
-                            value="Sole Source"
-                          >
-                            Sole Source
-                          </MenuItem>
-                          <MenuItem
-                            classes={{
-                              root: classes.selectMenuItem,
-                              selected: classes.selectMenuItemSelected
-                            }}
-                            value="Regular"
-                          >
-                            Regular (3 quotes)
-                          </MenuItem>
-                          <MenuItem
-                            classes={{
-                              root: classes.selectMenuItem,
-                              selected: classes.selectMenuItemSelected
-                            }}
-                            value="Open Market"
-                          >
-                            Open Market
-                          </MenuItem>
-                        </Select>
-                      </FormControl>
-
-                      {this.state.data.purchaseType === "Contract" && (
-                        <FormControl
-                          fullWidth
-                          className={classes.selectFormControl}
-                          style={{ marginTop: "10px" }}
-                        >
-                          <InputLabel
-                            htmlFor="vendor"
-                            className={classes.selectLabel}
-                          >
-                            Select Vendor
-                          </InputLabel>
-                          <Select
-                            MenuProps={{
-                              className: classes.selectMenu
-                            }}
-                            classes={{
-                              select: classes.select
-                            }}
-                            value={this.state.vendor}
-                            onChange={this.handleVendor}
-                            inputProps={{
-                              name: "vendor",
-                              id: "vendor"
-                            }}
-                            error={error.type ? true : false}
-                          >
-                            <MenuItem
-                              disabled
-                              classes={{
-                                root: classes.selectMenuItem
-                              }}
-                            >
-                              Select Vendor
-                            </MenuItem>
-                            {this.state.vendors.map((vendor, key) =>
-                              vendor.isContracted && this.state.isAllowed ? (
-                                <MenuItem
-                                  classes={{
-                                    root: classes.selectMenuItem,
-                                    selected: classes.selectMenuItemSelected
-                                  }}
-                                  value={vendor._id}
-                                  key={key}
-                                >
-                                  {vendor.general_info.company_name}
-                                </MenuItem>
-                              ) : (
-                                ""
-                              )
-                            )}
-                            )}
-                          </Select>
-                        </FormControl>
-                      )}
-
-                      {this.state.data.purchaseType === "Sole Source" && (
-                        <>
-                          <FormControl
-                            fullWidth
-                            className={classes.selectFormControl}
-                            style={{ marginTop: "10px" }}
-                          >
-                            <InputLabel
-                              htmlFor="vendor"
-                              className={classes.selectLabel}
-                            >
-                              Select Vendor
-                            </InputLabel>
-                            <Select
-                              MenuProps={{
-                                className: classes.selectMenu
-                              }}
-                              classes={{
-                                select: classes.select
-                              }}
-                              value={this.state.vendor}
-                              onChange={this.handleVendor}
-                              inputProps={{
-                                name: "vendor",
-                                id: "vendor"
-                              }}
-                              error={error.type ? true : false}
-                            >
-                              <MenuItem
-                                disabled
-                                classes={{
-                                  root: classes.selectMenuItem
-                                }}
-                              >
-                                Select Vendor
-                              </MenuItem>
-                              {this.state.vendors.map((vendor, i) => (
-                                <MenuItem
-                                  classes={{
-                                    root: classes.selectMenuItem,
-                                    selected: classes.selectMenuItemSelected
-                                  }}
-                                  value={vendor._id}
-                                  key={i}
-                                >
-                                  {vendor.general_info.company_name}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                          <FormControl
-                            fullWidth
-                            className={classes.selectFormControl}
-                            style={{ marginTop: "10px" }}
-                          >
-                            <TextField
-                              id="justification"
-                              placeholder="Justification"
-                              fullWidth
-                              onChange={this.handleChange}
-                              value={this.state.data.justification}
-                              margin="normal"
-                              InputLabelProps={{
-                                shrink: true
-                              }}
-                            />
-                          </FormControl>
-                        </>
-                      )}
-                    </GridItem>
-
-                    {/* <GridItem xs={12} sm={12} md={4} /> */}
-
+                    <GridItem xs={12} sm={12} md={4} />
                     <GridItem xs={12} sm={12} md={4} style={generalStyle.text2}>
-                      Requisition No:
+                      Requisition No: {this.state.data.requisitionno}
                     </GridItem>
                     <GridItem xs={12} sm={12} md={4}>
                       <CustomInput
@@ -765,9 +465,9 @@ class PurchaseRequisition extends React.Component {
                           disabled: true,
                           value:
                             "Required: " +
-                            this.props.user.firstname +
+                            this.state.data.requestor.firstname +
                             " " +
-                            this.props.user.lastname
+                            this.state.data.requestor.lastname
                         }}
                       />
                     </GridItem>
@@ -780,7 +480,7 @@ class PurchaseRequisition extends React.Component {
                         }}
                         inputProps={{
                           disabled: true,
-                          value: "Employee ID: " + this.props.user.eid
+                          value: "Employee ID: " + this.state.data.requestor.eid
                         }}
                       />
                     </GridItem>
@@ -804,11 +504,13 @@ class PurchaseRequisition extends React.Component {
                         required
                         onChange={e => this.handleSelectItem(e)}
                         formControlProps={{
-                          style: { width: "130px", padding: "0", margin: "0" }
+                          style: { width: "100%", padding: "0", margin: "0" }
                         }}
-                        error={error.department ? true : false}
                         value={this.state.data.department}
-                        inputProps={{ margin: "normal" }}
+                        inputProps={{
+                          margin: "normal",
+                          disabled: this.state.disabled
+                        }}
                         style={{ marginTop: "-3px", borderBottomWidth: " 1px" }}
                       >
                         {this.state.departments.map(option => (
@@ -822,7 +524,6 @@ class PurchaseRequisition extends React.Component {
                       <CustomInput
                         labelText="Charge To"
                         id="chargeto"
-                        required
                         formControlProps={{
                           fullWidth: true
                         }}
@@ -839,10 +540,10 @@ class PurchaseRequisition extends React.Component {
                         formControlProps={{
                           fullWidth: true
                         }}
-                        error={error.dateneeded ? true : false}
                         onFocus={this.toggleCalendar}
                         inputProps={{
-                          value: this.state.startDate.format("MM/DD/YYYY"),
+                          value: this.state.startDate.format("DD-MM-YYYY"),
+                          disabled: this.state.disabled,
                           onFocus: this.toggleCalendar
                         }}
                       />
@@ -875,12 +576,15 @@ class PurchaseRequisition extends React.Component {
                         name="shipvia"
                         required
                         onChange={e => this.handleSelectItem(e)}
-                        error={error.shipvia ? true : false}
                         formControlProps={{
-                          style: { width: "130px", padding: "0", margin: "0" }
+                          style: { width: "100%", padding: "0", margin: "0" }
                         }}
                         value={this.state.data.shipvia}
-                        inputProps={{ margin: "normal", id: "shipvia" }}
+                        inputProps={{
+                          margin: "normal",
+                          id: "shipvia",
+                          disabled: this.state.disabled
+                        }}
                         style={{ marginTop: "-3px", borderBottomWidth: " 1px" }}
                       >
                         {shipvia.map(option => (
@@ -899,7 +603,11 @@ class PurchaseRequisition extends React.Component {
                           fullWidth: true
                         }}
                         inputProps={{
-                          value: "Pending Submission",
+                          value:
+                            Status.getStatus(this.state.data.status) ===
+                            "AWAITING HOD APPROVAL"
+                              ? "AWAITING CLOSE OUT"
+                              : Status.getStatus(this.state.data.status),
                           disabled: true
                         }}
                       />
@@ -908,13 +616,10 @@ class PurchaseRequisition extends React.Component {
                   <br />
                   <div style={generalStyle.aboveTable}>
                     <div style={generalStyle.aboveTableIcon}>
-                      <span />
                       <span>
                         <Checkbox
-                          value="true"
-                          id="isextrabudget"
-                          name="isextrabudget"
-                          onChange={this.handleChange}
+                          checked={this.state.data.isextrabudget ? true : false}
+                          disabled="true"
                         />
                         Extra Budgetary
                       </span>
@@ -994,48 +699,155 @@ class PurchaseRequisition extends React.Component {
                             }
                             style={{ color: "blue" }}
                           >
-                            UOM
+                            Unit
+                          </TableCell>
+
+                          <TableCell
+                            className={
+                              classes.tableCell +
+                              " " +
+                              classes.tableHeadCell +
+                              " " +
+                              classes.td
+                            }
+                            style={{ color: "blue" }}
+                          >
+                            Enter Price
                           </TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>{tableData}</TableBody>
                     </Table>
                   </div>
-                  <div style={generalStyle.mt3}>
-                    <span>Add New Line</span>
-                    <Button
-                      justIcon
-                      round
-                      color="twitter"
-                      className={classes.marginRight}
-                      onClick={this.increaseRow}
-                    >
-                      <Add className={classes.icons} />
-                    </Button>
-                  </div>
                 </CardBody>
-                <CardFooter>
-                  <Grid container>
-                    <GridItem
-                      xs={12}
-                      sm={6}
-                      md={2}
-                      additionalclass={classes.removeDivPadding}
-                    >
-                      <Button color="primary" onClick={this.handleSaveForm}>
-                        Save
-                      </Button>
-                    </GridItem>
-                    <GridItem xs={12} sm={12} md={2}>
-                      <Button
-                        color="yellowgreen"
-                        onClick={this.handleSubmitForm}
-                      >
-                        Submit
-                      </Button>
-                    </GridItem>
-                  </Grid>
-                </CardFooter>
+                {/* {this.state.disabled == false ? (
+                  <CardFooter>
+                    <Grid container>
+                      <GridItem xs={12} sm={6} md={6}>
+                        <Button color="yellowgreen" onClick={this.submitUpdate}>
+                          Submit
+                        </Button>
+                      </GridItem>
+                    </Grid>
+                  </CardFooter>
+                ) : (
+                  ""
+                )} */}
+                {this.props.user.role === "admin" ? (
+                  <CardFooter>
+                    {this.state.showReason ? (
+                      <Grid container>
+                        <GridItem xs={12} sm={12} md={12}>
+                          <CustomInput
+                            labelText="Reason"
+                            id="reason"
+                            required
+                            formControlProps={{
+                              fullWidth: true
+                            }}
+                            inputProps={{
+                              name: "reason",
+                              value: this.state.data.reason,
+                              onChange: this.handleFormChange
+                            }}
+                          />
+                        </GridItem>
+                      </Grid>
+                    ) : (
+                      ""
+                    )}
+                    {this.state.data.status !== "01" ? (
+                      ""
+                    ) : (
+                      <Grid container>
+                        <GridItem xs={12} sm={6} md={6}>
+                          <FormControl
+                            fullWidth
+                            className={classes.selectFormControl}
+                          >
+                            <InputLabel
+                              htmlFor="simple-select"
+                              className={classes.selectLabel}
+                            >
+                              Close Out Method
+                            </InputLabel>
+                            <Select
+                              MenuProps={{
+                                className: classes.selectMenu
+                              }}
+                              classes={{
+                                select: classes.select
+                              }}
+                              value={this.state.action}
+                              inputProps={{
+                                name: "simpleSelect",
+                                id: "type"
+                              }}
+                              onChange={this.handleAction}
+                            >
+                              <MenuItem
+                                classes={{
+                                  root: classes.selectMenuItem,
+                                  selected: classes.selectMenuItemSelected
+                                }}
+                                value="cash advance"
+                              >
+                                Cash Advance
+                              </MenuItem>
+                              <MenuItem
+                                classes={{
+                                  root: classes.selectMenuItem,
+                                  selected: classes.selectMenuItemSelected
+                                }}
+                                value="reimbursement"
+                              >
+                                Reimbursement
+                              </MenuItem>
+                              <MenuItem
+                                classes={{
+                                  root: classes.selectMenuItem,
+                                  selected: classes.selectMenuItemSelected
+                                }}
+                                value="vendor advance"
+                              >
+                                Vendor Advance
+                              </MenuItem>
+                              <MenuItem
+                                classes={{
+                                  root: classes.selectMenuItem,
+                                  selected: classes.selectMenuItemSelected
+                                }}
+                                value="debit card"
+                              >
+                                Debit Card
+                              </MenuItem>
+                            </Select>
+                          </FormControl>
+                        </GridItem>
+                        <GridItem xs={12} sm={6} md={6}>
+                          <CustomInput
+                            labelText="Comment"
+                            id="comment"
+                            required
+                            formControlProps={{
+                              fullWidth: true
+                            }}
+                            inputProps={{
+                              value: this.state.data.comment
+                            }}
+                          />
+                        </GridItem>
+                        <GridItem xs={12} sm={6} md={6}>
+                          <Button color="yellowgreen" onClick={this.submitForm}>
+                            Submit
+                          </Button>
+                        </GridItem>
+                      </Grid>
+                    )}
+                  </CardFooter>
+                ) : (
+                  ""
+                )}
               </Card>
             </form>
           </GridItem>
@@ -1045,11 +857,11 @@ class PurchaseRequisition extends React.Component {
   }
 }
 
-PurchaseRequisition.defaultProps = {
+Edit.defaultProps = {
   tableHeaderColor: "gray"
 };
 
-PurchaseRequisition.propTypes = {
+Edit.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
@@ -1064,4 +876,4 @@ function mapStateToProps(state) {
 export default connect(
   mapStateToProps,
   null
-)(withStyles(styles)(PurchaseRequisition));
+)(withStyles(styles)(Edit));

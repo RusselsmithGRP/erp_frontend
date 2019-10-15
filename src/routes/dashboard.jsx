@@ -50,6 +50,8 @@ import DashboardIcon from "@material-ui/icons/Dashboard";
 import ChangePassword from "../views/UserProfile/ChangePassword.jsx";
 import importRecords from "../views/importRecords/index";
 import updateVendorContract from "../views/Vendor/updateVendorContract";
+import openMarket from "../views/OpenMarket/index";
+import viewOpenMarket from "../views/OpenMarket/edit";
 
 /* import Typography from "views/Typography/Typography.jsx";
 import Icons from "views/Icons/Icons.jsx";
@@ -202,6 +204,14 @@ export const dashboardRoutes = [
     path: "/setup/vendor/update",
     component: updateVendorContract
   },
+  {
+    path: "/openmarket",
+    component: openMarket
+  },
+  {
+    path: "/openmarket/view/:id",
+    component: viewOpenMarket
+  },
   { redirect: true, path: "/", to: "/dashboard", navbarName: "Redirect" }
 ];
 
@@ -314,6 +324,13 @@ export const AdminMenu = [
         mini: "RL",
         component: rejectionLogIndex,
         actions: ["index"]
+      },
+      {
+        path: "/openmarket",
+        name: "Open Market",
+        mini: "OM",
+        component: openMarket,
+        actions: ["index", "add", "edit", "delete", "admin_view"]
       }
     ]
   },

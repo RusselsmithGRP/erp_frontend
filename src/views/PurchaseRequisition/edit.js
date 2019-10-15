@@ -206,7 +206,7 @@ class Edit extends React.Component {
     } else {
       data.status = "010";
       data.reason = this.state.reason;
-      message = "Purchase requisition has been disapproved.";
+      message = "Purchase requisition has been rejected.";
     }
     prActions.editRequisition(
       this.props.user.token,
@@ -359,7 +359,7 @@ class Edit extends React.Component {
 
     return (
       <div>
-      {this.renderRedirect()}
+        {this.renderRedirect()}
         <Grid container>
           <Notification error={this.state.error} message={this.state.message} />
           <GridItem xs={12} sm={12} md={12}>
@@ -698,7 +698,7 @@ class Edit extends React.Component {
                 )} */}
                 {this.props.user._id == this.state.department.hod ? (
                   <CardFooter>
-                      {this.state.showReason ? (
+                    {this.state.showReason ? (
                       <Grid container>
                         <GridItem xs={12} sm={12} md={12}>
                           <CustomInput
@@ -716,69 +716,86 @@ class Edit extends React.Component {
                           />
                         </GridItem>
                       </Grid>
-                      ) : (
-                        ""
-                      )}
-                      {
-                        (this.state.data.status !== "01" ) ? ( 
-                          ""
-                        ): (
-                          <Grid container>
-                          <GridItem xs={12} sm={6} md={6}>
-                            <FormControl
-                              fullWidth
-                              className={classes.selectFormControl}
+                    ) : (
+                      ""
+                    )}
+                    {this.state.data.status !== "01" ? (
+                      ""
+                    ) : (
+                      <Grid container>
+                        <GridItem xs={12} sm={6} md={6}>
+                          <FormControl
+                            fullWidth
+                            className={classes.selectFormControl}
+                          >
+                            <InputLabel
+                              htmlFor="simple-select"
+                              className={classes.selectLabel}
                             >
-                              <InputLabel
-                                htmlFor="simple-select"
-                                className={classes.selectLabel}
-                              >
-                                Choose Action
-                              </InputLabel>
-                              <Select
-                                MenuProps={{
-                                  className: classes.selectMenu
-                                }}
+                              Choose Action
+                            </InputLabel>
+                            <Select
+                              MenuProps={{
+                                className: classes.selectMenu
+                              }}
+                              classes={{
+                                select: classes.select
+                              }}
+                              value={this.state.action}
+                              inputProps={{
+                                name: "simpleSelect",
+                                id: "type"
+                              }}
+                              onChange={this.handleAction}
+                            >
+                              <MenuItem
                                 classes={{
-                                  select: classes.select
+                                  root: classes.selectMenuItem,
+                                  selected: classes.selectMenuItemSelected
                                 }}
-                                value={this.state.action}
-                                inputProps={{
-                                  name: "simpleSelect",
-                                  id: "type"
-                                }}
-                                onChange={this.handleAction}
+                                value="approve"
                               >
-                                <MenuItem
-                                  classes={{
-                                    root: classes.selectMenuItem,
-                                    selected: classes.selectMenuItemSelected
-                                  }}
-                                  value="approve"
-                                >
-                                  Approve
-                                </MenuItem>
-                                <MenuItem
-                                  classes={{
-                                    root: classes.selectMenuItem,
-                                    selected: classes.selectMenuItemSelected
-                                  }}
-                                  value="disapprove"
-                                >
-                                  Reject
-                                </MenuItem>
-                              </Select>
-                            </FormControl>
-                          </GridItem>
-                          <GridItem xs={12} sm={6} md={6}>
-                            <Button color="yellowgreen" onClick={this.submitForm}>
-                              Submit
-                            </Button>
-                          </GridItem>
-                        </Grid>
-                        )
-                      }
+                                Approve
+                              </MenuItem>
+                              <MenuItem
+                                classes={{
+                                  root: classes.selectMenuItem,
+                                  selected: classes.selectMenuItemSelected
+                                }}
+                                value="disapprove"
+                              >
+                                Reject
+                              </MenuItem>
+                            </Select>
+                          </FormControl>
+                        </GridItem>
+
+                        <GridItem xs={12} sm={6} md={6}>
+                          <Button color="yellowgreen" onClick={this.submitForm}>
+                            Submit
+                          </Button>
+                        </GridItem>
+                      </Grid>
+                    )}
                   </CardFooter>
+                ) : (
+                  ""
+                )}
+                {this.props.user._id &&
+                Status.getStatus(this.state.data.status) === "HOD DECLINED" ? (
+                  <div>
+                    <CardFooter>
+                      <GridItem xs={12} sm={12} md={12}>
+                        <Button
+                          color="yellowgreen"
+                          onClick={this.submitForm}
+                          style={{ float: "right" }}
+                        >
+                          Resubmit
+                        </Button>
+                      </GridItem>
+                    </CardFooter>
+                  </div>
                 ) : (
                   ""
                 )}
