@@ -91,7 +91,8 @@ class PurchaseRequisition extends React.Component {
     message: "",
     redirect: "",
     vendors: [],
-    vendor: ""
+    vendor: "",
+    isAllowed: false
   };
 
   handleChange = event => {
@@ -261,6 +262,7 @@ class PurchaseRequisition extends React.Component {
     data.vendor = this.state.vendor;
     data.status = "01";
     if (this.formHasError()) return;
+
     prActions.submitRequisition(this.props.user.token, data, isOk => {
       if (isOk) {
         this.setState({
@@ -318,14 +320,25 @@ class PurchaseRequisition extends React.Component {
 
     genericActions.fetchAll("vendors", this.props.user.token, vendors => {
       this.setState({ vendors });
+      this.state.vendors.map((vendor, i) => {
+        vendor.contracts.map((v, i) => {
+          v.associatedDept === this.props.user.department._id.toString()
+            ? this.setState({
+                isAllowed: true
+              })
+            : "";
+        });
+      });
     });
   }
 
   render() {
-    console.log(this.state.data, "data");
-    console.log(this.state.departments, "departments");
-    console.log(this.state.vendors);
-    console.log(this.state.data.justification);
+    // console.log(this.state.data, "data");
+    // console.log(this.state.departments, "departments");
+    // console.log(this.state.vendors);
+    // console.log(this.state.data.justification);
+    console.log(this.state.data.purchaseType);
+    // console.log(this.props.user);
 
     const { classes, tableHeaderColor } = this.props;
     var today = new Date();
@@ -609,7 +622,7 @@ class PurchaseRequisition extends React.Component {
                         </Select>
                       </FormControl>
 
-                      {this.state.data.purchaseType === "Contract" ? (
+                      {this.state.data.purchaseType === "Contract" && (
                         <FormControl
                           fullWidth
                           className={classes.selectFormControl}
@@ -644,47 +657,95 @@ class PurchaseRequisition extends React.Component {
                             >
                               Select Vendor
                             </MenuItem>
-                            {this.state.vendors.map(
-                              (vendor, i) =>
-                                vendor.contracts.length >= 1 && (
-                                  <MenuItem
-                                    classes={{
-                                      root: classes.selectMenuItem,
-                                      selected: classes.selectMenuItemSelected
-                                    }}
-                                    value={vendor._id}
-                                    key={i}
-                                  >
-                                    {vendor.general_info.company_name}
-                                  </MenuItem>
-                                )
+                            {this.state.vendors.map((vendor, key) =>
+                              vendor.isContracted && this.state.isAllowed ? (
+                                <MenuItem
+                                  classes={{
+                                    root: classes.selectMenuItem,
+                                    selected: classes.selectMenuItemSelected
+                                  }}
+                                  value={vendor._id}
+                                  key={key}
+                                >
+                                  {vendor.general_info.company_name}
+                                </MenuItem>
+                              ) : (
+                                ""
+                              )
+                            )}
                             )}
                           </Select>
                         </FormControl>
-                      ) : (
-                        ""
                       )}
 
-                      {this.state.data.purchaseType === "Sole Source" ? (
-                        <FormControl
-                          fullWidth
-                          className={classes.selectFormControl}
-                          style={{ marginTop: "10px" }}
-                        >
-                          <TextField
-                            id="justification"
-                            placeholder="Justification"
+                      {this.state.data.purchaseType === "Sole Source" && (
+                        <>
+                          <FormControl
                             fullWidth
-                            onChange={this.handleChange}
-                            value={this.state.data.justification}
-                            margin="normal"
-                            InputLabelProps={{
-                              shrink: true
-                            }}
-                          />
-                        </FormControl>
-                      ) : (
-                        ""
+                            className={classes.selectFormControl}
+                            style={{ marginTop: "10px" }}
+                          >
+                            <InputLabel
+                              htmlFor="vendor"
+                              className={classes.selectLabel}
+                            >
+                              Select Vendor
+                            </InputLabel>
+                            <Select
+                              MenuProps={{
+                                className: classes.selectMenu
+                              }}
+                              classes={{
+                                select: classes.select
+                              }}
+                              value={this.state.vendor}
+                              onChange={this.handleVendor}
+                              inputProps={{
+                                name: "vendor",
+                                id: "vendor"
+                              }}
+                              error={error.type ? true : false}
+                            >
+                              <MenuItem
+                                disabled
+                                classes={{
+                                  root: classes.selectMenuItem
+                                }}
+                              >
+                                Select Vendor
+                              </MenuItem>
+                              {this.state.vendors.map((vendor, i) => (
+                                <MenuItem
+                                  classes={{
+                                    root: classes.selectMenuItem,
+                                    selected: classes.selectMenuItemSelected
+                                  }}
+                                  value={vendor._id}
+                                  key={i}
+                                >
+                                  {vendor.general_info.company_name}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                          <FormControl
+                            fullWidth
+                            className={classes.selectFormControl}
+                            style={{ marginTop: "10px" }}
+                          >
+                            <TextField
+                              id="justification"
+                              placeholder="Justification"
+                              fullWidth
+                              onChange={this.handleChange}
+                              value={this.state.data.justification}
+                              margin="normal"
+                              InputLabelProps={{
+                                shrink: true
+                              }}
+                            />
+                          </FormControl>
+                        </>
                       )}
                     </GridItem>
 

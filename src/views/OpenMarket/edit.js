@@ -77,7 +77,9 @@ class Edit extends React.Component {
       dateneeded: "",
       status: "01",
       requestor: {},
-      department: {}
+      department: {},
+      comment: "",
+      price: 0
     },
     lineItems: [],
     startDate: moment(),
@@ -176,8 +178,8 @@ class Edit extends React.Component {
   renderRedirect = () => {
     if (this.state.redirect == "yes") {
       setTimeout(function() {
-        window.location.href = "/requisition";
-      }, 3000);
+        window.location.href = "/openmarket";
+      }, 2000);
     }
   };
   submitUpdate = () => {
@@ -190,7 +192,7 @@ class Edit extends React.Component {
       isOk => {
         if (isOk) {
           this.setState({ message: message, error: false });
-          this.props.history.push("/requisition");
+          this.props.history.push("/openmarket");
         } else
           this.setState({ message: "Error processing request.", error: true });
       }
@@ -203,18 +205,10 @@ class Edit extends React.Component {
     if (this.state.action == "approve") {
       data.status = "011";
       message = "Purchase requisition approved.";
-    }
-     else {
+    } else {
       data.status = "010";
       data.reason = this.state.reason;
-<<<<<<< HEAD
-      if(!this.state.reason) {
-       return  this.setState({ message: "Please fill in reason for rejection.", error: true });
-      }
       message = "Purchase requisition has been disapproved.";
-=======
-      message = "Purchase requisition has been rejected.";
->>>>>>> 765df1fb2f7c991106218e78b51f5b2a2ec728e8
     }
     prActions.editRequisition(
       this.props.user.token,
@@ -240,7 +234,7 @@ class Edit extends React.Component {
         data.requestor.firstname + " " + data.requestor.lastname;
       data.eid = data.requestor.eid;
       const department = data.department;
-      data.department = data.department.name;
+      data.department = data.department._id;
       const disabled = data.status == "010" ? false : true;
       let rowArray = [];
 
@@ -255,9 +249,7 @@ class Edit extends React.Component {
   }
 
   render() {
-    console.log(this.state.data.department, "data")
-    console.log(this.props, "props")
-
+    console.log(this.state.simpleSelect);
     const { classes, tableHeaderColor } = this.props;
     var today = new Date();
     var dd = today.getDate();
@@ -364,6 +356,23 @@ class Edit extends React.Component {
               }}
             />
           </TableCell>
+
+          <TableCell className={classes.td}>
+            <CustomInput
+              name="price"
+              id="price"
+              type="number"
+              required
+              formControlProps={{
+                style: { width: "100px", padding: "0", margin: "0" }
+              }}
+              inputProps={{
+                onChange: this.handleLineItemChange(key),
+                value: this.state.data.price,
+                name: "price"
+              }}
+            />
+          </TableCell>
         </TableRow>
       );
     });
@@ -378,7 +387,7 @@ class Edit extends React.Component {
               <Card>
                 <CardHeader color="primary">
                   <h4 className={classes.cardTitleWhite}>
-                    Purchase Requisition 
+                    Open Market Purchase Requisition
                   </h4>
                 </CardHeader>
                 <CardBody>
@@ -447,7 +456,7 @@ class Edit extends React.Component {
                     </GridItem>
                     <GridItem xs={12} sm={12} md={4}>
                       <CustomInput
-                        labelText="Name"
+                        labelText="Required By"
                         id="requestedby"
                         formControlProps={{
                           fullWidth: true
@@ -455,7 +464,7 @@ class Edit extends React.Component {
                         inputProps={{
                           disabled: true,
                           value:
-                            " " +
+                            "Required: " +
                             this.state.data.requestor.firstname +
                             " " +
                             this.state.data.requestor.lastname
@@ -471,35 +480,45 @@ class Edit extends React.Component {
                         }}
                         inputProps={{
                           disabled: true,
-                          value: " " + this.state.data.requestor.eid
+                          value: "Employee ID: " + this.state.data.requestor.eid
                         }}
                       />
                     </GridItem>
                     <GridItem xs={12} sm={12} md={4}>
                       <CustomInput
-                       labelText="Date Created"
                         required
                         formControlProps={{
                           fullWidth: true
                         }}
                         inputProps={{
                           disabled: true,
-                          value:  " " + moment(this.state.data.created).format("DD-MM-YYYY") 
+                          value: today
                         }}
                       />
                     </GridItem>
                     <GridItem xs={12} sm={4} md={4}>
-                    <CustomInput
-                        labelText="Department"
+                      <CustomSelect
+                        labelText="Select"
                         id="department"
+                        name="department"
+                        required
+                        onChange={e => this.handleSelectItem(e)}
                         formControlProps={{
-                          fullWidth: true
+                          style: { width: "100%", padding: "0", margin: "0" }
                         }}
+                        value={this.state.data.department}
                         inputProps={{
-                          value: " " + this.state.data.department,
-                          disabled: true
+                          margin: "normal",
+                          disabled: this.state.disabled
                         }}
-                      />
+                        style={{ marginTop: "-3px", borderBottomWidth: " 1px" }}
+                      >
+                        {this.state.departments.map(option => (
+                          <MenuItem key={option._id} value={option._id}>
+                            {option.name}
+                          </MenuItem>
+                        ))}
+                      </CustomSelect>
                     </GridItem>
                     <GridItem xs={12} sm={4} md={4}>
                       <CustomInput
@@ -523,7 +542,7 @@ class Edit extends React.Component {
                         }}
                         onFocus={this.toggleCalendar}
                         inputProps={{
-                          value:  " " + moment(this.state.data.dateneeded).format("DD-MM-YYYY"),
+                          value: this.state.startDate.format("DD-MM-YYYY"),
                           disabled: this.state.disabled,
                           onFocus: this.toggleCalendar
                         }}
@@ -584,7 +603,11 @@ class Edit extends React.Component {
                           fullWidth: true
                         }}
                         inputProps={{
-                          value: Status.getStatus(this.state.data.status),
+                          value:
+                            Status.getStatus(this.state.data.status) ===
+                            "AWAITING HOD APPROVAL"
+                              ? "AWAITING CLOSE OUT"
+                              : Status.getStatus(this.state.data.status),
                           disabled: true
                         }}
                       />
@@ -678,6 +701,19 @@ class Edit extends React.Component {
                           >
                             Unit
                           </TableCell>
+
+                          <TableCell
+                            className={
+                              classes.tableCell +
+                              " " +
+                              classes.tableHeadCell +
+                              " " +
+                              classes.td
+                            }
+                            style={{ color: "blue" }}
+                          >
+                            Enter Price
+                          </TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>{tableData}</TableBody>
@@ -697,7 +733,7 @@ class Edit extends React.Component {
                 ) : (
                   ""
                 )} */}
-                {(this.props.user.type=="hod" || this.props.user.role == "admin") ? (
+                {this.props.user.role === "admin" ? (
                   <CardFooter>
                     {this.state.showReason ? (
                       <Grid container>
@@ -733,7 +769,7 @@ class Edit extends React.Component {
                               htmlFor="simple-select"
                               className={classes.selectLabel}
                             >
-                              Choose Action
+                              Close Out Method
                             </InputLabel>
                             <Select
                               MenuProps={{
@@ -754,23 +790,53 @@ class Edit extends React.Component {
                                   root: classes.selectMenuItem,
                                   selected: classes.selectMenuItemSelected
                                 }}
-                                value="approve"
+                                value="cash advance"
                               >
-                                Approve
+                                Cash Advance
                               </MenuItem>
                               <MenuItem
                                 classes={{
                                   root: classes.selectMenuItem,
                                   selected: classes.selectMenuItemSelected
                                 }}
-                                value="disapprove"
+                                value="reimbursement"
                               >
-                                Reject
+                                Reimbursement
+                              </MenuItem>
+                              <MenuItem
+                                classes={{
+                                  root: classes.selectMenuItem,
+                                  selected: classes.selectMenuItemSelected
+                                }}
+                                value="vendor advance"
+                              >
+                                Vendor Advance
+                              </MenuItem>
+                              <MenuItem
+                                classes={{
+                                  root: classes.selectMenuItem,
+                                  selected: classes.selectMenuItemSelected
+                                }}
+                                value="debit card"
+                              >
+                                Debit Card
                               </MenuItem>
                             </Select>
                           </FormControl>
                         </GridItem>
-
+                        <GridItem xs={12} sm={6} md={6}>
+                          <CustomInput
+                            labelText="Comment"
+                            id="comment"
+                            required
+                            formControlProps={{
+                              fullWidth: true
+                            }}
+                            inputProps={{
+                              value: this.state.data.comment
+                            }}
+                          />
+                        </GridItem>
                         <GridItem xs={12} sm={6} md={6}>
                           <Button color="yellowgreen" onClick={this.submitForm}>
                             Submit
@@ -779,24 +845,6 @@ class Edit extends React.Component {
                       </Grid>
                     )}
                   </CardFooter>
-                ) : (
-                  ""
-                )}
-                {this.props.user._id &&
-                Status.getStatus(this.state.data.status) === "HOD DECLINED" ? (
-                  <div>
-                    <CardFooter>
-                      <GridItem xs={12} sm={12} md={12}>
-                        <Button
-                          color="yellowgreen"
-                          onClick={this.submitForm}
-                          style={{ float: "right" }}
-                        >
-                          Resubmit
-                        </Button>
-                      </GridItem>
-                    </CardFooter>
-                  </div>
                 ) : (
                   ""
                 )}
