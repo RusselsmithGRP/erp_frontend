@@ -916,14 +916,16 @@ class Edit extends React.Component {
                           />
                         </GridItem>
                         <GridItem xs={12} sm={12} md={12}>
-                          <Button
-                            color="yellowgreen"
-                            onClick={this.submitForm}
-                            disabled={!this.validateAllFields()}
-                            style={{ float: "right" }}
-                          >
-                            Submit
-                          </Button>
+                          <div style={{ textAlign: "center" }}>
+                            <Button
+                              color="yellowgreen"
+                              onClick={this.submitForm}
+                              disabled={!this.validateAllFields()}
+                              // style={{ float: "right" }}
+                            >
+                              Submit
+                            </Button>
+                          </div>
                         </GridItem>
                       </Grid>
                     )}
