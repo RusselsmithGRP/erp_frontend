@@ -794,7 +794,8 @@ class Edit extends React.Component {
                 ) : (
                   ""
                 )} */}
-                {this.props.user.role === "procurement" ? (
+                {this.props.user.role === "procurement" ||
+                this.props.user.role === "admin" ? (
                   <CardFooter>
                     {this.state.showReason ? (
                       <Grid container>
@@ -914,11 +915,12 @@ class Edit extends React.Component {
                             }
                           />
                         </GridItem>
-                        <GridItem xs={12} sm={6} md={6}>
+                        <GridItem xs={12} sm={12} md={12}>
                           <Button
                             color="yellowgreen"
                             onClick={this.submitForm}
                             disabled={!this.validateAllFields()}
+                            style={{ float: "right" }}
                           >
                             Submit
                           </Button>
