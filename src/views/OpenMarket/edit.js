@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
+import FormHelperText from "@material-ui/core/FormHelperText";
 import Grid from "@material-ui/core/Grid";
 import GridItem from "components/Grid/GridItem.jsx";
 import Card from "components/Card/Card.jsx";
@@ -72,14 +73,14 @@ class Edit extends React.Component {
       type: "",
       requestedby: "",
       eid: "",
+      comment: "",
+      price: "",
       departmentname: "",
       chargeto: "",
       dateneeded: "",
       status: "01",
       requestor: {},
-      department: {},
-      comment: "",
-      price: ""
+      department: {}
     },
     lineItems: [],
     startDate: moment(),
@@ -90,7 +91,12 @@ class Edit extends React.Component {
     expenseheaders: [],
     disabled: true,
     department: {},
-    redirect: ""
+    redirect: "",
+    validPrice: false,
+    validAction: false,
+    validComment: false,
+    price: "",
+    comment: ""
   };
 
   handleAction = e => {
@@ -104,10 +110,16 @@ class Edit extends React.Component {
   };
 
   handleChange = event => {
-    let data = this.state.data;
+    let data = this.state;
     data[[event.target.id]] = event.target.value;
     this.setState({
       data: data
+    });
+  };
+
+  handleInput = e => {
+    this.setState({
+      [e.target.name]: e.target.value
     });
   };
 
@@ -197,14 +209,61 @@ class Edit extends React.Component {
     );
   };
 
+  validateAllFields = () => {
+    let { action, price, comment } = this.state;
+
+    return !!action && !!price && !!comment;
+  };
+
+  validatePrice = () => {
+    let { price } = this.state;
+
+    if (price.length < 1) {
+      this.setState({
+        validPrice: true
+      });
+    } else {
+      this.setState({
+        validPrice: false
+      });
+    }
+  };
+
+  validateAction = () => {
+    let { action } = this.state;
+    if (action.length < 1) {
+      this.setState({
+        validAction: true
+      });
+    } else {
+      this.setState({
+        validAction: false
+      });
+    }
+  };
+
+  validateComment = () => {
+    let { comment } = this.state;
+
+    if (comment.length < 1) {
+      this.setState({
+        validComment: true
+      });
+    } else {
+      this.setState({
+        validComment: false
+      });
+    }
+  };
+
   submitForm = e => {
     e.preventDefault();
     let { action } = this.state;
     let data = {};
     let message = "";
     data.closeoutmethod = action;
-    data.price = this.state.data.price;
-    data.comment = this.state.data.comment;
+    data.price = this.state.price;
+    data.comment = this.state.comment;
     data.status = "011";
 
     // console.log(data);
@@ -247,10 +306,6 @@ class Edit extends React.Component {
   }
 
   render() {
-    // console.log(this.state.action);
-    // console.log(this.state.data.comment);
-    // console.log(this.state.data.price);
-
     const { classes, tableHeaderColor } = this.props;
     var today = new Date();
     var dd = today.getDate();
@@ -362,16 +417,18 @@ class Edit extends React.Component {
             <CustomInput
               name="price"
               id="price"
-              type="number"
+              type="text"
               required
               formControlProps={{
                 style: { width: "100px", padding: "0", margin: "0" }
               }}
               inputProps={{
-                onChange: this.handleChange,
-                value: this.state.data.price,
-                name: "price"
+                onChange: this.handleInput,
+                value: this.state.price,
+                name: "price",
+                onBlur: this.validatePrice
               }}
+              error={this.state.validPrice ? this.state.validPrice : false}
             />
           </TableCell>
         </TableRow>
@@ -737,7 +794,7 @@ class Edit extends React.Component {
                 ) : (
                   ""
                 )} */}
-                {this.props.user.role === "admin" ? (
+                {this.props.user.role === "procurement" ? (
                   <CardFooter>
                     {this.state.showReason ? (
                       <Grid container>
@@ -788,6 +845,7 @@ class Edit extends React.Component {
                                 id: "type"
                               }}
                               onChange={this.handleAction}
+                              onBlur={this.validateAction}
                             >
                               <MenuItem
                                 classes={{
@@ -826,25 +884,42 @@ class Edit extends React.Component {
                                 Debit Card
                               </MenuItem>
                             </Select>
+                            <FormHelperText error={true}>
+                              {this.state.validAction
+                                ? "Please select a Close Out Method"
+                                : ""}
+                            </FormHelperText>
                           </FormControl>
                         </GridItem>
                         <GridItem xs={12} sm={6} md={6}>
                           <CustomInput
                             labelText="Comment"
                             id="comment"
+                            name="comment"
+                            type="text"
                             required
                             formControlProps={{
                               fullWidth: true
                             }}
                             inputProps={{
-                              value: this.state.data.comment,
+                              value: this.state.comment,
                               name: "comment",
-                              onChange: this.handleChange
+                              onChange: this.handleInput,
+                              onBlur: this.validateComment
                             }}
+                            error={
+                              this.state.validComment
+                                ? this.state.validComment
+                                : false
+                            }
                           />
                         </GridItem>
                         <GridItem xs={12} sm={6} md={6}>
-                          <Button color="yellowgreen" onClick={this.submitForm}>
+                          <Button
+                            color="yellowgreen"
+                            onClick={this.submitForm}
+                            disabled={!this.validateAllFields()}
+                          >
                             Submit
                           </Button>
                         </GridItem>
