@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
+import FormHelperText from "@material-ui/core/FormHelperText";
 import Grid from "@material-ui/core/Grid";
 import GridItem from "components/Grid/GridItem.jsx";
 import Card from "components/Card/Card.jsx";
@@ -72,14 +73,14 @@ class Edit extends React.Component {
       type: "",
       requestedby: "",
       eid: "",
+      comment: "",
+      price: "",
       departmentname: "",
       chargeto: "",
       dateneeded: "",
       status: "01",
       requestor: {},
-      department: {},
-      comment: "",
-      price: 0
+      department: {}
     },
     lineItems: [],
     startDate: moment(),
@@ -91,13 +92,16 @@ class Edit extends React.Component {
     disabled: true,
     department: {},
     redirect: "",
-    message: ""
+    validPrice: false,
+    validAction: false,
+    validComment: false,
+    price: "",
+    comment: ""
   };
 
   handleAction = e => {
     const action = e.target.value;
-    let showReason = action == "disapprove" ? true : false;
-    this.setState({ showReason, action });
+    this.setState({ action });
   };
 
   handleFormChange = e => {
@@ -106,10 +110,16 @@ class Edit extends React.Component {
   };
 
   handleChange = event => {
-    let data = this.state.data;
+    let data = this.state;
     data[[event.target.id]] = event.target.value;
     this.setState({
       data: data
+    });
+  };
+
+  handleInput = e => {
+    this.setState({
+      [e.target.name]: e.target.value
     });
   };
 
@@ -199,17 +209,64 @@ class Edit extends React.Component {
     );
   };
 
+  validateAllFields = () => {
+    let { action, price, comment } = this.state;
+
+    return !!action && !!price && !!comment;
+  };
+
+  validatePrice = () => {
+    let { price } = this.state;
+
+    if (price.length < 1) {
+      this.setState({
+        validPrice: true
+      });
+    } else {
+      this.setState({
+        validPrice: false
+      });
+    }
+  };
+
+  validateAction = () => {
+    let { action } = this.state;
+    if (action.length < 1) {
+      this.setState({
+        validAction: true
+      });
+    } else {
+      this.setState({
+        validAction: false
+      });
+    }
+  };
+
+  validateComment = () => {
+    let { comment } = this.state;
+
+    if (comment.length < 1) {
+      this.setState({
+        validComment: true
+      });
+    } else {
+      this.setState({
+        validComment: false
+      });
+    }
+  };
+
   submitForm = e => {
+    e.preventDefault();
+    let { action } = this.state;
     let data = {};
     let message = "";
-    if (this.state.action == "approve") {
-      data.status = "011";
-      message = "Purchase requisition approved.";
-    } else {
-      data.status = "010";
-      data.reason = this.state.reason;
-      message = "Purchase requisition has been disapproved.";
-    }
+    data.closeoutmethod = action;
+    data.price = this.state.price;
+    data.comment = this.state.comment;
+    data.status = "011";
+
+    // console.log(data);
     prActions.editRequisition(
       this.props.user.token,
       this.state.data._id,
@@ -235,6 +292,7 @@ class Edit extends React.Component {
       data.eid = data.requestor.eid;
       const department = data.department;
       data.department = data.department._id;
+      data.price = data.price;
       const disabled = data.status == "010" ? false : true;
       let rowArray = [];
 
@@ -249,7 +307,6 @@ class Edit extends React.Component {
   }
 
   render() {
-    console.log(this.state.simpleSelect);
     const { classes, tableHeaderColor } = this.props;
     var today = new Date();
     var dd = today.getDate();
@@ -361,16 +418,23 @@ class Edit extends React.Component {
             <CustomInput
               name="price"
               id="price"
-              type="number"
+              type="text"
               required
               formControlProps={{
                 style: { width: "100px", padding: "0", margin: "0" }
               }}
               inputProps={{
-                onChange: this.handleLineItemChange(key),
-                value: this.state.data.price,
-                name: "price"
+                onChange: this.handleInput,
+                value:
+                  this.state.data.status === "011"
+                    ? this.state.data.price
+                    : this.state.price,
+                name: "price",
+                onBlur: this.validatePrice,
+                disabled:
+                  this.state.data.status === "011" ? this.state.disabled : false
               }}
+              error={this.state.validPrice ? this.state.validPrice : false}
             />
           </TableCell>
         </TableRow>
@@ -607,7 +671,10 @@ class Edit extends React.Component {
                             Status.getStatus(this.state.data.status) ===
                             "AWAITING HOD APPROVAL"
                               ? "AWAITING CLOSE OUT"
-                              : Status.getStatus(this.state.data.status),
+                              : Status.getStatus(this.state.data.status) ===
+                                "HOD APPROVED"
+                              ? "CLOSED OUT"
+                              : "",
                           disabled: true
                         }}
                       />
@@ -733,7 +800,8 @@ class Edit extends React.Component {
                 ) : (
                   ""
                 )} */}
-                {this.props.user.role === "admin" ? (
+                {this.props.user.role === "procurement" ||
+                this.props.user.role === "admin" ? (
                   <CardFooter>
                     {this.state.showReason ? (
                       <Grid container>
@@ -784,6 +852,7 @@ class Edit extends React.Component {
                                 id: "type"
                               }}
                               onChange={this.handleAction}
+                              onBlur={this.validateAction}
                             >
                               <MenuItem
                                 classes={{
@@ -822,25 +891,47 @@ class Edit extends React.Component {
                                 Debit Card
                               </MenuItem>
                             </Select>
+                            <FormHelperText error={true}>
+                              {this.state.validAction
+                                ? "Please select a Close Out Method"
+                                : ""}
+                            </FormHelperText>
                           </FormControl>
                         </GridItem>
                         <GridItem xs={12} sm={6} md={6}>
                           <CustomInput
                             labelText="Comment"
                             id="comment"
+                            name="comment"
+                            type="text"
                             required
                             formControlProps={{
                               fullWidth: true
                             }}
                             inputProps={{
-                              value: this.state.data.comment
+                              value: this.state.comment,
+                              name: "comment",
+                              onChange: this.handleInput,
+                              onBlur: this.validateComment
                             }}
+                            error={
+                              this.state.validComment
+                                ? this.state.validComment
+                                : false
+                            }
                           />
                         </GridItem>
-                        <GridItem xs={12} sm={6} md={6}>
-                          <Button color="yellowgreen" onClick={this.submitForm}>
-                            Submit
-                          </Button>
+                        <GridItem xs={12} sm={12} md={12}>
+                          <div style={{ textAlign: "center" }}>
+                            <Button
+                              color="yellowgreen"
+                              onClick={this.submitForm}
+                              disabled={!this.validateAllFields()}
+                              // style={{ float: "right" }}
+                            >
+                              Close Out
+                            </Button>
+                          </div>
                         </GridItem>
                       </Grid>
                     )}

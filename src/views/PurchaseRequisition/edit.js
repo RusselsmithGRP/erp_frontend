@@ -203,8 +203,7 @@ class Edit extends React.Component {
     if (this.state.action == "approve") {
       data.status = "011";
       message = "Purchase requisition approved.";
-    }
-     else {
+    } else {
       data.status = "010";
       data.reason = this.state.reason;
       message = "Purchase requisition has been rejected.";
@@ -248,9 +247,7 @@ class Edit extends React.Component {
   }
 
   render() {
-    console.log(this.state.data.department, "data")
-    console.log(this.props, "props")
-
+    // console.log(this.state.data.requestor);
     const { classes, tableHeaderColor } = this.props;
     var today = new Date();
     var dd = today.getDate();
@@ -690,7 +687,7 @@ class Edit extends React.Component {
                 ) : (
                   ""
                 )} */}
-                {(this.props.user.type=="hod" || this.props.user.role == "admin") ? (
+                {this.props.user._id == this.state.department.hod ? (
                   <CardFooter>
                     {this.state.showReason ? (
                       <Grid container>
@@ -775,7 +772,7 @@ class Edit extends React.Component {
                 ) : (
                   ""
                 )}
-                {this.props.user._id &&
+                {this.state.data.requestor._id &&
                 Status.getStatus(this.state.data.status) === "HOD DECLINED" ? (
                   <div>
                     <CardFooter>
