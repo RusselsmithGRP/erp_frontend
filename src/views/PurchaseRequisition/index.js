@@ -102,6 +102,8 @@ class Index extends React.Component {
   }
 
   render() {
+    console.log(this.state, "hello");
+
     const { classes } = this.props;
     let prs = { dataRows: [] };
     if (this.state.data.length > 0) {

@@ -1,6 +1,17 @@
 import { relative } from "path";
 
 const generalStyle = {
+  textLabel: {
+    fontSize: "18px",
+    padding: "10px",
+    float: "left"
+  },
+  text: {
+    fontSize: "16px",
+    padding: "10px",
+    fontWeight: "500",
+    float: "left"
+  },
   aboveTable: {
     background: "rgba(0, 0, 0, 0.05)",
     borderRadius: "0",

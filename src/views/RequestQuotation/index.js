@@ -152,7 +152,7 @@ class Index extends React.Component {
       this.props.user.token,
       pr._id,
       quotes => {
-        this.setState({ quotes: quotes, pr: pr });
+        this.setState({ quotes, pr });
       }
     );
   };
@@ -306,11 +306,11 @@ class Index extends React.Component {
         <SweetAlert
           style={{
             display: "block",
-            marginTop: "-30%",
+            marginTop: "-20%",
             marginLeft: "-30%",
             width: "65%"
           }}
-          title="Request For Quote"
+          title={(this.state.pr.purchaseType === "Contract")? "Enter Price": "Request For Quote"} 
           onConfirm={() => this.hideAlert()}
           confirmBtnText="Click to Close"
           confirmBtnCssClass={
@@ -341,6 +341,7 @@ class Index extends React.Component {
   }
 
   render() {
+    console.log(this.state.pr, "hello")
     const { classes } = this.props;
     if (this.props.loader.loading) {
       return (
@@ -425,14 +426,15 @@ class Index extends React.Component {
                   </GridItem>
                   <GridItem xs={12} sm={8} md={8}>
                     <div>
+                    {(this.state.pr)?
                       <Button
                         color="twitter"
                         size="sm"
                         onClick={this.showQuoteForm}
                         disabled={(!this.state.selectedPr)? true: false}
                       >
-                        Request For Quote
-                      </Button>
+                      { (this.state.pr)?(this.state.pr.purchaseType === "Contract")? "Enter Price": "Request For Quote" : " "}
+                      </Button> : "" }
                     </div>
                     {this.state.alert}
                     {this.state.showRfq ? (
