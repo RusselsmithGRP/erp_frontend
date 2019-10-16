@@ -299,7 +299,7 @@ class Quote extends React.Component {
       });
       return [
         prop.no,
-        prop.vendor.general_info.company_name,
+        (prop.vendor)? prop.vendor.general_info.company_name: "",
         dt.toISOString().split("T")[0],
         status,
         <Button
@@ -316,7 +316,7 @@ class Quote extends React.Component {
             <div className={classes.positionCenter}>
               <Card>
                 <CardHeader>
-                  <h3>Quote for {prop.vendor.general_info.company_name}</h3>
+                  <h3>Quote for { (prop.vendor)? prop.vendor.general_info.company_name: ""}</h3>
                   <Close
                     onClick={() => this.hideAlert()}
                     className={classes.closeButtonSetting}
@@ -449,9 +449,9 @@ class Quote extends React.Component {
             <li className={classes.liStyle}>
               Requestor: <br />
               <span className={classes.ap}>
-                {this.props.pr.requestor.firstname +
+                { (this.props.pr.requestor)?this.props.pr.requestor.firstname +
                   " " +
-                  this.props.pr.requestor.lastname}
+                  this.props.pr.requestor.lastname : " "}
               </span>
             </li>
             <li className={classes.liStyle}>

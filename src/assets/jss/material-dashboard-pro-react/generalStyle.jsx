@@ -1,6 +1,17 @@
 import { relative } from "path";
 
 const generalStyle = {
+  textLabel: {
+    fontSize: "18px",
+    padding: "10px",
+    float: "left"
+  },
+  text: {
+    fontSize: "16px",
+    padding: "10px",
+    fontWeight: "500",
+    float: "left"
+  },
   aboveTable: {
     background: "rgba(0, 0, 0, 0.05)",
     borderRadius: "0",
@@ -34,9 +45,15 @@ const generalStyle = {
     marginLeft: "2.6%"
   },
   divider: {
-    height: "10px",
+    height: "1px",
     width: "100%",
     backgroundColor: "#333"
+  },
+  divider2: {
+    height: "1px",
+    width: "100%",
+    backgroundColor: "#333",
+    margin: "50px 0" 
   },
   tableHeadSpace: {
     padding: "10px"
@@ -64,7 +81,7 @@ const generalStyle = {
   text2: {
     color: "#1b4aa5",
     marginTop: "30px",
-    fontWeight: "700"
+    fontWeight: "bold"
   },
   positionRelative: {
     position: "relative"
@@ -85,7 +102,7 @@ const generalStyle = {
   },
   signature: {
     position:"absolute",
-    marginLeft: "80px"
+    right: "100px"
   },
   positionCenter: {
     position: "fixed",
@@ -110,13 +127,13 @@ const generalStyle = {
     borderSpacing: "0"
   },
   tableTh: {
-    fontSize: "11px",
+    fontSize: "9px",
     textAlign: "left",
     textTransform: "uppercase",
     background: "#000",
     padding: "6px 12px",
-    maxWidth: "100px",
-    minWidth: "50px",
+    width: "70px",
+    // minWidth: "50px",
     border: " 1px solid #d9d7ce",
     color: "#fff",
     borderCollapse: "collapse"
@@ -125,20 +142,23 @@ const generalStyle = {
     padding: "6px 12px",
     border: "1px solid #d9d7ce",
     borderCollapse: "collapse",
-    maxWidth: "100px",
-    minWidth: "52px"
+    width: "70px",
+    fontSize: "9px"
+    // minWidth: "52px"
   },
   tableTd2: {
     padding: "6px 12px",
     border: "1px solid #d9d7ce",
     borderCollapse: "collapse",
-    minWidth: "60px"
+    width: "65px",
+    fontSize: "9px"
   },
   tableTd3: {
     padding: "4px 5px",
     border: "1px solid #d9d7ce",
     borderCollapse: "collapse",
-    minWidth: "66px"
+    width: "72px",
+    fontSize: "9px"
   },
   sTable: {
     display: "block",
@@ -203,17 +223,30 @@ const generalStyle = {
     right: "0"
   },
   strong7: {
-    fontWeight: "700"
+    fontWeight: "bold",
+    fontSize: "10px",
+
+  },
+  strong: {
+    fontSize: "8px",
+    lineHeight: "250%"
+
+  },
+  termsStyle: {
+    fontSize: "7px",
+    fontFamily:" Arial",
+    lineHeight: "1.3",
+    padding: "5px 1%"
   },
   text13: {
     fontSize: "11px",
-    fontWeight: "700",
+    fontWeight: "bold",
     display: "block",
     padding: "1px 0"
   },
   text14: {
     fontSize: "10.5px",
-    fontWeight: "700",
+    fontWeight: "bold",
     display: "block",
     padding: "2px 0"
   },
@@ -223,13 +256,17 @@ const generalStyle = {
   POLabel: {
     float: "none",
     display: "inline-block",
-    verticalAlign: "middle"
+    verticalAlign: "middle",
+    fontSize: "10px",
+    fontWeight:"bold"
+
   },
   POLabel2: {
     float: "none",
     display: "inline-block",
     verticalAlign: "middle",
-    margin: "5px 0"
+    margin: "5px 0",
+    fontSize: "10px",
   },
   POinput: {
     float: "none",
@@ -252,9 +289,10 @@ const generalStyle = {
     borderWidth: "0",
     borderColor: "#000",
     maxWidth: "70px",
-    margin: "9px 0",
-    fontSize: "8px",
-    padding: "0 4px"
+    margin: "2px 0",
+    fontSize: "10px",
+    padding: "0 4px",
+    fontFamily: "arial, helvetica, sans-serif",
   },
   space10: {
     height: "10px"
@@ -279,7 +317,7 @@ const generalStyle = {
   POtitle: {
     fontWeight: "bold",
     padding: "10px 0",
-    marginTop: "-30px"
+    marginTop: "-15px"
   },
   POtitle2: {
     fontWeight: "bold",
@@ -294,7 +332,9 @@ const generalStyle = {
     borderColor: "#000",
     float: "right",
     maxWidth: "290px",
-    width: "100%"
+    width: "100%",
+    fontSize: "9px",
+    fontFamily: "Arial"
   },
   divider: {
     height: "1px",
@@ -307,7 +347,7 @@ const generalStyle = {
     right: "2px",
     fontFamily: "arial, helvetica, sans-serif",
     fontSize: "9px",
-    padding: "10px 25px"
+    padding: "10px 25px",
   },
   fixedHeader: {
     position: "absolute",
@@ -554,7 +594,7 @@ const generalStyle = {
     width: "9.45em",
     left: "1em",
     top: "auto",
-    fontWeight: "700",
+    fontWeight: "bold",
     borderBottomWidth: "1px",
     textAlign: "left",
     backgroundColor: "#E1ECF4",
@@ -571,7 +611,7 @@ const generalStyle = {
     padding: "5px 2px",
     textAlign: "center",
     backgroundColor: "#E1ECF4",
-    fontWeight: "700",
+    fontWeight: "nold",
     color: "#39739d",
     margin: "2px",
     borderRadius: "70px"
@@ -677,6 +717,11 @@ const generalStyle = {
     fontSize: "13px"
     
 
+  },
+  date: {
+    position: "absolute",
+    right: "0",
+    fontSize: "9px"
   }
 };
 

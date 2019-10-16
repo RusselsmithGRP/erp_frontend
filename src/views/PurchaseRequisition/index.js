@@ -86,8 +86,8 @@ class Index extends React.Component {
       arry.push(
         row._id,
         row.requisitionno,
-        row.requestor.firstname,
-        row.requestor.lastname,
+         (row.requestor != null) ? row.requestor.firstname: "",
+         (row.requestor != null) ? row.requestor.lastname: "",
         row.department.name,
         row.status
       );
@@ -102,6 +102,8 @@ class Index extends React.Component {
   }
 
   render() {
+    console.log(this.state, "hello");
+
     const { classes } = this.props;
     let prs = { dataRows: [] };
     if (this.state.data.length > 0) {

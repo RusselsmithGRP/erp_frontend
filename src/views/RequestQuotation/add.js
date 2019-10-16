@@ -69,7 +69,8 @@ class Add extends React.Component {
     selectedOption:[],
     lineItems:[],
     alert: null,
-    show: false
+    show: false,
+    price: ""
   };
 
   componentDidMount(){
@@ -107,6 +108,9 @@ class Add extends React.Component {
   handleChange = (selectedOption) => {
     this.setState({ selectedOption });
   }
+  getPrice = (e) => {
+    this.setState({ price: e.target.value });
+  }
 
 
   submitQuote= ()=>{
@@ -115,14 +119,51 @@ class Add extends React.Component {
             return prop;
           }
       });
-      rfqActions.submitQuotation(this.props.user.token, 
-        {items: items, vendors:  this.state.selectedOption, 
+      if (this.props.pr.purchaseType === "Contract") {
+        let vendor = [{
+          value: this.props.pr.vendor._id
+        }];
+        let items = [];
+        let item = this.props.pr.lineitems[0];
+        item.price = this.state.price;
+        item.description = item.itemdescription;
+        item.currency = "0";
+        items.push(item);
+        let data = {items}
+        if (this.state.price){
+          rfqActions.submitQuotation(this.props.user.token, 
+            {items: items, vendors: vendor, type: "contract", price: this.state.price,
+              pr:this.props.pr}, (quote)=>{
+                if(quote){
+                  rfqActions.submitVendorQuote(
+                    this.props.user.token,
+                    quote._id,
+                    data,
+                    docs => {
+                      if (docs) {
+                        this.setState({message:"Price entered successfully.", error:false });
+                      }
+                    }
+                  );
+                 
+                } 
+                else this.setState({message:"An error occur while sending RFQ.", error:true });
+            }); 
+        }
+        else alert("Please Enter Price")
+
+      }
+      else {
+  rfqActions.submitQuotation(this.props.user.token, 
+        {items: items, vendors:  this.state.selectedOption,  
           pr:this.props.pr}, (isOk)=>{
             if(isOk){
               this.setState({message:"RFQ succesfully sent to vendor", error:false });
             } 
             else this.setState({message:"An error occur while sending RFQ.", error:true });
-        });
+        });  
+    }
+    
   }
 
   render() {
@@ -179,21 +220,32 @@ class Add extends React.Component {
                   <form>
                       <Grid container>
                         <GridItem xs={12} sm={12} md={11} lg={11}>
-                          <Select
+                        { (this.props.pr.purchaseType === "Contract")? ` ` : <Select
                               isMulti
                               value={this.state.selectedOption}
                               onChange={this.handleChange}
                               options={this.state.options}
-                          />
+                          /> }
                         </GridItem>
-                        <GridItem xs={12} sm={3} md={3} lg={3}>
+                         {/* 
                         <CustomInput labelText="Vendors" id="vendors" name="vendors"
                           formControlProps={{
                             fullWidth: true
-                          }} inputProps={{             
+                          }} inputProps={{    
+         
                           }}
                         />
-                        </GridItem>
+                         */}
+
+                        { (this.props.pr.purchaseType === "Contract")?
+                         <GridItem xs={12} sm={12} md={12} lg={12}>
+                       
+                        <span style={generalStyle.textLabel}>
+                        Vendor:
+                      </span>
+                      <span style={generalStyle.text}>{this.props.pr.vendor.general_info.company_name} </span>
+                     
+                        </GridItem> : ""}
                       </Grid>
                     <Grid container>
                       <GridItem xs={12} sm={12} md={12} lg={12}>
@@ -211,6 +263,17 @@ class Add extends React.Component {
                             {tableData}
                             </TableBody>
                           </Table> 
+                          { (this.props.pr.purchaseType === "Contract")?<CustomInput
+                        labelText="Enter Price"
+                        id="price"
+                        formControlProps={{
+                           fullWidth: true
+                        }}
+                        inputProps={{
+                          onChange: this.getPrice,
+                          value: this.state.price
+                        }}
+                      />: ""}
                         </div>
                       </GridItem>
                     </Grid>
@@ -218,8 +281,8 @@ class Add extends React.Component {
               </CardBody>
               <CardFooter>
               <Grid container>
-                <GridItem xs={12} sm={12} md={2}>
-                  <Button color="yellowgreen"  onClick={this.submitQuote}>Submit</Button>
+                <GridItem xs={12} sm={12} md={12}>
+                  <Button color="yellowgreen"  onClick={this.submitQuote} style={{float: "right"}}>Submit</Button>
                 </GridItem>
               </Grid>              
               </CardFooter>

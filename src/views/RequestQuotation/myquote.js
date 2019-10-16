@@ -257,7 +257,8 @@ class Index extends React.Component {
   }
 
   render() {
-   //console.log(this.props, "vendor");
+   console.log(this.state.quote, "my quote");
+   console.log(this.state.data, "data");
     const { classes, tableHeaderColor } = this.props;
     let mappedData = this.state.docs.map((prop, key) => {
       let date = new Date(prop.created);

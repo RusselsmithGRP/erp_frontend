@@ -59,16 +59,19 @@ export function submitVendorQuote(token, quoteid, data,callback){
 
 export function submitQuotation(token, data, callback){
     let m = new MiddleWare(token);
-    return m.makeConnection('/purchase/quotation/submit', m.POST, data).then(
+    return m.makeConnection('/purchase/quotation/submit', m.POST, data)
+    .then(response => response.json())
+    .then(
         (result)=>{
-            if(result.ok && result.statusText == "OK" && result.status == 200 ) callback(result.ok);
+            console.log(result, "result")
+            if(result.isOk ) callback(result.data);
     });   
 }
 
 export function editQuotation(token, id, data, callback){
     let m = new MiddleWare(token);
     return m.makeConnection('/purchase/quotation/update/'+id, m.POST, data).then((result)=>{
-        if(result.ok && result.statusText == "OK" && result.status == 200 )callback(result.ok);
+        if(result.ok && result.statusText == "OK" && result.status == 200 )callback(result.data);
     }); 
 }
 

@@ -53,8 +53,6 @@ class Add extends React.Component {
   state = {
     data: {
       vendor: "",
-      shipto: "",
-      creditterms: "",
       grand_total: 0,
       vat: 5,
       lineitems: []
@@ -83,6 +81,7 @@ class Add extends React.Component {
 
   handleChange = event => {
     let data = this.state.data;
+    //console.log(event.target, "target")
     data[[event.target.name]] = event.target.value;
     this.setState({
       data: data
@@ -93,19 +92,25 @@ class Add extends React.Component {
     let data = this.state.data;
     data.lineitems = this.state.checkeditems;
     data.types = this.state.types;
-    poActions.submitPO(this.props.user.token, data, isOk => {
-      if (isOk) {
-        this.setState({
-          message: "Purchase Order created succesfully",
-          error: false,
-          redirect: "yes"
-        });
-      } else
-        this.setState({
-          message: "Error creating purchase order.",
-          error: true
-        });
-    });
+    if(data.creditterms){
+      poActions.submitPO(this.props.user.token, data, isOk => {
+        if (isOk) {
+          this.setState({
+            message: "Purchase Order created succesfully",
+            error: false,
+            redirect: "yes"
+          });
+        } else
+          this.setState({
+            message: "Error creating purchase order.",
+            error: true
+          });
+      });
+    }
+    else {
+      alert("please select credit terms")
+    }
+
   };
 
   handleCheckedItems = (i, k) => {
@@ -132,71 +137,61 @@ class Add extends React.Component {
     this.calcPrice("", cummulativeprice);
   };
 
-  handleItemChange = event => {
-    const { classes } = this.props;
+  handleItemChange= event =>{
+    const { classes} = this.props;
     this.handleChange(event);
     let itemsprice = this.state.checkeditemsprice;
-    rfqActions.fetchAllQuoteforVendor(
-      this.props.user.token,
-      event.target.value,
-      quotes => {
-        this.setState({ quotes });
+    rfqActions.fetchAllQuoteforVendor(this.props.user.token, event.target.value, (quotes)=>{
+        this.setState({quotes});
         let grandTotal = this.state.data.grand_total;
-        const table_data = this.state.quotes.map((prop, key) => {
-          itemsprice[prop._id] = ((prop.price * prop.quantity) / 100).toFixed(
-            2
-          );
-          return (
-            <TableRow key={key}>
-              <TableCell
-                component="th"
-                style={{
-                  border: "none",
-                  padding: "0",
-                  width: "20px",
-                  textAlign: "center"
-                }}
-              >
-                <FormControlLabel
+        const table_data = this.state.quotes.map((prop, key)=> {
+          itemsprice[prop._id] = ((prop.price*prop.quantity)/100).toFixed(2);
+            return (
+            <TableRow key={key}> 
+                <TableCell component="th" style={{border: "none", padding: "0", width: "20px", textAlign: "center"}}>                   
+                  <FormControlLabel
                   control={
                     <Checkbox
-                      tabIndex={-1}
-                      onClick={() =>
-                        this.handleCheckedItems(prop._id, prop.service_type)
-                      }
-                      checkedIcon={<Check className={classes.checkedIcon} />}
-                      icon={<Check className={classes.uncheckedIcon} />}
-                      classes={{
-                        checked: classes.checked
-                      }}
+                        tabIndex={-1}
+                        onClick={() => this.handleCheckedItems(prop._id)}
+                        checkedIcon={
+                          <Check className={classes.checkedIcon} />
+                        }
+                        icon={<Check className={classes.uncheckedIcon} />}
+                        classes={{
+                          checked: classes.checked
+                        }}
                     />
                   }
-                  classes={{
-                    label: classes.label
-                  }}
-                />
-                {key + 1}
-              </TableCell>
-              <TableCell className={classes.td}>{prop.description}</TableCell>
-              <TableCell className={classes.td}>{prop.quantity}</TableCell>
-              <TableCell className={classes.td}>{prop.unit}</TableCell>
-              <TableCell className={classes.td}>
-                {currencies.getCurrency(prop.currency)}{" "}
-                {(prop.price / 100).toFixed(2)}
-              </TableCell>
-              <TableCell className={classes.td}>
-                {currencies.getCurrency(prop.currency)}{" "}
-                {((prop.price * prop.quantity) / 100).toFixed(2)}
-              </TableCell>
+                      classes={{
+                        label: classes.label
+                      }}
+                  />
+                    {key+1}
+                </TableCell>
+                <TableCell className={classes.td}>
+                    {prop.description }
+                </TableCell>
+                <TableCell className={classes.td}>
+                    {prop.quantity}
+                </TableCell>
+                <TableCell className={classes.td}>
+                    {prop.unit}   
+                </TableCell>   
+                <TableCell className={classes.td}>
+                    {(prop.price/100).toFixed(2)}   
+                </TableCell>   
+                <TableCell className={classes.td}>
+                    {((prop.price*prop.quantity)/100).toFixed(2)}   
+                </TableCell> 
             </TableRow>
-          );
-        });
+            )}
+        );
 
         let data = this.state.data;
-        this.setState({ data, table_data, itemsprice });
-      }
-    );
-  };
+        this.setState({data, table_data, itemsprice });
+    });
+}
 
   selectedLocation(e) {
     locationAction.getAddress(this.props, e.target.value, json => {
@@ -258,10 +253,16 @@ class Add extends React.Component {
     }
   }
   render() {
-    console.log(this.props, "props")
-    console.log(this.state, "state")
+    console.log(this.state.data.vendor, "state")
 
     const { classes, tableHeaderColor } = this.props;
+
+    const creditTerms = [
+      { value: "0", label: "Advance" },
+      { value: "1", label: "30 days" },
+      { value: "2", label: "45 days" },
+      { value: "3", label: "60 days" }
+    ];
     return (
       <div>
         {this.renderRedirect()}
@@ -378,6 +379,54 @@ class Add extends React.Component {
                           disabled: true
                         }}
                       />
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={12}>
+                    <CustomSelect
+                      labelText="Select Credit Terms"
+                      id="creditterms"
+                      name="creditterms"
+                      required
+                      formControlProps={{
+                        style: {
+                          padding: "0",
+                          margin: "0",
+                          width: "300px"
+                        }
+                      }}
+                      onChange={this.handleChange}
+                      inputProps={{
+                        margin: "normal",
+                        value: this.state.data.creditterms
+                      }}
+                      style={{
+                        marginTop: "-3px",
+                        borderBottomWidth: " 1px"
+                      }}
+                              >
+                                {creditTerms.map(option => (
+                                  <MenuItem
+                                    key={option.value}
+                                    value={option.label}
+                                  >
+                                    {option.label}
+                                  </MenuItem>
+                                ))}
+                              </CustomSelect>
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={12}>
+                    <CustomInput
+                      labelText="Additional Terms"
+                      name="additional_terms"
+                      id="additional_terms"
+                      formControlProps={{
+                        fullWidth: true
+                      }}
+                      inputProps={{
+                        onChange: e => this.handleChange(e),
+                        name:"additional_terms",
+                        value: this.state.data.additional_terms
+                      }}
+                          />
                     </GridItem>
                   </Grid>
                   <br />
@@ -565,6 +614,7 @@ class Add extends React.Component {
                   </div>
                 </CardBody>
                 <CardFooter>
+                {(this.state.data.vendor)? ( 
                   <Grid container>
                     <GridItem
                       xs={12}
@@ -577,11 +627,13 @@ class Add extends React.Component {
                       </Button>
                     </GridItem>
                     <GridItem xs={12} sm={12} md={2}>
-                      <Button color="yellowgreen" onClick={this.handleSubmit}>
+                   <Button color="yellowgreen" onClick={this.handleSubmit}>
                         Submit
                       </Button>
                     </GridItem>
                   </Grid>
+                   ) : ""
+                  }
                 </CardFooter>
               </Card>
             </form>

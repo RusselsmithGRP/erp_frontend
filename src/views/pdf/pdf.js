@@ -15,6 +15,7 @@ import * as Status from "utility/Status";
 import * as Util from "utility/Util";
 import moment from "moment";
 import * as currencies from "../../utility/Currencies.js";
+import logo from "../../assets/img/rs-logo.png"
 
 const styles = {
   cardCategoryWhite: {
@@ -29,7 +30,7 @@ const styles = {
     marginTop: "0px",
     minHeight: "auto",
     fontWeight: "300",
-    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
+    fontFamily: "'Arial', 'Helvetica', 'Arial', sans-serif",
     marginBottom: "3px",
     textDecoration: "none"
   }
@@ -60,14 +61,15 @@ class Pdf extends Component {
 
   }
 
-//   convertSVGToImage = () => {
-//     // if FontAwesome, run this next part
-//     let htmlString = ReactDOMServer.renderToStaticMarkup(
-//       this.state.po.reviewedBy.signature);
-//     // for both FontAwesome and regular SVG:
-//     canvg(this.refs.canvas, htmlString);
-//     this.reviewedBy = this.refs.canvas.toDataURL('image/png')
-// }
+  convertSVGToImage = () => {
+    // if FontAwesome, run this next part
+    let htmlString = ReactDOMServer.renderToStaticMarkup(
+      this.state.po.reviewedBy.signature);
+    // for both FontAwesome and regular SVG:
+    canvg(this.refs.canvas, htmlString);
+    this.reviewedBy = this.refs.canvas.toDataURL('image/png')
+    console.log(this.reviewedBy)
+}
 
   exportPDF = () => {
     this.po_doc.save();
@@ -98,16 +100,17 @@ class Pdf extends Component {
       this.props.match.params.id,
       doc => {
         this.setState({ po: doc.po, items: doc.items });
+        sessionStorage.setItem('effectiveDate', doc.po.approvedByDate)
       }
     );
   }
 
   componentDidMount() {
-    // this.convertSVGToImage();
+    this.convertSVGToImage();
 }
 
   render() {
-    console.log(this.reviewedBy, "hello")
+    console.log( this.state.po, "HELLO")
     const { classes, data } = this.props;
     let currency = "";
     const numberWords = require("number-words");
@@ -130,6 +133,7 @@ class Pdf extends Component {
         </tr>
       );
     });
+
 
     return (
       <div
@@ -159,6 +163,7 @@ class Pdf extends Component {
           title=""
           subject=""
           keywords=""
+          forcePageBreak=".page-break"
           ref={r => (this.po_doc = r)}
         >
           <div
@@ -171,15 +176,13 @@ class Pdf extends Component {
               overflowY: "hidden",
               fontFamily: "Arial",
               fontSize: "11px",
+              lineHeight: "1.3",
               position: "relative"
             }}
             ref={elem => (this.myPdf = elem)}
           >
             <div>
-              <br />
-              <div style={generalStyle.POtitle}>
-                RS-PMG-PUR-P-1016–4 PURCHASE ORDER FORM
-              </div>
+             
 
               <Grid container>
                 <GridItem xs={7} />
@@ -224,6 +227,7 @@ class Pdf extends Component {
                       style={generalStyle.POinput3}
                       type="text"
                       id="your-input"
+                      value={this.state.po.creditterms}
                     />
                   </div>
                   <div style={generalStyle.space20} />
@@ -236,17 +240,15 @@ class Pdf extends Component {
                 <GridItem xs={7} style={generalStyle.alignLeft}>
                   <span style={generalStyle.strong7}>To:</span>
                   <br />
-                  {this.state.po.vendor.general_info.company_name}
+                  {(this.state.po.vendor)? this.state.po.vendor.general_info.company_name: ""}
                   <br />
-                  {this.state.po.vendor.general_info.office_address}
+                  { (this.state.po.vendor)? this.state.po.vendor.general_info.office_address: ""}
                   <br />
-                  {this.state.po.vendor.general_info.city +
-                    ", " +
-                    this.state.po.vendor.general_info.country}
+                  {(this.state.po.vendor)? this.state.po.vendor.general_info.city + ", "+  this.state.po.vendor.general_info.country : "" }
                 </GridItem>
                 <GridItem xs={5}>
                   <span style={generalStyle.strong7}>Ship To:</span>
-                  <br /> Russelsmith Nig Ltd <br />
+                  <br /> RusselSmith Nig Ltd <br />
                   KM 14 Lekki - Epe Express Road,
                   <br /> Lekki Phase 1, Lekki
                 </GridItem>
@@ -333,20 +335,20 @@ class Pdf extends Component {
                     <div>
                       <div style={generalStyle.space30} />
 
-                      <label style={generalStyle.POLabel2} for="input">
+                      <label style={generalStyle.strong7} for="input">
                         Prepared by:
                       </label>
                       <input
                         style={generalStyle.POinput2}
                         type="text"
                         id="your-input"
-                        value={this.state.po.requestor.lastname + " "+ this.state.po.requestor.firstname}
+                        value={ (this.state.po.requestor)? (this.state.po.requestor.lastname + " "+ this.state.po.requestor.firstname) : ""}
                       />
                       <div style={generalStyle.space10} />
                     </div>
 
-                      <div>
-                        <strong>Reviewed by:</strong>
+                      <div style={generalStyle.strong7}>
+                       Reviewed by:
 
                         <br />
                       </div>
@@ -362,13 +364,19 @@ class Pdf extends Component {
                       />
                {/* <img src="https://careersome.com/img/career2.png" /> */}
 
-                     {(this.state.po.reviewedBy) ? ( <span dangerouslySetInnerHTML={{__html: this.state.po.reviewedBy.signature}}  style={generalStyle.signature} />): ""}
+                     {(this.state.po.reviewedBy) ? (<img
+                    ref={image => (this.image = image)}
+                    style={generalStyle.signature}
+                    src={`data:image/svg+xml, ${encodeURIComponent(this.state.po.reviewedBy.signature)}`}
+                    //height="100px"
+                  />): ""}
+                     {(this.state.po.reviewedByDate) ? ( <span style={generalStyle.date}>{moment(this.state.po.reviewedByDate).format("DD-MM-YYYY")}</span>): ""}
 
                       <div style={generalStyle.space10} />
                     </div>
                     <div style={generalStyle.pr}>
-                      <span>
-                        <strong>Authorized and Approved By:</strong>
+                      <span style={generalStyle.strong7}>
+                     Authorized and Approved By:
                         <br />
                       </span>
                       <label style={generalStyle.POLabel2} for="input">
@@ -381,7 +389,14 @@ class Pdf extends Component {
                         value={(this.state.po.authorizedBy)? (this.state.po.authorizedBy.lastname + " "+ this.state.po.authorizedBy.firstname): "" }
 
                       />
-                     {(this.state.po.authorizedBy) ? ( <span dangerouslySetInnerHTML={{__html: this.state.po.authorizedBy.signature}}  style={generalStyle.signature} />): ""}
+                     {(this.state.po.authorizedBy) ? (<img
+                    ref={image => (this.image = image)}
+                    style={generalStyle.signature}
+                    src={`data:image/svg+xml, ${encodeURIComponent(this.state.po.authorizedBy.signature)}`}
+                    //height="100px"
+                  />): ""}
+                     {(this.state.po.authorizedByDate) ? ( <span style={generalStyle.date}>{moment(this.state.po.authorizedByDate).format("DD-MM-YYYY")}</span>): ""}
+
                     </div>
                     <div style={generalStyle.pr}>
                       <label style={generalStyle.POLabel2} for="input">
@@ -393,7 +408,14 @@ class Pdf extends Component {
                         id="your-input"
                         value={(this.state.po.approvedBy)? (this.state.po.approvedBy.lastname + " "+ this.state.po.approvedBy.firstname): "" }
                       />
-                      {(this.state.po.approvedBy) ? ( <span dangerouslySetInnerHTML={{__html: this.state.po.approvedBy.signature}}  style={generalStyle.signature} />): ""}
+                      {(this.state.po.approvedBy) ? (<img
+                    ref={image => (this.image = image)}
+                    style={generalStyle.signature}
+                    src={`data:image/svg+xml, ${encodeURIComponent(this.state.po.approvedBy.signature)}`}
+                    //height="100px"
+                  /> ): ""}
+                      {(this.state.po.approvedByDate) ? ( <span style={generalStyle.date}>{moment(this.state.po.approvedByDate).format("DD-MM-YYYY")}</span>): ""}
+
                     </div>
                     <div>
                       <div style={generalStyle.space10} />
@@ -410,6 +432,7 @@ class Pdf extends Component {
                         type="text"
                         id="your-input"
                       />
+                  
                     </div>
                   </GridItem>
                   {/* <GridItem xs={5}>
@@ -484,6 +507,215 @@ class Pdf extends Component {
                     </strong>
                   </p>
                 </div>
+
+                <div  style={generalStyle.divider2}></div>
+
+                <div style={generalStyle.termsStyle}  className= "forcePageBreak">
+
+                <div><strong style={generalStyle.strong}>1. SERVICES &amp; DELIVERABLES.</strong></div>
+<div>Seller agrees to provide to Company (or its subsidiaries, if such subsidiaries are designated as the contracting parties in the purchase order) (hereinafter referred</div>
+<div>to as &ldquo;Company&rdquo;) the services ("Services") and/or goods (&ldquo;Goods&rdquo;), described in any purchase order, in accordance with these Terms and Conditions ("Agreement"). Upon acceptance of a purchase</div>
+<div>order, shipment of Goods or commencement of a Service, Seller shall be bound by the provisions of this Agreement, including all provisions set forth on the face of any applicable purchase order,</div>
+<div>whether Seller acknowledges or otherwise signs this Agreement or the purchase order, unless Seller objects to such terms in writing prior to shipping Goods or commencing Services.</div>
+<div>This writing does not constitute a firm offer,and may be revoked at any time prior to acceptance. This Agreement may not be added to, modified, superseded, or otherwise altered, except by writing</div>
+<div>signed by an authorized COMPANY representative. Any terms or conditions contained in any acknowledgment, invoice, or other communication of Seller, which are inconsistent with the terms and</div>
+<div>conditions herein, are hereby rejected. To the extent that this Agreement might be treated as an acceptance of Seller&rsquo;s prior offer, such acceptance is expressly made on condition of assent by Seller</div>
+<div>to the terms hereof and shipment of the Goods or beginning performance of any Services by Seller shall constitute such assent. COMPANY hereby reserves the right to reschedule any delivery or</div>
+<div>cancel any purchase order issued at any time prior to shipment of the Goods or prior to commencement of any Services. COMPANY shall not be subject to any charges or other fees as a result of</div>
+<div>such cancellation.</div>
+<div><strong style={generalStyle.strong}>2. DELIVERY</strong></div>
+<div>. Time is of the essence. Delivery of Goods and Services shall be made pursuant to the schedule, via the carrier, and to the place specified on the face of the applicable purchase</div>
+<div>order. COMPANY reserves the right to return, shipping charges collect, all Goods received in advance of the delivery schedule. If no delivery schedule is specified, the order shall be filled promptly</div>
+<div>and delivery will be made by the most expeditious form of land transportation. If no method of shipment is specified in the purchase order, Seller shall use the least expensive carrier. In the event</div>
+<div>Seller fails to deliver the Goods or Services within the time specified, COMPANY may, at its option, decline to accept performance and terminate the Agreement or may demand its allocable fair</div>
+<div>share of Seller&rsquo;s available Goods and terminate the balance of the Agreement. Seller shall package all items in suitable containers to permit safe transportation and handling. Each delivered</div>
+<div>container must be labeled and marked to identify contents without opening and all boxes and packages must contain packing sheets listing contents. COMPANY&rsquo;s purchase order number must</div>
+<div>appear on all shipping containers, packing sheets, delivery tickets, and bills of lading.</div>
+<div><strong style={generalStyle.strong}>3. IDENTIFICATION, RISK OF LOSS, &amp; DESTRUCTION OF GOODS.</strong></div>
+<div>Seller assumes all risk of loss until receipt by COMPANY. Title to Goods shall pass to COMPANY upon receipt by it of the</div>
+<div>Goods at the designated destination. If the Goods ordered are destroyed prior to title passing to COMPANY, COMPANY may at its option cancel the Agreement or require delivery of substitute</div>
+<div>Goods of equal quantity and quality. Such delivery will be made as soon as commercially practicable. If loss of Goods is partial, COMPANY shall have the right to require delivery of the Goods not</div>
+<div>destroyed.</div>
+<div><strong style={generalStyle.strong}>4. PAYMENT.</strong></div>
+<div>As full consideration for the performance of the Services, delivery of the Goods and the assignment of rights to COMPANY as provided herein, COMPANY shall pay Seller (i) the</div>
+<div>amount agreed upon and specified in the applicable purchase order, or (ii) Seller&rsquo;s quoted price on date of shipment (for Goods), or the date Services were started (for Services), whichever is lower.</div>
+<div>Applicable taxes and other charges such as shipping costs, duties, customs, tariffs, imposts, and government-imposed surcharges shall be stated separately on Seller's invoice. Payment is made</div>
+<div>when COMPANY's check is mailed. Payment shall not constitute acceptance. All personal property taxes assessable upon the Goods prior to receipt by COMPANY of Goods conforming to the</div>
+<div>purchase order shall be borne by Seller. Seller shall invoice COMPANY for all Goods delivered and all Services actually performed. Each invoice submitted by Seller must be provided to COMPANY</div>
+<div>within ninety (90) days of completion of the Services or delivery of Goods and must reference the applicable purchase order, and COMPANY reserves the right to return all incorrect invoices.</div>
+<div>COMPANY will receive a 5% discount of the invoiced amount for all invoices that are submitted more than ninety (90) days after completion of the Services or delivery of the Goods. Unless</div>
+<div>otherwise specified on the face of a purchase order, COMPANY shall pay the invoiced amount within fourteen (14) days after receipt of a correct invoice. Seller will receive no royalty or other</div>
+<div>remuneration on the production or distribution of any products developed by COMPANY or Seller in connection with or based on the Goods or Services provided. There will be penalty for late</div>
+<div>delivery of goods. Furthermore, goods must be delivered in good conditions and signed off by RusselSmith Facilities and Services representative</div>
+<div>.</div>
+<div><strong style={generalStyle.strong}>5. WARRANTIES.</strong></div>
+<div><strong style={generalStyle.strong}>5.1 Services</strong></div>
+<div>: Seller represents and warrants that all Services shall be completed in a professional, workmanlike manner, with the degree of skill and care that is required by current, good, and</div>
+<div>sound professional procedures. Further, Seller represents and warrants that the Services shall be completed in accordance with applicable specifications and shall be correct and appropriate for the</div>
+<div>purposes contemplated in this Agreement. Seller represents and warrants that the performance of Services under this Agreement will not conflict with, or be prohibited in any way by, any other</div>
+<div>agreement or statutory restriction to which Seller is bound.</div>
+<div><strong style={generalStyle.strong}>5.2 Goods</strong></div>
+<div>: Seller warrants that all Goods provided will be new and will not be used or refurbished except otherwise stated. Seller warrants that all Goods delivered shall be free from defects in</div>
+<div>materials and workmanship and shall conform to all applicable specifications for a period of twelve (12) months from the date of delivery to COMPANY or for the period provided in Seller&rsquo;s standard</div>
+<div>warranty covering the Goods, whichever is longer. Additionally, Goods purchased shall be subject to all written and oral express warranties made by Seller&rsquo;s agents. All warranties and Service</div>
+<div>guaranties shall run both to COMPANY and to its customers. If COMPANY identifies a warranty problem with the Goods during the warranty period, COMPANY will promptly notify Seller of such</div>
+<div>problems and will return the Goods to Seller, at Seller&rsquo;s expense. Within five (5) business days of receipt of the returned Goods, Seller shall, at COMPANY&rsquo;s option, either repair or replace such</div>
+<div>Goods, or credit COMPANY&rsquo;s account for the same. Replacement and repaired Goods shall be warranted for the remainder of the warranty period or six (6) months, whichever is longer.</div>
+<div><strong style={generalStyle.strong}>6. INSPECTION.</strong></div>
+<div>COMPANY shall have a reasonable time after receipt of Goods or Service deliverables and before payment to inspect them for conformity hereto, and performance hereunder shall</div>
+<div>not be deemed accepted until COMPANY has run an adequate test to determine whether the Goods and Services conform to the specifications hereof. Use of a portion of the Goods for the purpose</div>
+<div>of testing shall not constitute an acceptance of the Goods. If performance tendered does not wholly conform with the provisions hereof, COMPANY shall have the right to reject such performance.</div>
+<div>Nonconforming Goods will be returned to Seller freight collect and risk of loss will pass to Seller upon COMPANY&rsquo;s delivery to the common carrier.</div>
+<div><strong style={generalStyle.strong}>7. INDEPENDENT CONTRACTOR.</strong></div>
+<div>COMPANY is interested only in the results obtained under this Agreement; the manner and means of achieving the results are subject to Seller's sole control.</div>
+<div>Seller is an independent contractor for all purposes, without express or implied authority to bind COMPANY by contract or otherwise. Neither Seller nor its employees, agents or subcontractors</div>
+<div>("Seller&rsquo;s Assistants") are agents or employees of COMPANY, and therefore are not entitled to any employee benefits of COMPANY, including but not limited to, any type of insurance. Seller shall be</div>
+<div>responsible for all costs and expenses incident to performing its obligations under this Agreement and shall provide Seller's own supplies and equipment.</div>
+<div><strong style={generalStyle.strong}>8. SELLER RESPONSIBLE FOR TAXES AND RECORDS.</strong></div>
+<div>Seller shall be solely responsible for filing the appropriate federal, state and local tax forms and paying all such taxes or fees, including</div>
+<div>estimated taxes and employment taxes, due with respect to Seller's receipt of payment under this Agreement. Seller further agrees to provide COMPANY with reasonable assistance in the event of</div>
+<div>a government audit. COMPANY shall have no responsibility to pay or withhold from any payment to Seller under this Agreement, any federal, state, or local taxes or fees. COMPANY will regularly</div>
+<div>report amounts paid to Seller by filing</div>
+<div>forms</div>
+<div>with the Federal Internal Revenue Service.</div>
+<div><strong style={generalStyle.strong}>9. INSURANCE.</strong></div>
+<div>Seller shall be solely responsible for maintaining and requiring Seller&rsquo;s Assistants to maintain such adequate health, auto, workers' compensation, unemployment compensation,</div>
+<div>disability, liability, and other insurance, as is required by law or as is the common practice in Seller's and Seller's Assistants' trades or businesses, whichever affords greater coverage. Upon request,</div>
+<div>Seller shall provide COMPANY with certificates of insurance or evidence of coverage before commencing performance under this Agreement. Seller shall provide adequate coverage for any</div>
+<div>COMPANY property under the care, custody or, control of Seller or Seller's Assistants.</div>
+<div><strong style={generalStyle.strong}>10. INDEMNITY.</strong></div>
+<div>Seller shall indemnify, hold harmless, and at COMPANY's request, defend COMPANY, its officers, directors, customers, agents and employees, against all claims, liabilities,</div>
+<div>damages, losses, and expenses, including attorneys' fees and cost of suit arising out of or in any way connected with the Goods or Services provided under this Agreement, including, without</div>
+<div>limitation, (i) any claim based on the death or bodily injury to any person, destruction or damage to property, or contamination of the environment and any associated clean up costs, (ii) Seller failing</div>
+<div>to satisfy the Internal Revenue Service&rsquo;s guidelines for an independent contractor, (iii) any claim based on the negligence, omissions, or willful misconduct of Seller or any Seller&rsquo;s Assistants, and (iv)</div>
+<div>any claim by a third party against COMPANY alleging that the Goods or Services, the results of such Services, or any other products or processes provided under this Agreement, infringe a patent,</div>
+<div>copyright, trademark, trade secret, or other proprietary right of a third party, whether such are provided alone or in combination with other products, software, or processes. Seller shall not settle any</div>
+<div>such suit or claim without COMPANY's prior written approval. Seller agrees to pay or reimburse all costs that may be incurred by COMPANY in enforcing this indemnity, including attorneys' fees.</div>
+<div>Should COMPANY&rsquo;s use, or use by its distributors, subcontractors, or customers, of any Goods or Services purchased from Seller be enjoined, be threatened by injunction, or be the subject of any</div>
+<div>legal proceeding, Seller shall, at its sole cost and expense, either (a) substitute fully equivalent non-infringing Goods or Services; (b) modify the Goods or Services so that they no longer infringe but</div>
+<div>remain fully equivalent in functionality; (c) obtain for COMPANY, its distributors, subcontractors, or customers the right to continue using the Goods or Services; or (d) if none of the foregoing is</div>
+<div>possible, refund all amounts paid for the infringing Goods or Services.</div>
+<div><strong style={generalStyle.strong}>11. CONFIDENTIALITY.</strong></div>
+<div>Seller will acquire knowledge of COMPANY Confidential Information (as defined below) in connection with its performance hereunder and agrees to keep such COMPANY</div>
+<div>Confidential Information in confidence during and following termination or expiration of this Agreement. "COMPANY Confidential Information" includes but is not limited to all information, whether</div>
+<div>written or oral, in any form, including without limitation, information relating to the research, development, products, methods of manufacture, trade secrets, business plans, customers, vendors,</div>
+<div>finances, personnel data, Work Product (as defined herein), and other material or information considered proprietary by COMPANY relating to the current or anticipated business or affairs of</div>
+<div>COMPANY which is disclosed directly or indirectly to Seller. In addition, COMPANY Confidential Information means any third party's proprietary or confidential information disclosed to Seller in the</div>
+<div>course of providing Services or Goods to COMPANY. COMPANY Confidential Information does not include any information (i) which Seller lawfully knew without restriction on disclosure before</div>
+<div>COMPANY disclosed it to Seller, (ii) which is now or becomes publicly known through no wrongful act or failure to act of Seller, (iii) which Seller developed independently without use of the</div>
+<div>COMPANY Confidential Information, as evidenced by appropriate documentation, or (iv) which is hereafter lawfully furnished to Seller by a third party as a matter of right and without restriction on</div>
+<div>disclosure. In addition, Seller may disclose Confidential Information which is required to be disclosed pursuant to a requirement of a government agency or law so long as Seller provides prompt</div>
+<div>notice to COMPANY of such requirement prior to disclosure.</div>
+<div>Seller agrees not to copy, alter, or directly or indirectly disclose any COMPANY Confidential Information. Additionally, Seller agrees to limit its internal distribution of COMPANY Confidential</div>
+<div>Information to Seller's Assistants who have a need to know, and to take steps to ensure that the dissemination is so limited, including the execution by Seller's Assistants of nondisclosure</div>
+<div>agreements with provisions substantially similar to those set forth herein. In no event will Seller use less than the degree of care and means that it uses to protect its own information of like kind, but</div>
+<div>in any event not less than reasonable care to prevent the unauthorized use of COMPANY Confidential Information</div>
+<div>
+<div>Seller further agrees not to use the COMPANY Confidential Information except in the course of performing hereunder and will not use such COMPANY Confidential Information for its own benefit or</div>
+<div>for the benefit of any third party. The mingling of the COMPANY Confidential Information with information of Seller shall not affect the confidential nature or ownership of the same as stated</div>
+<div>hereunder. Seller agrees not to design or manufacture any products which incorporate COMPANY Confidential Information. All COMPANY Confidential Information is and shall remain the property of</div>
+<div>COMPANY. Upon COMPANY's written request or the termination of this Agreement, Seller shall return, transfer, or assign to COMPANY all COMPANY Confidential Information, including all Work</div>
+<div>Product, as defined herein, and all copies thereof.</div>
+<div><strong style={generalStyle.strong}>12. OWNERSHIP OF WORK PRODUCT.</strong></div>
+<div>For purposes of this Agreement, "Work Product" shall include, without limitation, all designs, discoveries, creations, works, devices, masks, models, work in</div>
+<div>progress, Service deliverables, inventions, products, computer programs, procedures, improvements, developments, drawings, notes, documents, information and materials made, conceived, or</div>
+<div>developed by Seller, alone or with others, which result from or relate to the Services performed hereunder. Standard Goods manufactured by Seller and sold to COMPANY without having been</div>
+<div>designed, customized, or modified for COMPANY do not constitute Work Product. All Work Product shall at all times be and remain the sole and exclusive property of COMPANY. Seller hereby</div>
+<div>agrees to irrevocably assign and transfer to COMPANY and does hereby assign and transfer to COMPANY all of its worldwide right, title, and interest in and to the Work Product including all</div>
+<div>associated intellectual property rights. COMPANY will have the sole right to determine the treatment of any Work Product, including the right to keep it as trade secret, execute and file patent</div>
+<div>applications on it, to use and disclose it without prior patent application, to file registrations for copyright or trademark in its own name, or to follow any other procedure that COMPANY deems</div>
+<div>appropriate. Seller agrees: (a) to disclose promptly in writing to COMPANY all Work Product in its possession; (b) to assist COMPANY in every reasonable way, at COMPANY's expense, to secure,</div>
+<div>perfect, register, apply for, maintain, and defend for COMPANY's benefit all copyrights, patent rights, mask work rights, trade secret rights, and all other proprietary rights or statutory protections in</div>
+<div>and to the Work Product in COMPANY&rsquo;s name as it deems appropriate; and (c) to otherwise treat all Work Product as COMPANY Confidential Information as described above. These obligations to</div>
+<div>disclose, assist, execute, and keep confidential survive the expiration or termination of this Agreement. All tools and equipment supplied by COMPANY to Seller shall remain the sole property of</div>
+<div>COMPANY.</div>
+<div>Seller will ensure that Seller's Assistants appropriately waive any and all claims and assign to COMPANY any and all rights or any interests in any Work Product or original works created in</div>
+<div>connection with this Agreement. Seller irrevocably agrees not to assert against COMPANY or its direct or indirect customers, assignees, or licensees any claim of any intellectual property rights of</div>
+<div>Seller affecting the Work Product.</div>
+<div>COMPANY will not have rights to any works conceived or reduced to practice by Seller which were developed entirely on Seller's own time without using equipment, supplies, facilities, or trade</div>
+<div>secret or COMPANY Confidential Information, unless (i) such works relate to COMPANY's business, or COMPANY's actual or demonstrably anticipated research or development, or (ii) such works</div>
+<div>result from any Services performed by Seller for COMPANY.</div>
+<div><strong style={generalStyle.strong}>13. NON-INTERFERENCE WITH BUSINESS.</strong></div>
+<div>During and for a period of two years immediately after the termination or expiration of this Agreement, Seller agrees not to unlawfully interfere with the</div>
+<div>business of COMPANY in any manner, and further agrees not to solicit or induce any employee or independent contractor to terminate or breach an employment, contractual, or other relationship</div>
+<div>with COMPANY.</div>
+<div><strong style={generalStyle.strong}>14. TERMINATION.</strong></div>
+<div>COMPANY may terminate this Agreement upon written notice to Seller if Seller fails to perform or otherwise breaches this Agreement, files a petition in bankruptcy, becomes</div>
+<div>insolvent, or dissolves. In the event of such termination, COMPANY shall pay Seller for the portion of the Services satisfactorily performed and those conforming Goods delivered to COMPANY</div>
+<div>through the date of termination, less appropriate offsets, including any additional costs to be incurred by COMPANY in completing the Services.</div>
+<div>COMPANY may terminate this Agreement for any other reason upon thirty (30) days' written notice to Seller. Seller shall cease to perform Services and/or provide Goods under this Agreement on</div>
+<div>the date of termination specified in such notice. In the event of such termination, COMPANY shall be liable to Seller only for those Services satisfactorily performed and those conforming Goods</div>
+<div>delivered to COMPANY through the date of termination, less appropriate offsets.</div>
+<div>Upon the expiration or termination of this Agreement for any reason: (a) each party will be released from all obligations to the other arising after the date of expiration or termination, except for those</div>
+<div>which by their terms survive such termination or expiration; and (b) Seller will promptly notify COMPANY of all COMPANY Confidential Information or any Work Product in Seller&rsquo;s possession and, at</div>
+<div>the expense of Seller and in accordance with COMPANY&rsquo;s instructions, will promptly deliver to COMPANY all such COMPANY Confidential Information and/or Work Product.</div>
+<div><strong style={generalStyle.strong}>15. REMEDIES.</strong></div>
+<div>If Seller breaches this Agreement, COMPANY shall have all remedies available by law and at equity. For the purchase of Goods, Seller&rsquo;s sole remedy in the event of breach of this</div>
+<div>Agreement by COMPANY shall be the right to recover damages in the amount equal to the difference between market price at the time of breach and the purchase price specified in the Agreement.</div>
+<div>No alternate method of measuring damages shall apply to this transaction. Seller shall have no right to resell Goods for COMPANY&rsquo;s account in the event of wrongful rejection, revocation of</div>
+<div>acceptance, failure to make payment or reprepudiation by COMPANY and any resale so made shall be for the account of Seller.</div>
+<div><strong style={generalStyle.strong}>16. FORCE MAJEURE.</strong></div>
+<div>COMPANY shall not be liable for any failure to perform including failure to (i) accept performance of Services or, (ii) take delivery of the Goods as provided caused by</div>
+<div>circumstances beyond its control which make such performance commercially impractical including, but not limited to, acts of God, fire, flood, acts of war, government action, accident, labor</div>
+<div>difficulties or shortage, inability to obtain materials, equipment, or transportation. In the event COMPANY is so excused, either party may terminate the Agreement and COMPANY shall at its</div>
+<div>expense and risk, return any Goods received to the place of shipment.</div>
+<div><strong style={generalStyle.strong}>17. ATTORNEYS' FEES.</strong></div>
+<div>In any action to enforce this Agreement, the prevailing party shall be entitled to recover all court costs and expenses and reasonable attorneys' fees, in addition to any other</div>
+<div>relief to which it may be entitled.</div>
+<div><strong style={generalStyle.strong}>18. SEVERABILITY.</strong></div>
+<div>If any provision of this Agreement shall be deemed to be invalid, illegal or unenforceable, the validity, legality, and enforceability of the remaining provisions shall not in any way</div>
+<div>be affected or impaired thereby.</div>
+<div><strong style={generalStyle.strong}>19. LIMITATION OF LIABILITY.</strong></div>
+<div>IN NO EVENT SHALL COMPANY BE LIABLE TO SELLER OR SELLER'S ASSISTANTS, OR ANY THIRD PARTY FOR ANY INCIDENTAL, INDIRECT, SPECIAL,</div>
+<div>OR CONSEQUENTIAL DAMAGES ARISING OUT OF, OR IN CONNECTION WITH, THIS AGREEMENT, WHETHER OR NOT COMPANY WAS ADVISED OF THE POSSIBILITY OF SUCH</div>
+<div>DAMAGE, AND WHETHER OR NOT THERE IS A FAILURE OF ANY AGREED REMEDY.</div>
+<div><strong style={generalStyle.strong}>20. ASSIGNMENT; WAIVER.</strong></div>
+<div>Seller may not assign this Agreement or any of its rights or obligations under this Agreement, without the prior written consent of COMPANY. Any assignment or</div>
+<div>transfer without such written consent shall be null and void. A waiver of any default hereunder or of any term or condition of this Agreement shall not be deemed to be a continuing waiver or a waiver</div>
+<div>of any other default or any other term or condition.</div>
+<div><strong style={generalStyle.strong}>21. NONEXCLUSIVE AGREEMENT.</strong></div>
+<div>This is not an exclusive agreement. COMPANY is free to engage others to perform Services or provide Goods the same as or similar to Seller's. Seller is free</div>
+<div>to, and is encouraged to, advertise, offer, and provide Seller's Services and/or Goods to others; provided however, that Seller does not breach this Agreement.</div>
+<div><strong style={generalStyle.strong}>22. NOTICES.</strong></div>
+<div>Except for Purchase Orders which may be sent by local mail, facsimile transmission, or electronically transmitted,, all notices, and other communications hereunder shall be in writing,</div>
+<div>and shall be addressed to Seller or to an authorized COMPANY representative, and shall be considered given when (a) delivered personally, (b) sent by confirmed telex or facsimile, (c) sent by</div>
+<div>commercial overnight courier with written verification receipt, or (d) three (3) days after having been sent, postage prepaid, by first class or certified mail.</div>
+<div><strong style={generalStyle.strong}>23. SURVIVAL OF OBLIGATIONS.</strong></div>
+<div>Any obligations and duties which by their nature extend beyond the expiration or termination of this Agreement shall survive the expiration or termination of this</div>
+<div>Agreement.</div>
+<div><strong style={generalStyle.strong}>24. GOVERNING LAW.</strong></div>
+<div>This Agreement shall be construed in accordance with, and disputes shall be governed by, the laws of the Federal Republic of Nigeria excluding its conflict of law rules.</div>
+<div>Jurisdiction and venue over all controversies arising out of, or relating to, this Agreement shall be in Nigeria. The applicability of the UN Convention on Contracts for the International Sale of Goods is</div>
+<div>hereby expressly waived by the parties and it shall not apply to the terms and conditions of this Agreement.</div>
+<div><strong style={generalStyle.strong}>25. ENTIRE AGREEMENT; MODIFICATION.</strong></div>
+<div>This Agreement is the complete, final, and exclusive statement of the terms of the agreement between the parties and supersedes any and all other</div>
+<div>prior and contemporaneous negotiations and agreements, whether oral or written, between them relating to the subject matter hereof. This Agreement may not be varied, modified, altered, or</div>
+<div>amended except in writing, including a purchase order or a change order issued by COMPANY, signed by the parties. The terms and conditions of this Agreement shall prevail notwithstanding any</div>
+<div>variance with the terms and conditions of any acknowledgment or other document submitted by Seller. Notwithstanding the foregoing, this Agreement will not supersede or take the place of any</div>
+<div>written agreement which is signed by both parties and covers the same subject matter as this Agreement or its related purchase orders.</div>
+<div><strong style={generalStyle.strong}>26. COMPLIANCE WITH LAWS.</strong></div>
+<div><strong style={generalStyle.strong}>26.1 General:</strong></div>
+<div>Seller shall comply fully with all applicable federal, state, and local laws in the performance of this Agreement including, but not limited to, all applicable employment, tax, export</div>
+<div>control, and environmental laws.</div>
+<div><strong style={generalStyle.strong}>26.3 Hazardous Materials:</strong></div>
+<div>If Goods include hazardous materials, Seller represents and warrants that Seller understands the nature of any hazards associated with the manufacture, handling, and</div>
+<div>transportation of such hazardous materials</div>
+<div><strong style={generalStyle.strong}>26.4 Customs:</strong></div>
+<div>Upon COMPANY&rsquo;s request, Seller will promptly provide COMPANY with a statement of origin for all Nigerian Customs documentation for Goods wholly or partially manufactured</div>
+<div>outside of the Nigeria.</div>
+<div>
+<div><strong style={generalStyle.strong}>27. INJUNCTIVE RELIEF.</strong></div>
+<div>Seller acknowledges and agrees that the obligations and promises of Seller under this Agreement are of a unique, intellectual nature giving them particular value. Seller's</div>
+<div>breach of any of the promises contained in this Agreement will result in irreparable and continuing damage to COMPANY for which there will be no adequate remedy at law and, in the event of such</div>
+<div>breach, COMPANY will be entitled to seek injunctive relief, or a decree of specific performance.</div>
+</div>
+</div>
+
+                   
+                </div>
+
+   
+              
               </div>
             </div>
           </div>
