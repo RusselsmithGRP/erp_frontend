@@ -21,6 +21,7 @@ import Button from "../../components/CustomButtons/Button.jsx";
 import Add from "@material-ui/icons/Add";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
+import CreateIcon from "@material-ui/icons/Create";
 import PropTypes from "prop-types";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import purple from "@material-ui/core/colors/purple";
@@ -103,6 +104,21 @@ class Index extends React.Component {
             ) : (
               ""
             )}
+            {
+              <IconButton
+                style={{ marginLeft: "10px", width: "30px", height: "30px" }}
+                disabled={prop.status !== "POX0"}
+                color="secondary"
+              >
+                <Link
+                  to={`/order/update/${prop._id}`}
+                  disabled={prop.status !== "POX0"}
+                  style={{ color: "purple" }}
+                >
+                  <CreateIcon style={{ fontSize: "20px" }} />
+                </Link>
+              </IconButton>
+            }
           </div>
         )
       };

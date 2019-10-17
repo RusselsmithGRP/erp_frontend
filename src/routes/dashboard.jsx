@@ -52,6 +52,7 @@ import importRecords from "../views/importRecords/index";
 import updateVendorContract from "../views/Vendor/updateVendorContract";
 import openMarket from "../views/OpenMarket/index";
 import viewOpenMarket from "../views/OpenMarket/edit";
+import update from "../views/PurchaseOrder/update";
 
 /* import Typography from "views/Typography/Typography.jsx";
 import Icons from "views/Icons/Icons.jsx";
@@ -175,6 +176,10 @@ export const dashboardRoutes = [
   {
     path: "/order/view/:id",
     component: PurchaseOrderView
+  },
+  {
+    path: "/order/update/:id",
+    component: update
   },
   {
     path: "/changepassword",
