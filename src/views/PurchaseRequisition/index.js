@@ -59,12 +59,16 @@ class Index extends React.Component {
     prActions
       .fetchAllRequistion(this.props.user.token, docs => {
         // this.setState({ data: docs });
-        console.log(docs);
+        // console.log(docs);
         return docs;
       })
       .then(data => {
-        let newData = data.filter(doc => doc.purchaseType !== "Open Market");
-        this.setState({ data: newData });
+        let newData = data.filter(
+          doc => doc.status === "011" && doc.purchaseType !== "Open Market"
+        );
+        this.setState({ data });
+        console.log("newData:", newData);
+        console.log("Data:", data);
       });
   }
 

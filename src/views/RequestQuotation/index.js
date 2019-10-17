@@ -310,7 +310,11 @@ class Index extends React.Component {
             marginLeft: "-30%",
             width: "65%"
           }}
-          title={(this.state.pr.purchaseType === "Contract")? "Enter Price": "Request For Quote"} 
+          title={
+            this.state.pr.purchaseType === "Contract"
+              ? "Enter Price"
+              : "Request For Quote"
+          }
           onConfirm={() => this.hideAlert()}
           confirmBtnText="Click to Close"
           confirmBtnCssClass={
@@ -341,7 +345,7 @@ class Index extends React.Component {
   }
 
   render() {
-    console.log(this.state.pr, "hello")
+    console.log(this.state.pr, "hello");
     const { classes } = this.props;
     if (this.props.loader.loading) {
       return (
@@ -412,7 +416,16 @@ class Index extends React.Component {
                         </FormControl>
                       </GridItem>
                     </GridContainer>
-                    <span style={{fontSize: "11px", color: "red", fontStyle:"oblique"}}>Please select a Purchase requisition before requesting for Qoute</span>
+                    <span
+                      style={{
+                        fontSize: "11px",
+                        color: "red",
+                        fontStyle: "oblique"
+                      }}
+                    >
+                      Please select a Purchase requisition before requesting for
+                      Qoute
+                    </span>
 
                     <div className={classes.sidebar}>
                       <div className={classes.boxer}>
@@ -426,15 +439,22 @@ class Index extends React.Component {
                   </GridItem>
                   <GridItem xs={12} sm={8} md={8}>
                     <div>
-                    {(this.state.pr)?
-                      <Button
-                        color="twitter"
-                        size="sm"
-                        onClick={this.showQuoteForm}
-                        disabled={(!this.state.selectedPr)? true: false}
-                      >
-                      { (this.state.pr)?(this.state.pr.purchaseType === "Contract")? "Enter Price": "Request For Quote" : " "}
-                      </Button> : "" }
+                      {this.state.pr ? (
+                        <Button
+                          color="twitter"
+                          size="sm"
+                          onClick={this.showQuoteForm}
+                          disabled={!this.state.selectedPr ? true : false}
+                        >
+                          {this.state.pr
+                            ? this.state.pr.purchaseType === "Contract"
+                              ? "Enter Price"
+                              : "Request For Quote"
+                            : " "}
+                        </Button>
+                      ) : (
+                        ""
+                      )}
                     </div>
                     {this.state.alert}
                     {this.state.showRfq ? (

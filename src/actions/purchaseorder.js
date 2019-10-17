@@ -54,3 +54,17 @@ export function editPurchaseOrder(token, id, data, callback) {
         callback(result.ok);
     });
 }
+
+export function deletePO(token, id, callback) {
+  let m = new MiddleWare(token);
+  return m
+    .makeConnection(`/purchase/order/delete/${id}`, m.DELETE, {
+      mode: "no-cors"
+    })
+    .then(result => {
+      return result.json();
+    })
+    .then(doc => {
+      callback(doc);
+    });
+}

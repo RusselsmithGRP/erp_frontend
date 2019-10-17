@@ -78,7 +78,7 @@ class Edit extends React.Component {
       departmentname: "",
       chargeto: "",
       dateneeded: "",
-      status: "01",
+      status: "012",
       requestor: {},
       department: {}
     },
@@ -194,7 +194,7 @@ class Edit extends React.Component {
   };
   submitUpdate = () => {
     let data = this.state.data;
-    data.status = "01";
+    data.status = "013";
     prActions.updateRequisition(
       this.props.user.token,
       this.state.data._id,
@@ -264,7 +264,7 @@ class Edit extends React.Component {
     data.closeoutmethod = action;
     data.price = this.state.price;
     data.comment = this.state.comment;
-    data.status = "011";
+    data.status = "013";
 
     // console.log(data);
     prActions.editRequisition(
@@ -292,6 +292,7 @@ class Edit extends React.Component {
       data.eid = data.requestor.eid;
       const department = data.department;
       data.department = data.department._id;
+      data.departmentname = department.name;
       data.price = data.price;
       const disabled = data.status == "010" ? false : true;
       let rowArray = [];
@@ -307,6 +308,7 @@ class Edit extends React.Component {
   }
 
   render() {
+    console.log(this.state.data);
     const { classes, tableHeaderColor } = this.props;
     var today = new Date();
     var dd = today.getDate();
@@ -561,7 +563,18 @@ class Edit extends React.Component {
                       />
                     </GridItem>
                     <GridItem xs={12} sm={4} md={4}>
-                      <CustomSelect
+                      <CustomInput
+                        required
+                        id="departmentname"
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        inputProps={{
+                          disabled: true,
+                          value: this.state.data.departmentname
+                        }}
+                      />
+                      {/* <CustomSelect
                         labelText="Select"
                         id="department"
                         name="department"
@@ -570,7 +583,7 @@ class Edit extends React.Component {
                         formControlProps={{
                           style: { width: "100%", padding: "0", margin: "0" }
                         }}
-                        value={this.state.data.department}
+                        value={this.state.data.department.slug}
                         inputProps={{
                           margin: "normal",
                           disabled: this.state.disabled
@@ -582,7 +595,7 @@ class Edit extends React.Component {
                             {option.name}
                           </MenuItem>
                         ))}
-                      </CustomSelect>
+                      </CustomSelect> */}
                     </GridItem>
                     <GridItem xs={12} sm={4} md={4}>
                       <CustomInput

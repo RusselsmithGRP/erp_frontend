@@ -191,12 +191,12 @@ class Quote extends React.Component {
       accepted: true,
       rejection_reason: "",
       open: false,
-      openkey:"",
-      meetQuality:"",
-      meetSpec:"",
-      rfqTime:"",
-      onTime:"",
-      vendorRating:{}
+      openkey: "",
+      meetQuality: "",
+      meetSpec: "",
+      rfqTime: "",
+      onTime: "",
+      vendorRating: {}
     };
   }
   hideAlert() {
@@ -220,7 +220,7 @@ class Quote extends React.Component {
     const data = {};
     data.accepted = this.state.accepted;
     data.id = this.props.quotes[0]._id;
-/*     data.meetDefineSpecification = this.state.meetDefineSpecification;
+    /*     data.meetDefineSpecification = this.state.meetDefineSpecification;
     data.meetQuality = this.state.meetQuality;
     data.meetRfqResponseTime = this.state.meetRfqResponseTime;
     data.onTimeDelivery = this.state.onTimeDelivery;
@@ -261,7 +261,7 @@ class Quote extends React.Component {
         });
       }
     });
-  /*   vendorActions.getVendorEvaluation(this.props.user.token, this.props.quotes[0].vendor._id, (result)=>{
+    /*   vendorActions.getVendorEvaluation(this.props.user.token, this.props.quotes[0].vendor._id, (result)=>{
       this.setState({vendorRating: result});
     }) */
   };
@@ -299,147 +299,155 @@ class Quote extends React.Component {
       });
       return [
         prop.no,
-        (prop.vendor)? prop.vendor.general_info.company_name: "",
+        prop.vendor ? prop.vendor.general_info.company_name : "",
         dt.toISOString().split("T")[0],
         status,
-        <Button
-          color="yellowgreen"
-          onClick={() => {
-            this.showQuoteDetails(key);
-          }}
-        >
-          View
-        </Button>,
-        (this.state.openkey==key)?
-        <Modal className={this.props.classes.pr} open={this.state.open}>
-          {prop.lineitems.length > 0 ? (
-            <div className={classes.positionCenter}>
-              <Card>
-                <CardHeader>
-                  <h3>Quote for { (prop.vendor)? prop.vendor.general_info.company_name: ""}</h3>
-                  <Close
-                    onClick={() => this.hideAlert()}
-                    className={classes.closeButtonSetting}
-                  />
-                </CardHeader>
-                <CardBody>
-                  <TableCore className={classes.table}>
-                    <TableHead
-                      className={classes.tableHeaderColor}
-                      style={{
-                        marginTop: "10px",
-                        color: "blue",
-                        borderBottomColor: "#333",
-                        borderBottomStyle: "solid",
-                        borderBottomWidth: "1px"
-                      }}
-                    >
-                      <TableRow>
-                        <TableCell
-                          className={
-                            classes.tableCell +
-                            " " +
-                            classes.tableHeadCell +
-                            " " +
-                            classes.td
-                          }
-                          style={{ color: "blue" }}
+        prop.quoteType === "contract" ? (
+          " "
+        ) : (
+          <Button
+            color="yellowgreen"
+            onClick={() => {
+              this.showQuoteDetails(key);
+            }}
+          >
+            View
+          </Button>
+        ),
+        this.state.openkey == key ? (
+          <Modal className={this.props.classes.pr} open={this.state.open}>
+            {prop.lineitems.length > 0 ? (
+              <div className={classes.positionCenter}>
+                <Card>
+                  <CardHeader>
+                    <h3>
+                      Quote for{" "}
+                      {prop.vendor ? prop.vendor.general_info.company_name : ""}
+                    </h3>
+                    <Close
+                      onClick={() => this.hideAlert()}
+                      className={classes.closeButtonSetting}
+                    />
+                  </CardHeader>
+                  <CardBody>
+                    <TableCore className={classes.table}>
+                      <TableHead
+                        className={classes.tableHeaderColor}
+                        style={{
+                          marginTop: "10px",
+                          color: "blue",
+                          borderBottomColor: "#333",
+                          borderBottomStyle: "solid",
+                          borderBottomWidth: "1px"
+                        }}
+                      >
+                        <TableRow>
+                          <TableCell
+                            className={
+                              classes.tableCell +
+                              " " +
+                              classes.tableHeadCell +
+                              " " +
+                              classes.td
+                            }
+                            style={{ color: "blue" }}
+                          >
+                            Description
+                          </TableCell>
+                          <TableCell
+                            className={
+                              classes.tableCell +
+                              " " +
+                              classes.tableHeadCell +
+                              " " +
+                              classes.td
+                            }
+                            style={{ color: "blue", width: "70px" }}
+                          >
+                            Qty
+                          </TableCell>
+                          <TableCell
+                            className={
+                              classes.tableCell +
+                              " " +
+                              classes.tableHeadCell +
+                              " " +
+                              classes.td
+                            }
+                            style={{ color: "blue" }}
+                          >
+                            UOM
+                          </TableCell>
+                          <TableCell
+                            className={
+                              classes.tableCell +
+                              " " +
+                              classes.tableHeadCell +
+                              " " +
+                              classes.td
+                            }
+                            style={{ color: "blue" }}
+                          >
+                            Price
+                          </TableCell>
+                          <TableCell
+                            className={
+                              classes.tableCell +
+                              " " +
+                              classes.tableHeadCell +
+                              " " +
+                              classes.td
+                            }
+                            style={{ color: "blue" }}
+                          >
+                            Is Available
+                          </TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>{tableBody}</TableBody>
+                    </TableCore>
+                    <br />
+                    <Grid container>
+                      <GridItem xs={12} sm={3} md={3}>
+                        <label>Accept or Reject</label>
+                        <select
+                          id="accepted"
+                          name="accepted"
+                          required
+                          labelText="Accept / Reject"
+                          className={this.props.classes.select}
+                          onChange={this.handleChangeSelect}
                         >
-                          Description
-                        </TableCell>
-                        <TableCell
-                          className={
-                            classes.tableCell +
-                            " " +
-                            classes.tableHeadCell +
-                            " " +
-                            classes.td
-                          }
-                          style={{ color: "blue", width: "70px" }}
-                        >
-                          Qty
-                        </TableCell>
-                        <TableCell
-                          className={
-                            classes.tableCell +
-                            " " +
-                            classes.tableHeadCell +
-                            " " +
-                            classes.td
-                          }
-                          style={{ color: "blue" }}
-                        >
-                          UOM
-                        </TableCell>
-                        <TableCell
-                          className={
-                            classes.tableCell +
-                            " " +
-                            classes.tableHeadCell +
-                            " " +
-                            classes.td
-                          }
-                          style={{ color: "blue" }}
-                        >
-                          Price
-                        </TableCell>
-                        <TableCell
-                          className={
-                            classes.tableCell +
-                            " " +
-                            classes.tableHeadCell +
-                            " " +
-                            classes.td
-                          }
-                          style={{ color: "blue" }}
-                        >
-                          Is Available
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {tableBody}
-                    </TableBody>
-                  </TableCore>
-                  <br />
-                  <Grid container>
-                    <GridItem xs={12} sm={3} md={3}>
-                    <label>Accept or Reject</label>
-                      <select
-                        id="accepted"
-                        name="accepted"
-                        required
-                        labelText="Accept / Reject" 
-                        className={this.props.classes.select}
-                        onChange={this.handleChangeSelect}>
-                        
                           {yesNo.map(option => (
                             <option
                               value={option.value}
                               key={option.value}
-                              className={this.props.classes.option}>
-                                {option.label}
+                              className={this.props.classes.option}
+                            >
+                              {option.label}
                             </option>
                           ))}
-                    </select>
-                    </GridItem>
-                    <GridItem xs={12} sm={9} md={9}>
-                      {this.rejectionInputField(this.state.accepted)}
-                    </GridItem>
-                  </Grid>
-                </CardBody>
-                <CardFooter>
-                  <Button color="yellowgreen" onClick={this.submitAccepted}>
-                    submit
-                  </Button>
-                </CardFooter>
-              </Card>
-            </div>
-          ) : (
-            ""
-          )}
-        </Modal>
-        : ""  
+                        </select>
+                      </GridItem>
+                      <GridItem xs={12} sm={9} md={9}>
+                        {this.rejectionInputField(this.state.accepted)}
+                      </GridItem>
+                    </Grid>
+                  </CardBody>
+                  <CardFooter>
+                    <Button color="yellowgreen" onClick={this.submitAccepted}>
+                      submit
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </div>
+            ) : (
+              ""
+            )}
+          </Modal>
+        ) : (
+          ""
+        )
       ];
     });
     return (
@@ -449,9 +457,11 @@ class Quote extends React.Component {
             <li className={classes.liStyle}>
               Requestor: <br />
               <span className={classes.ap}>
-                { (this.props.pr.requestor)?this.props.pr.requestor.firstname +
-                  " " +
-                  this.props.pr.requestor.lastname : " "}
+                {this.props.pr.requestor
+                  ? this.props.pr.requestor.firstname +
+                    " " +
+                    this.props.pr.requestor.lastname
+                  : " "}
               </span>
             </li>
             <li className={classes.liStyle}>
@@ -484,7 +494,7 @@ class Quote extends React.Component {
               Status:
               <br />
               <span className={classes.ap}>
-              {Status.getStatus(this.props.pr.status)}
+                {Status.getStatus(this.props.pr.status)}
               </span>
             </li>
           </ul>

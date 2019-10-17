@@ -19,11 +19,13 @@ import CardIcon from "components/Card/CardIcon.jsx";
 import CardHeader from "components/Card/CardHeader.jsx";
 import Button from "../../components/CustomButtons/Button.jsx";
 import Add from "@material-ui/icons/Add";
+import IconButton from "@material-ui/core/IconButton";
+import DeleteIcon from "@material-ui/icons/Delete";
 import PropTypes from "prop-types";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import purple from "@material-ui/core/colors/purple";
 import * as poActions from "../../actions/purchaseorder";
-import { Redirect } from "react-router";
+import { Redirect } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { cardTitle } from "assets/jss/material-dashboard-pro-react.jsx";
 import generalStyle from "assets/jss/material-dashboard-pro-react/generalStyle.jsx";
@@ -41,7 +43,8 @@ class Index extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: []
+      data: [],
+      doc: {}
     };
   }
 
@@ -56,6 +59,19 @@ class Index extends React.Component {
       //vendorActions.findAllVendors(this.props, this.props.match.params.type);
     }
   }
+
+  deletePO = id => {
+    if (window.confirm("Do you really want to delete?")) {
+      poActions.deletePO(this.props.user.token, id, doc => {
+        this.setState({
+          doc
+        });
+      });
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+    }
+  };
   /**
    * @author Idowu
    * @summary Changed processJson to arrow function
@@ -67,7 +83,7 @@ class Index extends React.Component {
       let date = new Date(prop.created);
       return {
         id: prop.no,
-        vendor: (prop.vendor)? prop.vendor.general_info.company_name: " ",
+        vendor: prop.vendor ? prop.vendor.general_info.company_name : " ",
         order_date: date.toISOString().split("T")[0],
         credit_terms: prop.credit_terms,
         status: Status.getStatus(prop.status),
@@ -75,6 +91,18 @@ class Index extends React.Component {
           // we've added some custom button actions
           <div className="actions-right">
             <Link to={"/order/view/" + prop._id}>View</Link>
+            {this.props.user.role === "admin" ? (
+              <IconButton
+                color={"secondary"}
+                aria-label="delete"
+                style={{ marginLeft: "10px", width: "30px", height: "30px" }}
+                onClick={() => this.deletePO(prop._id)}
+              >
+                <DeleteIcon style={{ fontSize: "20px" }} />
+              </IconButton>
+            ) : (
+              ""
+            )}
           </div>
         )
       };
