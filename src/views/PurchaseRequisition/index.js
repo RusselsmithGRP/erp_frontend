@@ -70,7 +70,7 @@ class Index extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (this.props.match.params.type !== prevProps.match.params.type) {
-      //vendorActions.findAllVendors(this.props, this.props.match.params.type);
+      // vendorActions.findAllVendors(this.props, this.props.match.params.type);
     }
   }
 
@@ -86,8 +86,8 @@ class Index extends React.Component {
       arry.push(
         row._id,
         row.requisitionno,
-         (row.requestor != null) ? row.requestor.firstname: "",
-         (row.requestor != null) ? row.requestor.lastname: "",
+        row.requestor != null ? row.requestor.firstname : "",
+        row.requestor != null ? row.requestor.lastname : "",
         row.department.name,
         row.status
       );
