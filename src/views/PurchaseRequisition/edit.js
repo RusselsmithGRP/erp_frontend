@@ -247,9 +247,7 @@ class Edit extends React.Component {
   }
 
   render() {
-    console.log(this.state.data.department, "data");
-    console.log(this.props, "props");
-
+    // console.log(this.state.data.requestor);
     const { classes, tableHeaderColor } = this.props;
     var today = new Date();
     var dd = today.getDate();
