@@ -110,7 +110,6 @@ class Index extends React.Component {
   };
 
   render() {
-    console.log(this.state.data);
     const { classes } = this.props;
     if (this.props.loader.loading) {
       return (
