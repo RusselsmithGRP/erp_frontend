@@ -731,7 +731,7 @@ class Edit extends React.Component {
                       <Grid container>
                         <GridItem xs={12} sm={12} md={12}>
                           <CustomInput
-                            labelText="Reason"
+                            labelText="Reason *"
                             id="reason"
                             required
                             formControlProps={{
