@@ -55,6 +55,13 @@ export function editPurchaseOrder(token, id, data, callback) {
     });
 }
 
+/**
+ * @author Idowu
+ * @param {*} token
+ * @param {*} id
+ * @param {*} callback
+ * @summary Delete PO
+ */
 export function deletePO(token, id, callback) {
   let m = new MiddleWare(token);
   return m
@@ -68,3 +75,15 @@ export function deletePO(token, id, callback) {
       callback(doc);
     });
 }
+
+/**
+ * @author Idowu
+ * @summary Get PO Info for update
+ */
+export const getPOInfo = (token, id, callback) => {
+  let m = new MiddleWare(token);
+  return m
+    .makeConnection(`/purchase/order/info/${id}`, m.GET)
+    .then(result => result.json())
+    .then(doc => callback(doc));
+};

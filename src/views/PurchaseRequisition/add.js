@@ -198,8 +198,8 @@ class PurchaseRequisition extends React.Component {
   renderRedirect = () => {
     if (this.state.redirect == "yes") {
       setTimeout(function() {
-     //return <Redirect to={"/requisition"}/>
-      window.location.href = "/requisition";
+        //return <Redirect to={"/requisition"}/>
+        window.location.href = "/requisition";
       }, 3000);
     }
   };
@@ -338,7 +338,7 @@ class PurchaseRequisition extends React.Component {
     // console.log(this.state.departments, "departments");
     // console.log(this.state.vendors);
     // console.log(this.state.data.justification);
-   // console.log(this.state.data.purchaseType);
+    // console.log(this.state.data.purchaseType);
     // console.log(this.props.user);
 
     const { classes, tableHeaderColor } = this.props;
@@ -635,6 +635,7 @@ class PurchaseRequisition extends React.Component {
                           >
                             Select Vendor
                           </InputLabel>
+
                           <Select
                             MenuProps={{
                               className: classes.selectMenu

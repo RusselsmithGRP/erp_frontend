@@ -59,3 +59,13 @@ export function updateRequisition(token, id, data, callback) {
         callback(result.ok);
     });
 }
+
+export function resubmitereq(id, data, callback) {
+  let m = new MiddleWare();
+  return m
+    .makeConnection(`/purchase/requisition/resubmitreq/${id}`, "PATCH", data, {
+      mode: "no-cors"
+    })
+    .then(result => result.json())
+    .then(doc => callback(doc));
+}
