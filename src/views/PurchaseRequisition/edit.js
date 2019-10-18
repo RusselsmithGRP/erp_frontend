@@ -77,7 +77,9 @@ class Edit extends React.Component {
       dateneeded: "",
       status: "01",
       requestor: {},
-      department: {}
+      department: {},
+      purchaseType: "",
+      justification: ""
     },
     lineItems: [],
     startDate: moment(),
@@ -233,6 +235,8 @@ class Edit extends React.Component {
       data.eid = data.requestor.eid;
       const department = data.department;
       data.department = data.department.name;
+      data.purchaseType = data.purchaseType;
+      data.justification = data.justification;
       const disabled = data.status == "010" ? false : true;
       let rowArray = [];
 
@@ -431,7 +435,19 @@ class Edit extends React.Component {
                         </Select>
                       </FormControl>
                     </GridItem>
-                    <GridItem xs={12} sm={12} md={4} />
+                    <GridItem xs={12} sm={12} md={4}>
+                      <CustomInput
+                        labelText="Purchase Type"
+                        id="purchaseType"
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        inputProps={{
+                          disabled: true,
+                          value: this.state.data.purchaseType
+                        }}
+                      />
+                    </GridItem>
                     <GridItem xs={12} sm={12} md={4} style={generalStyle.text2}>
                       Requisition No: {this.state.data.requisitionno}
                     </GridItem>
@@ -585,6 +601,22 @@ class Edit extends React.Component {
                         }}
                       />
                     </GridItem>
+                    {this.state.data.purchaseType === "Sole Source" && (
+                      <GridItem xs={12} sm={4} md={4}>
+                        <CustomInput
+                          labelText="Justification"
+                          id="justification"
+                          required
+                          formControlProps={{
+                            fullWidth: true
+                          }}
+                          inputProps={{
+                            value: this.state.data.justification,
+                            disabled: true
+                          }}
+                        />
+                      </GridItem>
+                    )}
                   </Grid>
                   <br />
                   <div style={generalStyle.aboveTable}>
