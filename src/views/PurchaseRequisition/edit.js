@@ -252,6 +252,8 @@ class Edit extends React.Component {
 
   render() {
     // console.log(this.state.data.requestor);
+    console.log(this.props.user._id === this.state.department.hod);
+    console.log("Type:", this.props.user.type);
     const { classes, tableHeaderColor } = this.props;
     var today = new Date();
     var dd = today.getDate();
@@ -725,7 +727,8 @@ class Edit extends React.Component {
                 ) : (
                   ""
                 )} */}
-                {this.props.user._id == this.state.department.hod ? (
+                {/* this.props.user._id === this.state.department.hod */}
+                {this.props.user.type === "hod" ? (
                   <CardFooter>
                     {this.state.showReason ? (
                       <Grid container>
