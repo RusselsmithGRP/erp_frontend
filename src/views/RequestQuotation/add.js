@@ -70,7 +70,8 @@ class Add extends React.Component {
     lineItems:[],
     alert: null,
     show: false,
-    price: ""
+    price: "",
+    contractedVendor: ""
   };
 
   componentDidMount(){
@@ -78,11 +79,16 @@ class Add extends React.Component {
     for(var i = 0; i < this.props.pr.lineitems.length; i++){
       rowArray.push(i);
     }
+    let vendorID = this.props.pr.vendor;
     this.setState({rowArray:rowArray, lineItems : this.props.pr.lineitems});
     genericActions.fetchAll("departments", this.props.user.token, (items)=>{
       this.setState({departments : items});
     });
     vendorActions.searchVendor(this.props.user.token,"", (vendors)=>{
+      let myVendors = vendors.filter((t) => t._id ==  vendorID
+      );
+      this.setState({ contractedVendor: myVendors[0].general_info.company_name});
+
       let options = vendors.filter((v)=>{
           return (typeof v.general_info !== "undefined")
       }).map(f=>{
@@ -90,6 +96,7 @@ class Add extends React.Component {
       })
       this.setState({options});
     })
+
   }
 
   handleLineItems = i =>{
@@ -121,7 +128,7 @@ class Add extends React.Component {
       });
       if (this.props.pr.purchaseType === "Contract") {
         let vendor = [{
-          value: this.props.pr.vendor._id
+          value: this.props.pr.vendor
         }];
         let items = [];
         let item = this.props.pr.lineitems[0];
@@ -165,6 +172,7 @@ class Add extends React.Component {
     }
     
   }
+
 
   render() {
     const { classes, tableHeaderColor } = this.props;
@@ -243,7 +251,7 @@ class Add extends React.Component {
                         <span style={generalStyle.textLabel}>
                         Vendor:
                       </span>
-                      <span style={generalStyle.text}>{this.props.pr.vendor.general_info.company_name} </span>
+                      <span style={generalStyle.text}>{this.state.contractedVendor} </span>
                      
                         </GridItem> : ""}
                       </Grid>

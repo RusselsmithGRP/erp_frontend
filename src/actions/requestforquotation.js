@@ -63,7 +63,6 @@ export function submitQuotation(token, data, callback){
     .then(response => response.json())
     .then(
         (result)=>{
-            console.log(result, "result")
             if(result.isOk ) callback(result.data);
     });   
 }
@@ -85,6 +84,19 @@ export function fetchUniqueVendorFromQuote(token, callback){
             //props.dispatch(loadAction.LoadingSuccess());
     }); 
 }
+
+export function searchVendor(token, callback) {
+    let m = new MiddleWare(token);
+    ///props.dispatch(loadAction.Loading());
+    return m
+      .makeConnection("/purchase/quotation/vendors/search/", m.GET)
+      .then(response => {
+        return response.json();
+      })
+      .then(responseJson => {
+        callback(responseJson);
+      });
+  }
 
 export function fetchAllQuoteforVendor(token, id, callback){
     let m = new MiddleWare(token);   

@@ -302,7 +302,7 @@ class Quote extends React.Component {
         (prop.vendor)? prop.vendor.general_info.company_name: "",
         dt.toISOString().split("T")[0],
         status,
-        <Button
+        (prop.quoteType === "contract")? " " :<Button
           color="yellowgreen"
           onClick={() => {
             this.showQuoteDetails(key);
