@@ -800,7 +800,16 @@ class Edit extends React.Component {
                         </GridItem>
 
                         <GridItem xs={12} sm={6} md={6}>
-                          <Button color="yellowgreen" onClick={this.submitForm}>
+                          <Button
+                            color="yellowgreen"
+                            onClick={this.submitForm}
+                            disabled={
+                              this.state.action === "disapprove" &&
+                              this.state.reason.length === 0
+                                ? true
+                                : false
+                            }
+                          >
                             Submit
                           </Button>
                         </GridItem>
