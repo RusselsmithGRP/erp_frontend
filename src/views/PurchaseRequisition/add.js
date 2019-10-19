@@ -12,6 +12,9 @@ import CardFooter from "components/Card/CardFooter.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
+
+import SelectDrop from "react-select";
+
 import CustomInput from "components/CustomInput/CustomInput.jsx";
 import CustomSelect from "components/CustomInput/CustomSelect.jsx";
 import Table from "@material-ui/core/Table";
@@ -693,6 +696,7 @@ class PurchaseRequisition extends React.Component {
                             >
                               Select Vendor
                             </InputLabel>
+
                             <Select
                               MenuProps={{
                                 className: classes.selectMenu

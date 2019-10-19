@@ -12,7 +12,7 @@ import CardBody from "components/Card/CardBody.jsx";
 import CardFooter from "components/Card/CardFooter.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import InputLabel from "@material-ui/core/InputLabel";
-//import Select from "@material-ui/core/Select";
+import Select from "@material-ui/core/Select";
 import CustomInput from "components/CustomInput/CustomInput.jsx";
 import CustomSelect from "components/CustomInput/CustomSelect.jsx";
 import Table from "@material-ui/core/Table";
@@ -23,7 +23,7 @@ import TableBody from "@material-ui/core/TableBody";
 import FormLabel from "@material-ui/core/FormLabel";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
-import Select from "react-select";
+// import Select from "react-select";
 
 import Check from "@material-ui/icons/Check";
 import { connect } from "react-redux";
