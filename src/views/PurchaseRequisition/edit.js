@@ -125,7 +125,8 @@ class Edit extends React.Component {
         disabled,
         department,
         departmentId: department._id,
-        reason
+        reason,
+        vendor: data.vendor
       });
     });
     genericActions.fetchAll("departments", this.props.user.token, items => {
