@@ -34,6 +34,8 @@ import * as locationAction from "../../actions/location";
 import Notification from "views/Notifications/Index.jsx";
 import * as Util from "../../utility/Util";
 import * as currencies from "../../utility/Currencies.js";
+import * as companyName from "../../utility/companyName";
+import * as vendorActions from 'actions/vendor.js';
 
 const styles = theme => ({
   ...tableStyle,
@@ -58,6 +60,7 @@ class Add extends React.Component {
       lineitems: []
     },
     vendors: [],
+    allVendors: [],
     quotes: [],
     table_data: [],
     checkeditems: [],
@@ -81,7 +84,6 @@ class Add extends React.Component {
 
   handleChange = event => {
     let data = this.state.data;
-    //console.log(event.target, "target")
     data[[event.target.name]] = event.target.value;
     this.setState({
       data: data
@@ -204,6 +206,7 @@ class Add extends React.Component {
     this.calcPrice(name, this.state.cummulativeprice);
   };
 
+
   calcPrice = (name, currentPrice) => {
     const grandTotal = currentPrice;
     let data = this.state.data;
@@ -240,20 +243,29 @@ class Add extends React.Component {
   };
 
   componentDidMount() {
-    rfqActions.fetchUniqueVendorFromQuote(this.props.user.token, vendors => {
-      this.setState({ vendors });
-    });
+    // rfqActions.fetchUniqueVendorFromQuote(this.props, vendors => {
+    //   //this.setState({ vendors });
+
+    // });
     locationAction.getLocation(this.props, json => {
       this.setState({ locations: json });
     });
+    rfqActions.searchVendor(this.props.user.token, (vendors)=>{
+     this.setState({vendors});
+    }) 
+
+    vendorActions.searchVendor(this.props.user.token,"", (allVendors)=>{
+      this.setState({allVendors});
+    })
   }
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.isvatable != this.state.isvatable) {
-      this.calcPrice("isvatable", this.state.cummulativeprice);
-    }
-  }
+
+
+  // componentDidUpdate(prevProps, prevState) {
+  //   if (prevState.isvatable != this.state.isvatable) {
+  //     this.calcPrice("isvatable", this.state.cummulativeprice);
+  //   }
+  // }
   render() {
-    console.log(this.state.data.vendor, "state")
 
     const { classes, tableHeaderColor } = this.props;
 
@@ -307,10 +319,10 @@ class Add extends React.Component {
                       >
                         {this.state.vendors.map(option => (
                           <MenuItem
-                            key={option.vendor._id}
-                            value={option.vendor._id}
+                            key={option.vendor}
+                            value={option.vendor}
                           >
-                            {option.vendor.general_info.company_name}
+                            {(option.vendor && this.state.allVendors)? companyName.getVendor(option.vendor, this.state.allVendors): ''} 
                           </MenuItem>
                         ))}
                       </CustomSelect>

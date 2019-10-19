@@ -70,8 +70,7 @@ class Add extends React.Component {
     alert: null,
     show: false,
     price: "",
-    contractedVendor: "",
-    options: []
+    contractedVendor: ""
   };
 
   componentDidMount() {
@@ -172,24 +171,54 @@ class Add extends React.Component {
               });
           }
         );
-      } else alert("Please Enter Price");
-    } else {
-      rfqActions.submitQuotation(
-        this.props.user.token,
-        { items: items, vendors: this.state.selectedOption, pr: this.props.pr },
-        isOk => {
-          if (isOk) {
-            this.setState({
-              message: "RFQ succesfully sent to vendor",
-              error: false
-            });
-          } else
-            this.setState({
-              message: "An error occur while sending RFQ.",
-              error: true
-            });
+      }
+      if (this.props.pr.purchaseType === "Contract") {
+        let vendor = [
+          {
+            value: this.props.pr.vendor
+          }
+        ];
+        let items = [];
+        let item = this.props.pr.lineitems[0];
+        item.price = this.state.price;
+        item.description = item.itemdescription;
+        item.currency = "0";
+        items.push(item);
+        let data = { items };
+        if (this.state.price) {
+          rfqActions.submitQuotation(
+            this.props.user.token,
+            {
+              items: items,
+              vendors: vendor,
+              type: "contract",
+              price: this.state.price,
+              pr: this.props.pr
+            },
+            quote => {
+              if (quote) {
+                rfqActions.submitVendorQuote(
+                  this.props.user.token,
+                  quote._id,
+                  data,
+                  docs => {
+                    if (docs) {
+                      this.setState({
+                        message: "Price entered successfully.",
+                        error: false
+                      });
+                    }
+                  }
+                );
+              } else
+                this.setState({
+                  message: "An error occur while sending RFQ.",
+                  error: true
+                });
+            }
+          );
         }
-      );
+      }
     }
   };
 
@@ -273,6 +302,9 @@ class Add extends React.Component {
                   {this.props.pr.purchaseType === "Contract" ? (
                     <GridItem xs={12} sm={12} md={12} lg={12}>
                       <span style={generalStyle.textLabel}>Vendor:</span>
+                      <span style={generalStyle.text}>
+                        {this.state.contractedVendor}{" "}
+                      </span>
                       <span style={generalStyle.text}>
                         {this.state.contractedVendor}{" "}
                       </span>
