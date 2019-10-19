@@ -302,7 +302,6 @@ class Quote extends React.Component {
         prop.vendor ? prop.vendor.general_info.company_name : "",
         dt.toISOString().split("T")[0],
         status,
-<<<<<<< HEAD
         prop.quoteType === "contract" ? (
           " "
         ) : (
@@ -418,98 +417,6 @@ class Quote extends React.Component {
                           labelText="Accept / Reject"
                           className={this.props.classes.select}
                           onChange={this.handleChangeSelect}
-=======
-        (prop.quoteType === "contract")? " " :<Button
-          color="yellowgreen"
-          onClick={() => {
-            this.showQuoteDetails(key);
-          }}
-        >
-          View
-        </Button>,
-        (this.state.openkey==key)?
-        <Modal className={this.props.classes.pr} open={this.state.open}>
-          {prop.lineitems.length > 0 ? (
-            <div className={classes.positionCenter}>
-              <Card>
-                <CardHeader>
-                  <h3>Quote for { (prop.vendor)? prop.vendor.general_info.company_name: ""}</h3>
-                  <Close
-                    onClick={() => this.hideAlert()}
-                    className={classes.closeButtonSetting}
-                  />
-                </CardHeader>
-                <CardBody>
-                  <TableCore className={classes.table}>
-                    <TableHead
-                      className={classes.tableHeaderColor}
-                      style={{
-                        marginTop: "10px",
-                        color: "blue",
-                        borderBottomColor: "#333",
-                        borderBottomStyle: "solid",
-                        borderBottomWidth: "1px"
-                      }}
-                    >
-                      <TableRow>
-                        <TableCell
-                          className={
-                            classes.tableCell +
-                            " " +
-                            classes.tableHeadCell +
-                            " " +
-                            classes.td
-                          }
-                          style={{ color: "blue" }}
-                        >
-                          Description
-                        </TableCell>
-                        <TableCell
-                          className={
-                            classes.tableCell +
-                            " " +
-                            classes.tableHeadCell +
-                            " " +
-                            classes.td
-                          }
-                          style={{ color: "blue", width: "70px" }}
-                        >
-                          Qty
-                        </TableCell>
-                        <TableCell
-                          className={
-                            classes.tableCell +
-                            " " +
-                            classes.tableHeadCell +
-                            " " +
-                            classes.td
-                          }
-                          style={{ color: "blue" }}
-                        >
-                          UOM
-                        </TableCell>
-                        <TableCell
-                          className={
-                            classes.tableCell +
-                            " " +
-                            classes.tableHeadCell +
-                            " " +
-                            classes.td
-                          }
-                          style={{ color: "blue" }}
-                        >
-                          Price
-                        </TableCell>
-                        <TableCell
-                          className={
-                            classes.tableCell +
-                            " " +
-                            classes.tableHeadCell +
-                            " " +
-                            classes.td
-                          }
-                          style={{ color: "blue" }}
->>>>>>> feature-purchase-requisition
                         >
                           {yesNo.map(option => (
                             <option
