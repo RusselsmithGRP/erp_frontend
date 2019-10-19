@@ -86,17 +86,67 @@ class Edit extends React.Component {
     startDate: moment(),
     departments: [],
     action: "",
-    reason: "",
+
     message: "",
     expenseheaders: [],
     disabled: true,
     department: {},
+    departmentId: "",
     redirect: "",
     message: "",
     vendors: [],
     isAllowed: false,
-    vendor: ""
+    vendor: "",
+    reason: ""
   };
+
+  componentDidMount() {
+    const id = this.props.match.params.id;
+    prActions.findRequisitionById(this.props.user.token, id, data => {
+      let reason;
+      data.requestedby =
+        data.requestor.firstname + " " + data.requestor.lastname;
+      data.eid = data.requestor.eid;
+      const department = data.department;
+      data.department = data.department.name;
+      data.purchaseType = data.purchaseType;
+      data.justification = data.justification;
+      const disabled = data.status == "010" ? false : true;
+      let rowArray = [];
+      if (data.reason) {
+        reason = data.reason;
+      } else {
+        reason = "";
+      }
+
+      this.setState({
+        data,
+        lineItems: data.lineitems,
+        disabled,
+        department,
+        departmentId: department._id,
+        reason
+      });
+    });
+    genericActions.fetchAll("departments", this.props.user.token, items => {
+      this.setState({ departments: items });
+    });
+    genericActions.fetchAll("expenseheader", this.props.user.token, items => {
+      this.setState({ expenseheaders: items });
+    });
+    genericActions.fetchAll("vendors", this.props.user.token, vendors => {
+      this.setState({ vendors });
+      this.state.vendors.map((vendor, i) => {
+        vendor.contracts.map((v, i) => {
+          v.associatedDept === this.props.user.department._id.toString()
+            ? this.setState({
+                isAllowed: true
+              })
+            : "";
+        });
+      });
+    });
+  }
 
   handleAction = e => {
     const action = e.target.value;
@@ -215,12 +265,32 @@ class Edit extends React.Component {
     );
   };
 
+  handleResubmit = e => {
+    // e.preventDefault();
+    let { data, departmentId } = this.state;
+    data.status = "01";
+    data.vendor = this.state.vendor;
+    data.department = departmentId;
+
+    prActions.resubmitereq(this.props.user.token, data._id, data, doc => {
+      console.log(doc.success);
+      if (doc.success === true) {
+        this.setState({
+          message: "Purchase requisition resubmitted successfully",
+          error: false
+        });
+        this.props.history.push("/requisition");
+      }
+    });
+  };
+
   submitForm = e => {
     let data = {};
     let message = "";
     if (this.state.action == "approve") {
       data.status = "011";
       message = "Purchase requisition approved.";
+      data.reason = "";
     } else {
       data.status = "010";
       data.reason = this.state.reason;
@@ -248,58 +318,11 @@ class Edit extends React.Component {
     }
   };
 
-  handleResubmit = e => {
-    // e.preventDefault();
-    let { data } = this.state;
-    data.status = "01";
-    data.vendor = this.state.vendor;
-    console.log(data);
-    prActions.resubmitereq(data._id, data, doc => {
-      if (doc.success === true) {
-        this.props.history.push("/requisition");
-      }
-    });
-  };
-
-  componentDidMount() {
-    const id = this.props.match.params.id;
-    prActions.findRequisitionById(this.props.user.token, id, data => {
-      data.requestedby =
-        data.requestor.firstname + " " + data.requestor.lastname;
-      data.eid = data.requestor.eid;
-      const department = data.department;
-      data.department = data.department.name;
-      data.purchaseType = data.purchaseType;
-      data.justification = data.justification;
-      const disabled = data.status == "010" ? false : true;
-      let rowArray = [];
-
-      this.setState({ data, lineItems: data.lineitems, disabled, department });
-    });
-    genericActions.fetchAll("departments", this.props.user.token, items => {
-      this.setState({ departments: items });
-    });
-    genericActions.fetchAll("expenseheader", this.props.user.token, items => {
-      this.setState({ expenseheaders: items });
-    });
-    genericActions.fetchAll("vendors", this.props.user.token, vendors => {
-      this.setState({ vendors });
-      this.state.vendors.map((vendor, i) => {
-        vendor.contracts.map((v, i) => {
-          v.associatedDept === this.props.user.department._id.toString()
-            ? this.setState({
-                isAllowed: true
-              })
-            : "";
-        });
-      });
-    });
-  }
-
   render() {
     // console.log(this.state.data.requestor);
-    console.log(this.props.user._id === this.state.department.hod);
     console.log("Type:", this.props.user.type);
+    console.log(typeof this.state.reason);
+
     const { classes, tableHeaderColor } = this.props;
     var today = new Date();
     var dd = today.getDate();
@@ -987,7 +1010,7 @@ class Edit extends React.Component {
                             }}
                             inputProps={{
                               name: "reason",
-                              value: this.state.data.reason,
+                              value: this.state.reason,
                               onChange: this.handleFormChange
                             }}
                           />
@@ -1067,7 +1090,7 @@ class Edit extends React.Component {
                 ) : (
                   ""
                 )}
-                {this.state.data.requestor._id &&
+                {this.state.data.requestor._id === this.props.user._id &&
                 Status.getStatus(this.state.data.status) === "HOD DECLINED" ? (
                   <div>
                     <CardFooter>

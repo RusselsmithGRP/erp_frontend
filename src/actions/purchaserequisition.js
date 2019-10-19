@@ -60,12 +60,13 @@ export function updateRequisition(token, id, data, callback) {
     });
 }
 
-export function resubmitereq(id, data, callback) {
-  let m = new MiddleWare();
+export function resubmitereq(token, id, data, callback) {
+  let m = new MiddleWare(token);
   return m
-    .makeConnection(`/purchase/requisition/resubmitreq/${id}`, "PATCH", data, {
-      mode: "no-cors"
-    })
+    .makeConnection(`/purchase/requisition/resubmitreq/${id}`, "PATCH", data)
     .then(result => result.json())
-    .then(doc => callback(doc));
+    .then(doc => callback(doc))
+    .catch(e => {
+      console.log("the error" + e);
+    });
 }
