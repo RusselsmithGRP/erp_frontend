@@ -702,7 +702,7 @@ class Edit extends React.Component {
                             className={classes.selectFormControl}
                             style={{ marginTop: "10px" }}
                           >
-                            <TextField
+                            {/* <TextField
                               id="justification"
                               placeholder="Justification"
                               fullWidth
@@ -711,6 +711,17 @@ class Edit extends React.Component {
                               margin="normal"
                               InputLabelProps={{
                                 shrink: true
+                              }}
+                            /> */}
+                            <CustomInput
+                              labelText="Justification"
+                              id="justification"
+                              formControlProps={{
+                                fullWidth: true
+                              }}
+                              inputProps={{
+                                value: this.state.data.justification,
+                                onChange: this.handleChange
                               }}
                             />
                           </FormControl>
@@ -871,7 +882,7 @@ class Edit extends React.Component {
                         }}
                       />
                     </GridItem>
-                    {this.state.data.purchaseType === "Sole Source" && (
+                    {/* {this.state.data.purchaseType === "Sole Source" && (
                       <GridItem xs={12} sm={4} md={4}>
                         <CustomInput
                           labelText="Justification"
@@ -886,7 +897,7 @@ class Edit extends React.Component {
                           }}
                         />
                       </GridItem>
-                    )}
+                    )} */}
                   </Grid>
                   <br />
                   <div style={generalStyle.aboveTable}>
