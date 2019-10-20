@@ -131,7 +131,9 @@ class Index extends React.Component {
       multipleSelect: [],
       showForm: false,
       submitRfq: true,
-      sortByType: "default"
+      sortByType: "default",
+      isActive: false,
+      active: ""
     };
   }
 
@@ -152,7 +154,7 @@ class Index extends React.Component {
       this.props.user.token,
       pr._id,
       quotes => {
-        this.setState({ quotes, pr });
+        this.setState({ quotes, pr, isActive: !this.state.isActive });
       }
     );
   };
@@ -187,6 +189,7 @@ class Index extends React.Component {
                 }
                 onClick={() => this.fetchQuotes(prop)}
                 key={key}
+                style={{ background: this.state.active === key ? "#fff" : "" }}
               >
                 <div className={this.props.classes.box}>
                   {prop.requisitionno}
@@ -215,6 +218,7 @@ class Index extends React.Component {
                 }
                 onClick={() => this.fetchQuotes(prop)}
                 key={key}
+                style={{ background: this.state.active === key ? "#fff" : "" }}
               >
                 <div className={this.props.classes.box}>
                   {prop.requisitionno}
@@ -242,6 +246,7 @@ class Index extends React.Component {
                 }
                 onClick={() => this.fetchQuotes(prop)}
                 key={key}
+                style={{ background: this.state.active === key ? "#fff" : "" }}
               >
                 <div className={this.props.classes.box}>
                   {prop.requisitionno}
@@ -269,6 +274,7 @@ class Index extends React.Component {
                 this.addActiveClass(key);
               }}
               key={key}
+              style={{ background: this.state.active === key ? "#fff" : "" }}
             >
               <div className={this.props.classes.box}>{prop.requisitionno}</div>
               <div className={this.props.classes.box}>
@@ -345,7 +351,8 @@ class Index extends React.Component {
   }
 
   render() {
-    console.log(this.state.pr, "hello");
+    // console.log(this.state.pr, "hello");
+    console.log(this.state.active);
     const { classes } = this.props;
     if (this.props.loader.loading) {
       return (
@@ -424,7 +431,7 @@ class Index extends React.Component {
                       }}
                     >
                       Please select a Purchase requisition before requesting for
-                      Qoute
+                      Quote
                     </span>
 
                     <div className={classes.sidebar}>

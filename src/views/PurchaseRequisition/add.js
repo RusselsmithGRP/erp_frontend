@@ -95,7 +95,8 @@ class PurchaseRequisition extends React.Component {
     redirect: "",
     vendors: [],
     vendor: "",
-    isAllowed: false
+    isAllowed: false,
+    search: ""
   };
 
   handleChange = event => {
@@ -103,6 +104,12 @@ class PurchaseRequisition extends React.Component {
     data[[event.target.id]] = event.target.value;
     this.setState({
       data: data
+    });
+  };
+
+  updateSearch = e => {
+    this.setState({
+      search: e.target.value.substr(0, 20)
     });
   };
 
@@ -168,7 +175,7 @@ class PurchaseRequisition extends React.Component {
     data[[event.target.name]] = event.target.value;
     if (event.target.name == "department") {
       this.state.departments.map((v, i) => {
-        if (event.target.value == v._id) {
+        if (this.state.data.department == v._id) {
           data["chargeto"] = v.code;
           data["departmentslug"] = v.slug;
           return;
@@ -315,6 +322,13 @@ class PurchaseRequisition extends React.Component {
     });
     let error = { lineitems: lineitemsError };
     this.setState({ data: data, error });
+
+    this.setState({
+      data: {
+        department: this.props.user.department._id,
+        chargeto: this.props.user.department.code
+      }
+    });
     genericActions.fetchAll("departments", this.props.user.token, items => {
       this.setState({ departments: items });
     });
@@ -342,7 +356,15 @@ class PurchaseRequisition extends React.Component {
     // console.log(this.state.vendors);
     // console.log(this.state.data.justification);
     // console.log(this.state.data.purchaseType);
-    // console.log(this.props.user);
+    console.log(this.props.user);
+    // console.log(this.state.data.department);
+    const filteredVendors = this.state.vendors.filter(vendor => {
+      return (
+        vendor.general_info.company_name
+          .toLowerCase()
+          .indexOf(this.state.search.toLowerCase()) !== -1
+      );
+    });
 
     const { classes, tableHeaderColor } = this.props;
     var today = new Date();
@@ -475,6 +497,7 @@ class PurchaseRequisition extends React.Component {
     return (
       <div>
         {this.renderRedirect()}
+
         <Grid container>
           {this.state.showError == true ? (
             <Notification
@@ -587,6 +610,7 @@ class PurchaseRequisition extends React.Component {
                           >
                             Choose Purchase Type
                           </MenuItem>
+
                           <MenuItem
                             classes={{
                               root: classes.selectMenuItem,
@@ -662,7 +686,23 @@ class PurchaseRequisition extends React.Component {
                             >
                               Select Vendor
                             </MenuItem>
-                            {this.state.vendors.map((vendor, key) =>
+                            <input
+                              type="text"
+                              value={this.state.search}
+                              onChange={this.updateSearch}
+                              style={{
+                                marginLeft: "20px",
+                                marginRight: "20px",
+                                outline: "none",
+                                border: "none",
+                                borderBottom: "1px solid #cecece",
+                                width: "70%",
+                                paddingBottom: "10px",
+                                fontSize: ".8rem"
+                              }}
+                              placeholder="Search for Vendor..."
+                            />
+                            {filteredVendors.map((vendor, key) =>
                               vendor.isContracted && this.state.isAllowed ? (
                                 <MenuItem
                                   classes={{
@@ -720,7 +760,23 @@ class PurchaseRequisition extends React.Component {
                               >
                                 Select Vendor
                               </MenuItem>
-                              {this.state.vendors.map((vendor, i) => (
+                              <input
+                                type="text"
+                                value={this.state.search}
+                                onChange={this.updateSearch}
+                                style={{
+                                  marginLeft: "20px",
+                                  marginRight: "20px",
+                                  outline: "none",
+                                  border: "none",
+                                  borderBottom: "1px solid #cecece",
+                                  width: "70%",
+                                  paddingBottom: "10px",
+                                  fontSize: ".8rem"
+                                }}
+                                placeholder="Search for Vendor..."
+                              />
+                              {filteredVendors.map((vendor, i) => (
                                 <MenuItem
                                   classes={{
                                     root: classes.selectMenuItem,
@@ -739,15 +795,15 @@ class PurchaseRequisition extends React.Component {
                             className={classes.selectFormControl}
                             style={{ marginTop: "10px" }}
                           >
-                            <TextField
+                            <CustomInput
                               id="justification"
-                              placeholder="Justification"
-                              fullWidth
-                              onChange={this.handleChange}
-                              value={this.state.data.justification}
-                              margin="normal"
-                              InputLabelProps={{
-                                shrink: true
+                              labelText="Justification"
+                              formControlProps={{
+                                fullWidth: true
+                              }}
+                              inputProps={{
+                                onChange: this.handleChange,
+                                value: this.state.data.justification
                               }}
                             />
                           </FormControl>
@@ -770,7 +826,6 @@ class PurchaseRequisition extends React.Component {
                         inputProps={{
                           disabled: true,
                           value:
-                            "Required: " +
                             this.props.user.firstname +
                             " " +
                             this.props.user.lastname
@@ -816,6 +871,7 @@ class PurchaseRequisition extends React.Component {
                         value={this.state.data.department}
                         inputProps={{ margin: "normal" }}
                         style={{ marginTop: "-3px", borderBottomWidth: " 1px" }}
+                        disabled={true}
                       >
                         {this.state.departments.map(option => (
                           <MenuItem key={option._id} value={option._id}>
