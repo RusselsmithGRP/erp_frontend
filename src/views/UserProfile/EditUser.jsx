@@ -289,7 +289,8 @@ class EditUser extends React.Component {
                         })}
                       </CustomSelect>
                     </GridItem>
-                    {this.state.data.type === "hod" ? (
+                    {this.state.data.type === "hod" ||
+                    this.state.data.type === "ceo" ? (
                       <GridItem xs={12} sm={12} md={6}>
                         <CustomSelect
                           labelText="Select Second Department (If ANY)"
