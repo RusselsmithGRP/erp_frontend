@@ -7,7 +7,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import GridItem from "../../components/Grid/GridItem.jsx";
 import CustomSelect from "../../components/CustomInput/CustomSelect.jsx";
 import CustomInput from "../../components/CustomInput/CustomInput.jsx";
-import TextField from '@material-ui/core/TextField';
+import TextField from "@material-ui/core/TextField";
 import Button from "../../components/CustomButtons/Button.jsx";
 import MenuItem from "@material-ui/core/MenuItem";
 import Card from "../../components/Card/Card.jsx";
@@ -289,28 +289,59 @@ class EditUser extends React.Component {
                         })}
                       </CustomSelect>
                     </GridItem>
+                    {this.state.data.type === "hod" ? (
+                      <GridItem xs={12} sm={12} md={6}>
+                        <CustomSelect
+                          labelText="Select Second Department (If ANY)"
+                          name="department2"
+                          value={this.state.data.department2}
+                          onChange={e => this.handleChangeSelect(e)}
+                          formControlProps={{
+                            fullWidth: true
+                          }}
+                          inputProps={{
+                            margin: "normal"
+                          }}
+                        >
+                          {this.state.optionsDepartment.map(function(
+                            data,
+                            key
+                          ) {
+                            return (
+                              <MenuItem
+                                name="department2"
+                                key={key}
+                                value={data._id}
+                              >
+                                {data.name}
+                              </MenuItem>
+                            );
+                          })}
+                        </CustomSelect>
+                      </GridItem>
+                    ) : (
+                      ""
+                    )}
                     <GridItem xs={12} sm={12} md={6}>
-                    <label >Signature</label>
-                    <textarea 
-                    name="signature"
-                    id="signature"
-                    style={{
-                      "width": "100%",
-                      "minHeight": "100px",
-                      "outline": "none",
-                      "padding": "7px"
-                    }}
-                    onChange = {this.handleChange.bind(this)}
-                    value={this.state.data.signature}
-                    />
+                      <label>Signature</label>
+                      <textarea
+                        name="signature"
+                        id="signature"
+                        style={{
+                          width: "100%",
+                          minHeight: "100px",
+                          outline: "none",
+                          padding: "7px"
+                        }}
+                        onChange={this.handleChange.bind(this)}
+                        value={this.state.data.signature}
+                      />
                     </GridItem>
-                  {/* <div dangerouslySetInnerHTML={{__html: this.state.data.signature}} style={{width: "70px"}}/> */}
-
+                    {/* <div dangerouslySetInnerHTML={{__html: this.state.data.signature}} style={{width: "70px"}}/> */}
                   </Grid>
                 </form>
               </CardBody>
               <CardFooter>
-
                 <Button color="primary" onClick={this.handleSave}>
                   Update Profile
                 </Button>
