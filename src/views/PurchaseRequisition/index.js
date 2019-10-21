@@ -59,18 +59,22 @@ class Index extends React.Component {
     prActions
       .fetchAllRequistion(this.props.user.token, docs => {
         // this.setState({ data: docs });
-        console.log(docs);
+        // console.log(docs);
         return docs;
       })
       .then(data => {
-        let newData = data.filter(doc => doc.purchaseType !== "Open Market");
-        this.setState({ data: newData });
+        let newData = data.filter(
+          doc => doc.status === "011" && doc.purchaseType !== "Open Market"
+        );
+        this.setState({ data });
+        console.log("newData:", newData);
+        console.log("Data:", data);
       });
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.match.params.type !== prevProps.match.params.type) {
-      //vendorActions.findAllVendors(this.props, this.props.match.params.type);
+      // vendorActions.findAllVendors(this.props, this.props.match.params.type);
     }
   }
 
@@ -86,8 +90,8 @@ class Index extends React.Component {
       arry.push(
         row._id,
         row.requisitionno,
-         (row.requestor != null) ? row.requestor.firstname: "",
-         (row.requestor != null) ? row.requestor.lastname: "",
+        row.requestor != null ? row.requestor.firstname : "",
+        row.requestor != null ? row.requestor.lastname : "",
         row.department.name,
         row.status
       );

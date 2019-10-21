@@ -77,7 +77,9 @@ class Edit extends React.Component {
       dateneeded: "",
       status: "01",
       requestor: {},
-      department: {}
+      department: {},
+      purchaseType: "",
+      justification: ""
     },
     lineItems: [],
     startDate: moment(),
@@ -233,6 +235,8 @@ class Edit extends React.Component {
       data.eid = data.requestor.eid;
       const department = data.department;
       data.department = data.department.name;
+      data.purchaseType = data.purchaseType;
+      data.justification = data.justification;
       const disabled = data.status == "010" ? false : true;
       let rowArray = [];
 
@@ -248,6 +252,8 @@ class Edit extends React.Component {
 
   render() {
     // console.log(this.state.data.requestor);
+    console.log(this.props.user._id === this.state.department.hod);
+    console.log("Type:", this.props.user.type);
     const { classes, tableHeaderColor } = this.props;
     var today = new Date();
     var dd = today.getDate();
@@ -368,7 +374,7 @@ class Edit extends React.Component {
               <Card>
                 <CardHeader color="primary">
                   <h4 className={classes.cardTitleWhite}>
-                    Purchase Requisition 
+                    Purchase Requisition
                   </h4>
                 </CardHeader>
                 <CardBody>
@@ -431,7 +437,19 @@ class Edit extends React.Component {
                         </Select>
                       </FormControl>
                     </GridItem>
-                    <GridItem xs={12} sm={12} md={4} />
+                    <GridItem xs={12} sm={12} md={4}>
+                      <CustomInput
+                        labelText="Purchase Type"
+                        id="purchaseType"
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        inputProps={{
+                          disabled: true,
+                          value: this.state.data.purchaseType
+                        }}
+                      />
+                    </GridItem>
                     <GridItem xs={12} sm={12} md={4} style={generalStyle.text2}>
                       Requisition No: {this.state.data.requisitionno}
                     </GridItem>
@@ -467,19 +485,21 @@ class Edit extends React.Component {
                     </GridItem>
                     <GridItem xs={12} sm={12} md={4}>
                       <CustomInput
-                       labelText="Date Created"
+                        labelText="Date Created"
                         required
                         formControlProps={{
                           fullWidth: true
                         }}
                         inputProps={{
                           disabled: true,
-                          value:  " " + moment(this.state.data.created).format("DD-MM-YYYY") 
+                          value:
+                            " " +
+                            moment(this.state.data.created).format("DD-MM-YYYY")
                         }}
                       />
                     </GridItem>
                     <GridItem xs={12} sm={4} md={4}>
-                    <CustomInput
+                      <CustomInput
                         labelText="Department"
                         id="department"
                         formControlProps={{
@@ -513,7 +533,11 @@ class Edit extends React.Component {
                         }}
                         onFocus={this.toggleCalendar}
                         inputProps={{
-                          value:  " " + moment(this.state.data.dateneeded).format("DD-MM-YYYY"),
+                          value:
+                            " " +
+                            moment(this.state.data.dateneeded).format(
+                              "DD-MM-YYYY"
+                            ),
                           disabled: this.state.disabled,
                           onFocus: this.toggleCalendar
                         }}
@@ -579,6 +603,22 @@ class Edit extends React.Component {
                         }}
                       />
                     </GridItem>
+                    {this.state.data.purchaseType === "Sole Source" && (
+                      <GridItem xs={12} sm={4} md={4}>
+                        <CustomInput
+                          labelText="Justification"
+                          id="justification"
+                          required
+                          formControlProps={{
+                            fullWidth: true
+                          }}
+                          inputProps={{
+                            value: this.state.data.justification,
+                            disabled: true
+                          }}
+                        />
+                      </GridItem>
+                    )}
                   </Grid>
                   <br />
                   <div style={generalStyle.aboveTable}>
@@ -687,13 +727,14 @@ class Edit extends React.Component {
                 ) : (
                   ""
                 )} */}
-                {this.props.user._id == this.state.department.hod ? (
+                {/* this.props.user._id === this.state.department.hod */}
+                {this.props.user.type === "hod" ? (
                   <CardFooter>
                     {this.state.showReason ? (
                       <Grid container>
                         <GridItem xs={12} sm={12} md={12}>
                           <CustomInput
-                            labelText="Reason"
+                            labelText="Reason *"
                             id="reason"
                             required
                             formControlProps={{
@@ -762,7 +803,16 @@ class Edit extends React.Component {
                         </GridItem>
 
                         <GridItem xs={12} sm={6} md={6}>
-                          <Button color="yellowgreen" onClick={this.submitForm}>
+                          <Button
+                            color="yellowgreen"
+                            onClick={this.submitForm}
+                            disabled={
+                              this.state.action === "disapprove" &&
+                              this.state.reason.length === 0
+                                ? true
+                                : false
+                            }
+                          >
                             Submit
                           </Button>
                         </GridItem>

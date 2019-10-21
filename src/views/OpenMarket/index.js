@@ -42,7 +42,8 @@ class Index extends React.Component {
     super(props);
     this.handler = this.handler.bind(this);
     this.state = {
-      data: []
+      data: [],
+      status: "012"
     };
   }
 
@@ -63,7 +64,9 @@ class Index extends React.Component {
         return docs;
       })
       .then(data => {
-        let newData = data.filter(doc => doc.purchaseType === "Open Market");
+        let newData = data.filter(
+          doc => doc.purchaseType === "Open Market" && doc.status === "011"
+        );
         this.setState({ data: newData });
       });
   }
@@ -130,9 +133,9 @@ class Index extends React.Component {
           requestor: prop[2] + " " + prop[3],
           department: prop[4],
           status:
-            Status.getStatus(prop[5]) === "AWAITING HOD APPROVAL"
+            Status.getStatus(prop[5]) === "HOD APPROVED"
               ? "AWAITING CLOSE OUT"
-              : Status.getStatus(prop[5]) === "HOD APPROVED"
+              : Status.getStatus(prop[5]) === "CLOSED OUT"
               ? "CLOSED OUT"
               : "",
           actions: (
