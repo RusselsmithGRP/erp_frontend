@@ -84,7 +84,9 @@ class PurchaseRequisition extends React.Component {
       shipvia: "",
       isextrabudget: false,
       purchaseType: "",
-      justification: ""
+      justification: "",
+      requestor: "",
+      slug: ""
     },
     lineItems: [],
     startDate: moment(),
@@ -272,6 +274,8 @@ class PurchaseRequisition extends React.Component {
     data.lineitems = this.state.lineItems;
     data.vendor = this.state.vendor;
     data.status = "01";
+    data.requestor = this.props.user._id;
+    data.slug = data.slug;
     if (this.formHasError()) return;
 
     prActions.submitRequisition(this.props.user.token, data, isOk => {
@@ -293,6 +297,9 @@ class PurchaseRequisition extends React.Component {
   handleSaveForm = e => {
     let data = this.state.data;
     data.lineitems = this.state.lineItems;
+    data.requestor = this.props.user._id;
+    data.department = data.department;
+    data.slug = data.slug;
     data.status = "00";
     prActions.saveRequisition(this.props.user.token, data, isOk => {
       if (isOk) this.setState({ data: {} });
@@ -326,7 +333,8 @@ class PurchaseRequisition extends React.Component {
     this.setState({
       data: {
         department: this.props.user.department._id,
-        chargeto: this.props.user.department.code
+        chargeto: this.props.user.department.code,
+        slug: this.props.user.department.slug
       }
     });
     genericActions.fetchAll("departments", this.props.user.token, items => {
