@@ -59,3 +59,14 @@ export function updateRequisition(token, id, data, callback) {
         callback(result.ok);
     });
 }
+
+export function resubmitereq(token, id, data, callback) {
+  let m = new MiddleWare(token);
+  return m
+    .makeConnection(`/purchase/requisition/resubmitreq/${id}`, "PATCH", data)
+    .then(result => result.json())
+    .then(doc => callback(doc))
+    .catch(e => {
+      console.log("the error" + e);
+    });
+}

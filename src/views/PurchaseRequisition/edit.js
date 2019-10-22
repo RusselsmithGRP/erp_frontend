@@ -33,6 +33,7 @@ import moment from "moment";
 import * as Status from "utility/Status";
 import * as Uom from "utility/Uom";
 import { Redirect } from "react-router-dom";
+import { TextField } from "@material-ui/core";
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -85,19 +86,85 @@ class Edit extends React.Component {
     startDate: moment(),
     departments: [],
     action: "",
-    reason: "",
+
     message: "",
     expenseheaders: [],
     disabled: true,
     department: {},
+    departmentId: "",
     redirect: "",
-    message: ""
+    message: "",
+    vendors: [],
+    isAllowed: false,
+    vendor: "",
+    reason: ""
   };
+
+  componentDidMount() {
+    const id = this.props.match.params.id;
+    prActions.findRequisitionById(this.props.user.token, id, data => {
+      let reason;
+      data.requestedby =
+        data.requestor.firstname + " " + data.requestor.lastname;
+      data.eid = data.requestor.eid;
+      const department = data.department;
+      data.department = data.department.name;
+      data.purchaseType = data.purchaseType;
+      data.justification = data.justification;
+      const disabled = data.status == "010" ? false : true;
+      let rowArray = [];
+      if (data.reason) {
+        reason = data.reason;
+      } else {
+        reason = "";
+      }
+
+      this.setState({
+        data,
+        lineItems: data.lineitems,
+        disabled,
+        department,
+        departmentId: department._id,
+        reason,
+        vendor: data.vendor
+      });
+    });
+    genericActions.fetchAll("departments", this.props.user.token, items => {
+      this.setState({ departments: items });
+    });
+    genericActions.fetchAll("expenseheader", this.props.user.token, items => {
+      this.setState({ expenseheaders: items });
+    });
+    genericActions.fetchAll("vendors", this.props.user.token, vendors => {
+      this.setState({ vendors });
+      this.state.vendors.map((vendor, i) => {
+        vendor.contracts.map((v, i) => {
+          v.associatedDept === this.props.user.department._id.toString()
+            ? this.setState({
+                isAllowed: true
+              })
+            : "";
+        });
+      });
+    });
+  }
 
   handleAction = e => {
     const action = e.target.value;
     let showReason = action == "disapprove" ? true : false;
     this.setState({ showReason, action });
+  };
+
+  handlePurchaseType = event => {
+    let data = this.state.data;
+    data["purchaseType"] = event.target.value;
+    this.setState({ data: data });
+  };
+
+  handleVendor = e => {
+    this.setState({
+      vendor: e.target.value
+    });
   };
 
   handleFormChange = e => {
@@ -199,17 +266,42 @@ class Edit extends React.Component {
     );
   };
 
+  handleResubmit = e => {
+    // e.preventDefault();
+    let { data, departmentId } = this.state;
+    data.status = "01";
+    data.vendor = this.state.vendor;
+    data.department = departmentId;
+
+    prActions.resubmitereq(this.props.user.token, data._id, data, doc => {
+      console.log(doc.success);
+      if (doc.success === true) {
+        this.setState({
+          message: "Purchase requisition resubmitted successfully",
+          error: false
+        });
+        this.props.history.push("/requisition");
+      }
+    });
+  };
+
   submitForm = e => {
     let data = {};
     let message = "";
     if (this.state.action == "approve") {
       data.status = "011";
       message = "Purchase requisition approved.";
+      data.reason = "";
     } else {
       data.status = "010";
       data.reason = this.state.reason;
       message = "Purchase requisition has been rejected.";
     }
+    if (Status.getStatus(this.state.data.status) === "HOD DECLINED") {
+      data = this.state.data;
+      data.vendor = this.state.vendor;
+    }
+    // console.log(data);
     prActions.editRequisition(
       this.props.user.token,
       this.state.data._id,
@@ -227,33 +319,11 @@ class Edit extends React.Component {
     }
   };
 
-  componentDidMount() {
-    const id = this.props.match.params.id;
-    prActions.findRequisitionById(this.props.user.token, id, data => {
-      data.requestedby =
-        data.requestor.firstname + " " + data.requestor.lastname;
-      data.eid = data.requestor.eid;
-      const department = data.department;
-      data.department = data.department.name;
-      data.purchaseType = data.purchaseType;
-      data.justification = data.justification;
-      const disabled = data.status == "010" ? false : true;
-      let rowArray = [];
-
-      this.setState({ data, lineItems: data.lineitems, disabled, department });
-    });
-    genericActions.fetchAll("departments", this.props.user.token, items => {
-      this.setState({ departments: items });
-    });
-    genericActions.fetchAll("expenseheader", this.props.user.token, items => {
-      this.setState({ expenseheaders: items });
-    });
-  }
-
   render() {
     // console.log(this.state.data.requestor);
-    console.log(this.props.user._id === this.state.department.hod);
     console.log("Type:", this.props.user.type);
+    console.log(typeof this.state.reason);
+
     const { classes, tableHeaderColor } = this.props;
     var today = new Date();
     var dd = today.getDate();
@@ -438,7 +508,7 @@ class Edit extends React.Component {
                       </FormControl>
                     </GridItem>
                     <GridItem xs={12} sm={12} md={4}>
-                      <CustomInput
+                      {/* <CustomInput
                         labelText="Purchase Type"
                         id="purchaseType"
                         formControlProps={{
@@ -448,8 +518,218 @@ class Edit extends React.Component {
                           disabled: true,
                           value: this.state.data.purchaseType
                         }}
-                      />
+                      /> */}
+                      <FormControl
+                        fullWidth
+                        className={classes.selectFormControl}
+                      >
+                        <InputLabel
+                          htmlFor="purchase-type"
+                          className={classes.selectLabel}
+                        >
+                          Purchase Type
+                        </InputLabel>
+                        <Select
+                          MenuProps={{
+                            className: classes.selectMenu
+                          }}
+                          classes={{
+                            select: classes.select
+                          }}
+                          value={this.state.data.purchaseType}
+                          onChange={this.handlePurchaseType}
+                          inputProps={{
+                            name: "purchaseType",
+                            id: "purchase-type"
+                          }}
+                          // error={error.type ? true : false}
+                        >
+                          <MenuItem
+                            disabled
+                            classes={{
+                              root: classes.selectMenuItem
+                            }}
+                          >
+                            Choose Purchase Type
+                          </MenuItem>
+                          <MenuItem
+                            classes={{
+                              root: classes.selectMenuItem,
+                              selected: classes.selectMenuItemSelected
+                            }}
+                            value="Contract"
+                          >
+                            Contract
+                          </MenuItem>
+                          <MenuItem
+                            classes={{
+                              root: classes.selectMenuItem,
+                              selected: classes.selectMenuItemSelected
+                            }}
+                            value="Sole Source"
+                          >
+                            Sole Source
+                          </MenuItem>
+                          <MenuItem
+                            classes={{
+                              root: classes.selectMenuItem,
+                              selected: classes.selectMenuItemSelected
+                            }}
+                            value="Regular"
+                          >
+                            Regular (3 quotes)
+                          </MenuItem>
+                          <MenuItem
+                            classes={{
+                              root: classes.selectMenuItem,
+                              selected: classes.selectMenuItemSelected
+                            }}
+                            value="Open Market"
+                          >
+                            Open Market
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
+
+                      {this.state.data.purchaseType === "Contract" && (
+                        <FormControl
+                          fullWidth
+                          className={classes.selectFormControl}
+                          style={{ marginTop: "10px" }}
+                        >
+                          <InputLabel
+                            htmlFor="vendor"
+                            className={classes.selectLabel}
+                          >
+                            Select Vendor
+                          </InputLabel>
+
+                          <Select
+                            MenuProps={{
+                              className: classes.selectMenu
+                            }}
+                            classes={{
+                              select: classes.select
+                            }}
+                            value={this.state.vendor}
+                            onChange={this.handleVendor}
+                            inputProps={{
+                              name: "vendor",
+                              id: "vendor"
+                            }}
+                            // error={error.type ? true : false}
+                          >
+                            <MenuItem
+                              disabled
+                              classes={{
+                                root: classes.selectMenuItem
+                              }}
+                            >
+                              Select Vendor
+                            </MenuItem>
+                            {this.state.vendors.map((vendor, key) =>
+                              vendor.isContracted && this.state.isAllowed ? (
+                                <MenuItem
+                                  classes={{
+                                    root: classes.selectMenuItem,
+                                    selected: classes.selectMenuItemSelected
+                                  }}
+                                  value={vendor._id}
+                                  key={key}
+                                >
+                                  {vendor.general_info.company_name}
+                                </MenuItem>
+                              ) : (
+                                ""
+                              )
+                            )}
+                            )}
+                          </Select>
+                        </FormControl>
+                      )}
+
+                      {this.state.data.purchaseType === "Sole Source" && (
+                        <>
+                          <FormControl
+                            fullWidth
+                            className={classes.selectFormControl}
+                            style={{ marginTop: "10px" }}
+                          >
+                            <InputLabel
+                              htmlFor="vendor"
+                              className={classes.selectLabel}
+                            >
+                              Select Vendor
+                            </InputLabel>
+                            <Select
+                              MenuProps={{
+                                className: classes.selectMenu
+                              }}
+                              classes={{
+                                select: classes.select
+                              }}
+                              value={this.state.vendor}
+                              onChange={this.handleVendor}
+                              inputProps={{
+                                name: "vendor",
+                                id: "vendor"
+                              }}
+                              // error={error.type ? true : false}
+                            >
+                              <MenuItem
+                                disabled
+                                classes={{
+                                  root: classes.selectMenuItem
+                                }}
+                              >
+                                Select Vendor
+                              </MenuItem>
+                              {this.state.vendors.map((vendor, i) => (
+                                <MenuItem
+                                  classes={{
+                                    root: classes.selectMenuItem,
+                                    selected: classes.selectMenuItemSelected
+                                  }}
+                                  value={vendor._id}
+                                  key={i}
+                                >
+                                  {vendor.general_info.company_name}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                          <FormControl
+                            fullWidth
+                            className={classes.selectFormControl}
+                            style={{ marginTop: "10px" }}
+                          >
+                            {/* <TextField
+                              id="justification"
+                              placeholder="Justification"
+                              fullWidth
+                              onChange={this.handleChange}
+                              value={this.state.data.justification}
+                              margin="normal"
+                              InputLabelProps={{
+                                shrink: true
+                              }}
+                            /> */}
+                            <CustomInput
+                              labelText="Justification"
+                              id="justification"
+                              formControlProps={{
+                                fullWidth: true
+                              }}
+                              inputProps={{
+                                value: this.state.data.justification,
+                                onChange: this.handleChange
+                              }}
+                            />
+                          </FormControl>
+                        </>
+                      )}
                     </GridItem>
+
                     <GridItem xs={12} sm={12} md={4} style={generalStyle.text2}>
                       Requisition No: {this.state.data.requisitionno}
                     </GridItem>
@@ -603,7 +883,7 @@ class Edit extends React.Component {
                         }}
                       />
                     </GridItem>
-                    {this.state.data.purchaseType === "Sole Source" && (
+                    {/* {this.state.data.purchaseType === "Sole Source" && (
                       <GridItem xs={12} sm={4} md={4}>
                         <CustomInput
                           labelText="Justification"
@@ -618,7 +898,7 @@ class Edit extends React.Component {
                           }}
                         />
                       </GridItem>
-                    )}
+                    )} */}
                   </Grid>
                   <br />
                   <div style={generalStyle.aboveTable}>
@@ -742,7 +1022,7 @@ class Edit extends React.Component {
                             }}
                             inputProps={{
                               name: "reason",
-                              value: this.state.data.reason,
+                              value: this.state.reason,
                               onChange: this.handleFormChange
                             }}
                           />
@@ -822,14 +1102,14 @@ class Edit extends React.Component {
                 ) : (
                   ""
                 )}
-                {this.state.data.requestor._id &&
+                {this.state.data.requestor._id === this.props.user._id &&
                 Status.getStatus(this.state.data.status) === "HOD DECLINED" ? (
                   <div>
                     <CardFooter>
                       <GridItem xs={12} sm={12} md={12}>
                         <Button
                           color="yellowgreen"
-                          onClick={this.submitForm}
+                          onClick={this.handleResubmit}
                           style={{ float: "right" }}
                         >
                           Resubmit
