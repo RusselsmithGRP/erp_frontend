@@ -107,6 +107,7 @@ class Index extends React.Component {
 
   render() {
     console.log(this.state, "hello");
+    // console.log(this.props.user);
 
     const { classes } = this.props;
     let prs = { dataRows: [] };
@@ -131,6 +132,7 @@ class Index extends React.Component {
       );
     } else {
       let mappedData = prs.dataRows.map((prop, key) => {
+        // console.log(prop[2], "", prop[3]);
         return {
           id: prop[1],
           requestor: prop[2] + " " + prop[3],
