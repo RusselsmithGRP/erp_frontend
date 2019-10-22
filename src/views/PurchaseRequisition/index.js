@@ -63,11 +63,16 @@ class Index extends React.Component {
         return docs;
       })
       .then(data => {
-        let newData = data.filter(
-          doc => doc.status === "011" && doc.purchaseType !== "Open Market"
-        );
-        this.setState({ data });
+        let newData = data.filter(doc => {
+          if (doc.status === "011" && doc.purchaseType === "Open Market") {
+            return;
+          } else {
+            return doc;
+          }
+        });
+        this.setState({ data: newData });
         console.log("newData:", newData);
+        console.log(typeof newData);
         console.log("Data:", data);
       });
   }
