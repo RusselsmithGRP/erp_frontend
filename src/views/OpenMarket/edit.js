@@ -693,6 +693,22 @@ class Edit extends React.Component {
                         }}
                       />
                     </GridItem>
+                    {this.state.data.comment && (
+                      <GridItem xs={12} sm={4} md={4}>
+                        <CustomInput
+                          labelText="Comment"
+                          // id="comment"
+                          required
+                          formControlProps={{
+                            fullWidth: true
+                          }}
+                          inputProps={{
+                            value: this.state.data.comment,
+                            disabled: true
+                          }}
+                        />
+                      </GridItem>
+                    )}
                   </Grid>
                   <br />
                   <div style={generalStyle.aboveTable}>
