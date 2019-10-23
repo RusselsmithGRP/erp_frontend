@@ -268,7 +268,12 @@ class Add extends React.Component {
 
     return (
       <div>
-        <GridItem xs={12} sm={12} md={12}>
+        <GridItem
+          xs={12}
+          sm={12}
+          md={12}
+          style={{ overflowY: "scroll", height: "50vh" }}
+        >
           <Card>
             <CardBody>
               <Notification
