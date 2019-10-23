@@ -57,7 +57,8 @@ class Add extends React.Component {
       vendor: "",
       grand_total: 0,
       vat: 5,
-      lineitems: []
+      lineitems: [],
+      discount: ""
     },
     vendors: [],
     allVendors: [],
@@ -226,8 +227,8 @@ class Add extends React.Component {
           ? event.target.value
           : this.state.data.discount;
         data.grand_total = grandTotal - parseInt(discount);
-        // data.discount = discount;
-        data.discount = event.target.value;
+        data.discount = discount;
+        console.log(data.discount);
         break;
       case "freightcharges":
         const freightcharges = event.target.value
@@ -245,6 +246,7 @@ class Add extends React.Component {
         break;
     }
     this.setState({ data });
+    // console.log(this.state.data);
   };
 
   componentDidMount() {
@@ -271,6 +273,7 @@ class Add extends React.Component {
   // }
   render() {
     // console.log(this.state.data.discount);
+    // console.log(this.state.data.grand_total);
 
     const { classes, tableHeaderColor } = this.props;
 
