@@ -454,7 +454,7 @@ class Index extends React.Component {
                           disabled={!this.state.selectedPr ? true : false}
                         >
                           {this.state.pr
-                            ? this.state.pr.purchaseType === "Contract"
+                            ? (this.state.pr.purchaseType === "Contract" || this.state.pr.purchaseType === "Sole Source")
                               ? "Enter Price"
                               : "Request For Quote"
                             : " "}

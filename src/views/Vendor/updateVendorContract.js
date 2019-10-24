@@ -90,7 +90,7 @@ export class updateVendorType extends Component {
       vendor: "",
       endDate: ""
     },
-    responseMessage: ""
+    search: ""
   };
 
   componentDidMount() {
@@ -108,6 +108,12 @@ export class updateVendorType extends Component {
       this.setState({ users });
     });
   }
+
+  updateSearch = e => {
+    this.setState({
+      search: e.target.value.substr(0, 20)
+    });
+  };
 
   handleStartDate = date => {
     this.setState({ startDate: date });
@@ -203,6 +209,13 @@ export class updateVendorType extends Component {
   };
 
   render() {
+    const filteredVendors = this.state.vendors.filter(vendor => {
+      return (
+        vendor.general_info.company_name
+          .toLowerCase()
+          .indexOf(this.state.search.toLowerCase()) !== -1
+      );
+    });
     return (
       <div style={{ fontFamily: styles.cardTitleWhite.fontFamily }}>
         <Grid container>
@@ -245,7 +258,21 @@ export class updateVendorType extends Component {
                         //     : !this.state.validationState.vendor
                         // }
                       >
-                        {this.state.vendors.map(function(data, key) {
+                        <CustomInput
+                          labelText="Search Vendor..."
+                          required
+                          formControlProps={{
+                            fullWidth: true
+                          }}
+                          style={{ width: "70%" }}
+                          // error={error.dateneeded ? true : false}
+                          inputProps={{
+                            value: this.state.search,
+                            onChange: this.updateSearch,
+                            margin: "normal"
+                          }}
+                        />
+                        {filteredVendors.map(function(data, key) {
                           return (
                             <MenuItem name="vendor" key={key} value={data._id}>
                               {data.general_info.company_name}

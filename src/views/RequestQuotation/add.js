@@ -81,6 +81,9 @@ class Add extends React.Component {
       rowArray.push(i);
     }
     let vendorID = this.props.pr.vendor;
+    let lineItems = this.props.pr.lineitems
+    //lineItems['New key'] = lineItems['old key'];
+
     this.setState({rowArray:rowArray, lineItems : this.props.pr.lineitems});
     genericActions.fetchAll("departments", this.props.user.token, (items)=>{
       this.setState({departments : items});
@@ -119,6 +122,13 @@ class Add extends React.Component {
   getPrice = (e) => {
     this.setState({ price: e.target.value });
   }
+  setItem = i => event => {
+    let items = this.state.lineItems;
+      items[[i]][[event.target.name]] = event.target.value;
+    this.setState({
+      lineItems: items
+    });
+  }
 
 
   submitQuote= ()=>{
@@ -127,21 +137,37 @@ class Add extends React.Component {
           if(this.state.checkedLineItems.indexOf(key) > -1){
             return prop;
           }
-      });
-      if (this.props.pr.purchaseType === "Contract") {
+      });      
+      if (this.props.pr.purchaseType === "Contract" || this.props.pr.purchaseType === "Sole Source") {
         let vendor = [{
           value: this.props.pr.vendor
         }];
-        let items = [];
-        let item = this.props.pr.lineitems[0];
-        item.price = this.state.price;
-        item.description = item.itemdescription;
-        item.currency = "0";
-        items.push(item);
-        let data = {items}
-        if (this.state.price){
+
+        let newData = [];
+        items.map((k) => {
+          let myData = {}
+          myData.category = k.category;
+          myData.itemdescription = k.itemdescription;
+          myData.description = k.itemdescription;
+          myData.quantity = k.quantity;
+          myData.uom = k.uom;
+          myData.price = k.price;
+          newData.push(myData)
+        })
+
+        //let items = [];
+        //let item = this.props.pr.lineitems[0];
+        //item.price = this.state.price;
+        //item.description = item.itemdescription;
+        //item.currency = "0";
+        //items.push(item);
+        let data = {
+          items: newData,
+          currency: "0",
+        }
+        // if (this.state.price){
           rfqActions.submitQuotation(this.props.user.token, 
-            {items: items, vendors: vendor, type: "contract", price: this.state.price,
+            {items: data.items, vendors: vendor, type: "contract", price: this.state.price,
               pr:this.props.pr}, (quote)=>{
                 if(quote){
                   rfqActions.submitVendorQuote(
@@ -158,8 +184,8 @@ class Add extends React.Component {
                 } 
                 else this.setState({message:"An error occur while sending RFQ.", error:true });
             }); 
-        }
-        else alert("Please Enter Price")
+        // }
+        // else alert("Please Enter Price")
 
       }
       else {
@@ -185,6 +211,7 @@ class Add extends React.Component {
         } 
     });
     const uom = Uom.getUom(prop.uom);
+    console.log(this.props.pr.lineitems, "hello people")
       return (
         <TableRow key={key}> 
           <TableCell component="th" style={{border: "none", padding: "0", width: "20px", textAlign: "center"}}>               
@@ -215,7 +242,26 @@ class Add extends React.Component {
           </TableCell>
           <TableCell className={classes.td}>
                 {uom.name}
-          </TableCell>      
+          </TableCell> 
+            { (this.props.pr.purchaseType === "Contract" || this.props.pr.purchaseType === "Sole Source")?<TableCell className={classes.td}>
+            <CustomInput
+              name="price"
+              id="price"
+              type="number"
+              labelText="Enter Price"
+              required
+              formControlProps={{
+                style: { width: "130px", padding: "0", margin: "0" },
+                name: "unit"
+              }}
+              inputProps={{
+                name: "price",
+                onChange: this.setItem(key),
+                style: { fontSize: "11px" },
+                //value: (this.state.lineItems[key]["price"])? this.state.lineItems[key]["price"]: ""
+              }}
+            />
+          </TableCell> : ""}    
         </TableRow>
         )}
     );
@@ -230,7 +276,7 @@ class Add extends React.Component {
                   <form>
                       <Grid container>
                         <GridItem xs={12} sm={12} md={11} lg={11}>
-                        { (this.props.pr.purchaseType === "Contract")? ` ` : <Select
+                        { (this.props.pr.purchaseType === "Contract"|| this.props.pr.purchaseType === "Sole Source")? ` ` : <Select
                               isMulti
                               value={this.state.selectedOption}
                               onChange={this.handleChange}
@@ -247,7 +293,7 @@ class Add extends React.Component {
                         />
                          */}
 
-                        { (this.props.pr.purchaseType === "Contract")?
+                        { (this.props.pr.purchaseType === "Contract"|| this.props.pr.purchaseType === "Sole Source")?
                          <GridItem xs={12} sm={12} md={12} lg={12}>
                        
                         <span style={generalStyle.textLabel}>
@@ -263,17 +309,18 @@ class Add extends React.Component {
                           <Table className={classes.table} > 
                             <TableHead  className={classes[tableHeaderColor + "TableHeader"]} style={{marginTop:"10px", color:"blue", borderBottomColor:"#333",borderBottomStyle:"solid", borderBottomWidth:"1px"}}>
                               <TableRow>
-                                <TableCell className={classes.tableCell + " " + classes.tableHeadCell+" "+classes.td} style={{color: "blue", width:"55px"}}>Item No</TableCell>
-                                <TableCell className={classes.tableCell + " " + classes.tableHeadCell+" "+classes.td} style={{color: "blue"}}>Item Description</TableCell>
+                                <TableCell className={classes.tableCell + " " + classes.tableHeadCell+ " " +classes.td} style={{color: "blue", width:"55px"}}>Item No</TableCell>
+                                <TableCell className={classes.tableCell + " " + classes.tableHeadCell+ " " +classes.td} style={{color: "blue"}}>Item Description</TableCell>
                                 <TableCell className={classes.tableCell + " " + classes.tableHeadCell+" "+classes.td} style={{color: "blue", width: "70px"}}>Quantity</TableCell>
                                 <TableCell className={classes.tableCell + " " + classes.tableHeadCell+" "+classes.td} style={{color: "blue"}}>Unit</TableCell>
+                                { (this.props.pr.purchaseType === "Contract" || this.props.pr.purchaseType === "Sole Source")?   <TableCell className={classes.tableCell + " " + classes.tableHeadCell+" "+classes.td} style={{color: "blue"}}>Enter Price</TableCell>: ""}
                               </TableRow>
                             </TableHead>
                             <TableBody>
                             {tableData}
                             </TableBody>
                           </Table> 
-                          { (this.props.pr.purchaseType === "Contract")?<CustomInput
+                          {/* { (this.props.pr.purchaseType === "Contract" || this.props.pr.purchaseType === "Sole Source")?<CustomInput
                         labelText="Enter Price"
                         id="price"
                         formControlProps={{
@@ -283,7 +330,7 @@ class Add extends React.Component {
                           onChange: this.getPrice,
                           value: this.state.price
                         }}
-                      />: ""}
+                      />: ""} */}
                         </div>
                       </GridItem>
                     </Grid>

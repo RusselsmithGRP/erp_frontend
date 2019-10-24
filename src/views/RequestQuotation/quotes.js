@@ -321,7 +321,7 @@ class Quote extends React.Component {
                 <Card>
                   <CardHeader>
                     <h3>
-                      Quote for{" "}
+                      Quote for
                       {prop.vendor ? prop.vendor.general_info.company_name : ""}
                     </h3>
                     <Close
@@ -495,6 +495,13 @@ class Quote extends React.Component {
               <br />
               <span className={classes.ap}>
                 {Status.getStatus(this.props.pr.status)}
+              </span>
+            </li>
+            <li className={classes.liStyle}>
+            Purchase Type:
+              <br />
+              <span className={classes.ap}>
+                {this.props.pr.purchaseType}
               </span>
             </li>
           </ul>

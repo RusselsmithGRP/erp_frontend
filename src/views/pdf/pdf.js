@@ -68,7 +68,6 @@ class Pdf extends Component {
     // for both FontAwesome and regular SVG:
     canvg(this.refs.canvas, htmlString);
     this.reviewedBy = this.refs.canvas.toDataURL('image/png')
-    console.log(this.reviewedBy)
 }
 
   exportPDF = () => {
@@ -77,6 +76,7 @@ class Pdf extends Component {
 
   getTotal(arr) {
     let sum = 0;
+    console.log(arr, "array")
     for (var i = 0; i < arr.length; i++) {
       sum += parseInt(arr[i].price * arr[i].quantity);
     }
@@ -110,7 +110,7 @@ class Pdf extends Component {
 }
 
   render() {
-    console.log( this.state.po, "HELLO")
+    console.log( this.state.po.discount, "HELLO")
     const { classes, data } = this.props;
     let currency = "";
     const numberWords = require("number-words");
@@ -310,7 +310,7 @@ class Pdf extends Component {
                       <th style={generalStyle.tableTd3}>Total:</th>
                       <td style={generalStyle.tableTd2}>
                         {currencies.getCurrencyCode(currency)}
-                        {this.getTotal(this.state.items)}
+                        {(this.state.po.discount)? this.getTotal(this.state.items)- parseInt(this.state.po.discount): this.getTotal(this.state.items)}
                       </td>
                     </tr>
                   </tbody>
@@ -319,7 +319,7 @@ class Pdf extends Component {
                   <br />
                   <p>
                     <strong>Amount In words: </strong>
-                    {numberWords.convert(this.getTotal(this.state.items))}
+                    {numberWords.convert((this.state.po.discount)? this.getTotal(this.state.items)- parseInt(this.state.po.discount): this.getTotal(this.state.items))}
                   </p>
                 </div>
               </div>

@@ -172,7 +172,7 @@ class Add extends React.Component {
                     {key+1}
                 </TableCell>
                 <TableCell className={classes.td}>
-                    {prop.description }
+                    {prop.description || prop.itemdescription }
                 </TableCell>
                 <TableCell className={classes.td}>
                     {prop.quantity}
@@ -252,6 +252,7 @@ class Add extends React.Component {
     });
     rfqActions.searchVendor(this.props.user.token, (vendors)=>{
      this.setState({vendors});
+
     }) 
 
     vendorActions.searchVendor(this.props.user.token,"", (allVendors)=>{
@@ -266,6 +267,7 @@ class Add extends React.Component {
   //   }
   // }
   render() {
+    console.log(this.state.quotes, "vendors")
 
     const { classes, tableHeaderColor } = this.props;
 
