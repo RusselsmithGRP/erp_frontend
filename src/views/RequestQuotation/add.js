@@ -60,6 +60,13 @@ const categories = [
   {value: '3',label: 'Category 3',}
 ];
 
+const currencies = [
+  { value: "0", label: " ₦ ", code: "NGN "},
+  { value: "1", label: " $ ", code:"USD " },
+  { value: "2", label: " £ ", code: "GBP " },
+  { value: "3", label: " € ", code: "EUR " }
+]
+
 class Add extends React.Component {
   state = {
     simpleSelect: "",
@@ -151,6 +158,7 @@ class Add extends React.Component {
           myData.description = k.itemdescription;
           myData.quantity = k.quantity;
           myData.uom = k.uom;
+          myData.currency = k.currency;
           myData.price = k.price;
           newData.push(myData)
         })
@@ -210,8 +218,10 @@ class Add extends React.Component {
           return option.label
         } 
     });
+    const _currencies = currencies.map((k) =>
+    <option key={k.value} value={k.value}>{k.code}</option>
+  );
     const uom = Uom.getUom(prop.uom);
-    console.log(this.props.pr.lineitems, "hello people")
       return (
         <TableRow key={key}> 
           <TableCell component="th" style={{border: "none", padding: "0", width: "20px", textAlign: "center"}}>               
@@ -261,7 +271,20 @@ class Add extends React.Component {
                 //value: (this.state.lineItems[key]["price"])? this.state.lineItems[key]["price"]: ""
               }}
             />
-          </TableCell> : ""}    
+            
+          </TableCell> : ""}  
+
+          {(this.props.pr.purchaseType === "Contract" || this.props.pr.purchaseType === "Sole Source")? <TableCell className={classes.td}>
+            <select 
+              onChange={this.setItem(key)}
+              //value={data.teamMembers}
+              id="currency"
+              name="currency"                
+              className="browser-default custom-select custom-select-md mb-3">
+              <option>--none--</option>
+                 {_currencies}
+              </select>
+          </TableCell> : ""}   
         </TableRow>
         )}
     );
@@ -269,7 +292,7 @@ class Add extends React.Component {
 
   	return (
         <div>
-            <GridItem xs={12} sm={12} md={12}>
+            <GridItem xs={12} sm={12} md={12} style={{ overflowY: "scroll", height: "50vh" }}>
               <Card>
                 <CardBody>
                 <Notification error={this.state.error} message={this.state.message} />
@@ -314,6 +337,8 @@ class Add extends React.Component {
                                 <TableCell className={classes.tableCell + " " + classes.tableHeadCell+" "+classes.td} style={{color: "blue", width: "70px"}}>Quantity</TableCell>
                                 <TableCell className={classes.tableCell + " " + classes.tableHeadCell+" "+classes.td} style={{color: "blue"}}>Unit</TableCell>
                                 { (this.props.pr.purchaseType === "Contract" || this.props.pr.purchaseType === "Sole Source")?   <TableCell className={classes.tableCell + " " + classes.tableHeadCell+" "+classes.td} style={{color: "blue"}}>Enter Price</TableCell>: ""}
+                                { (this.props.pr.purchaseType === "Contract" || this.props.pr.purchaseType === "Sole Source")?   <TableCell className={classes.tableCell + " " + classes.tableHeadCell+" "+classes.td} style={{color: "blue"}}>Currency</TableCell>: ""}
+
                               </TableRow>
                             </TableHead>
                             <TableBody>

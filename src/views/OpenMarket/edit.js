@@ -294,6 +294,7 @@ class Edit extends React.Component {
       data.department = data.department._id;
       data.departmentname = department.name;
       data.price = data.price;
+      data.status = data.status;
       const disabled = data.status == "010" ? false : true;
       let rowArray = [];
 
@@ -428,13 +429,13 @@ class Edit extends React.Component {
               inputProps={{
                 onChange: this.handleInput,
                 value:
-                  this.state.data.status === "011"
+                  this.state.data.status === "013"
                     ? this.state.data.price
                     : this.state.price,
                 name: "price",
                 onBlur: this.validatePrice,
                 disabled:
-                  this.state.data.status === "011" ? this.state.disabled : false
+                  this.state.data.status === "013" ? this.state.disabled : false
               }}
               error={this.state.validPrice ? this.state.validPrice : false}
             />
@@ -682,16 +683,32 @@ class Edit extends React.Component {
                         inputProps={{
                           value:
                             Status.getStatus(this.state.data.status) ===
-                            "AWAITING HOD APPROVAL"
+                            "HOD APPROVED"
                               ? "AWAITING CLOSE OUT"
                               : Status.getStatus(this.state.data.status) ===
-                                "HOD APPROVED"
+                                "CLOSED OUT"
                               ? "CLOSED OUT"
                               : "",
                           disabled: true
                         }}
                       />
                     </GridItem>
+                    {this.state.data.comment && (
+                      <GridItem xs={12} sm={4} md={4}>
+                        <CustomInput
+                          labelText="Comment"
+                          // id="comment"
+                          required
+                          formControlProps={{
+                            fullWidth: true
+                          }}
+                          inputProps={{
+                            value: this.state.data.comment,
+                            disabled: true
+                          }}
+                        />
+                      </GridItem>
+                    )}
                   </Grid>
                   <br />
                   <div style={generalStyle.aboveTable}>
@@ -837,7 +854,7 @@ class Edit extends React.Component {
                     ) : (
                       ""
                     )}
-                    {this.state.data.status !== "01" ? (
+                    {this.state.data.status !== "011" ? (
                       ""
                     ) : (
                       <Grid container>

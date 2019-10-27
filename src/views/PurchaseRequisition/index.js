@@ -66,6 +66,8 @@ class Index extends React.Component {
         let newData = data.filter(doc => {
           if (doc.status === "011" && doc.purchaseType === "Open Market") {
             return;
+          } else if (doc.status === "013") {
+            return;
           } else {
             return doc;
           }

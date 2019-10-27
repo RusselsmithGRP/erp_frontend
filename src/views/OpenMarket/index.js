@@ -65,7 +65,9 @@ class Index extends React.Component {
       })
       .then(data => {
         let newData = data.filter(
-          doc => doc.purchaseType === "Open Market" && doc.status === "011"
+          doc =>
+            (doc.purchaseType === "Open Market" && doc.status === "011") ||
+            doc.status === "013"
         );
         this.setState({ data: newData });
       });

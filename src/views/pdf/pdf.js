@@ -76,7 +76,6 @@ class Pdf extends Component {
 
   getTotal(arr) {
     let sum = 0;
-    console.log(arr, "array")
     for (var i = 0; i < arr.length; i++) {
       sum += parseInt(arr[i].price * arr[i].quantity);
     }
@@ -85,9 +84,9 @@ class Pdf extends Component {
     return realSum;
   }
   getVAT(vat, total) {
-    let val = (total * vat) / 100;
-    let realVat = parseInt(total) + parseInt(val);
-    return realVat;
+    let val =  (parseInt(vat) / 100) * parseInt(total);
+    // let realVat = parseInt(total) + parseInt(val);
+    return val;
   }
 
   /**
@@ -110,7 +109,6 @@ class Pdf extends Component {
 }
 
   render() {
-    console.log( this.state.po.discount, "HELLO")
     const { classes, data } = this.props;
     let currency = "";
     const numberWords = require("number-words");
@@ -310,7 +308,11 @@ class Pdf extends Component {
                       <th style={generalStyle.tableTd3}>Total:</th>
                       <td style={generalStyle.tableTd2}>
                         {currencies.getCurrencyCode(currency)}
-                        {(this.state.po.discount)? this.getTotal(this.state.items)- parseInt(this.state.po.discount): this.getTotal(this.state.items)}
+                        {(this.state.po.discount)? 
+                        parseInt(this.getTotal(this.state.items))  + parseInt(this.getVAT(this.state.po.vat, this.getTotal(this.state.items)))
+                           - parseInt(this.state.po.discount): 
+                           parseInt(this.getTotal(this.state.items))  + parseInt(this.getVAT(this.state.po.vat, this.getTotal(this.state.items)))
+                           }
                       </td>
                     </tr>
                   </tbody>
@@ -319,7 +321,9 @@ class Pdf extends Component {
                   <br />
                   <p>
                     <strong>Amount In words: </strong>
-                    {numberWords.convert((this.state.po.discount)? this.getTotal(this.state.items)- parseInt(this.state.po.discount): this.getTotal(this.state.items))}
+                    {numberWords.convert((this.state.po.discount)? parseInt(this.getTotal(this.state.items))  + parseInt(this.getVAT(this.state.po.vat, this.getTotal(this.state.items)))
+                           - parseInt(this.state.po.discount): 
+                           parseInt(this.getTotal(this.state.items))  + parseInt(this.getVAT(this.state.po.vat, this.getTotal(this.state.items))) )}
                   </p>
                 </div>
               </div>
