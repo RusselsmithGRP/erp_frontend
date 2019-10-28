@@ -1008,7 +1008,8 @@ class Edit extends React.Component {
                   ""
                 )} */}
                 {/* this.props.user._id === this.state.department.hod */}
-                {this.props.user.type === "hod" ? (
+                {this.props.user.type === "hod" ||
+                this.props.user.type === "ceo" ? (
                   <CardFooter>
                     {this.state.showReason ? (
                       <Grid container>
