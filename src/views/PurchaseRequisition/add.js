@@ -98,7 +98,8 @@ class PurchaseRequisition extends React.Component {
     vendors: [],
     vendor: "",
     isAllowed: false,
-    search: ""
+    search: "",
+    isError: false
   };
 
   handleChange = event => {
@@ -107,6 +108,27 @@ class PurchaseRequisition extends React.Component {
     this.setState({
       data: data
     });
+  };
+
+  errorHandling = () => {
+    if (
+      this.state.data.purchaseType === "Contract" &&
+      this.state.vendor === ""
+    ) {
+      this.setState({
+        errorState: true,
+        message: "Please select a vendor"
+      });
+    } else if (
+      this.state.data.purchaseType === "Sole Source" &&
+      this.state.vendor === ""
+    ) {
+      this.setState({
+        errorState: true,
+        message:
+          "Please select a vendor and fill the justification field if empty"
+      });
+    }
   };
 
   updateSearch = e => {
@@ -255,6 +277,12 @@ class PurchaseRequisition extends React.Component {
     } else if (!this.state.data.type) {
       errorState.type = true;
       error = true;
+    } else if (
+      this.state.data.purchaseType === "Sole Source" &&
+      this.state.vendor === ""
+    ) {
+      errorState.purchaseType = true;
+      error = true;
     }
 
     if (error) {
@@ -264,6 +292,7 @@ class PurchaseRequisition extends React.Component {
         showError: true,
         message: "Kindly fill all form fields"
       });
+      // this.errorHandling();
     }
     return error;
   };
@@ -277,6 +306,25 @@ class PurchaseRequisition extends React.Component {
     data.requestor = this.props.user._id;
     data.slug = data.slug;
     if (this.formHasError()) return;
+
+    if (this.state.data.purchaseType === "Contract" && !this.state.vendor) {
+      this.setState({
+        isError: true,
+        message: `Select a Vendor for Purchase Type of ${this.state.data.purchaseType}`
+      });
+      return;
+    }
+
+    if (
+      this.state.data.purchaseType === "Sole Source" &&
+      !this.state.data.justification
+    ) {
+      this.setState({
+        isError: true,
+        message: `Select a Vendor for Purchase Type of ${this.state.data.purchaseType} and Kindly fill the justification field if empty`
+      });
+      return;
+    }
 
     prActions.submitRequisition(this.props.user.token, data, isOk => {
       if (isOk) {
@@ -510,6 +558,14 @@ class PurchaseRequisition extends React.Component {
           {this.state.showError == true ? (
             <Notification
               error={this.state.showError}
+              message={this.state.message}
+            />
+          ) : (
+            ""
+          )}
+          {this.state.isError === true ? (
+            <Notification
+              error={this.state.isError}
               message={this.state.message}
             />
           ) : (
