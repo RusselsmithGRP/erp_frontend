@@ -12,7 +12,7 @@ import CardBody from "components/Card/CardBody.jsx";
 import CardFooter from "components/Card/CardFooter.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import InputLabel from "@material-ui/core/InputLabel";
-import Select from "@material-ui/core/Select";
+//import Select from "@material-ui/core/Select";
 import CustomInput from "components/CustomInput/CustomInput.jsx";
 import CustomSelect from "components/CustomInput/CustomSelect.jsx";
 import Table from "@material-ui/core/Table";
@@ -23,7 +23,7 @@ import TableBody from "@material-ui/core/TableBody";
 import FormLabel from "@material-ui/core/FormLabel";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
-// import Select from "react-select";
+import Select from "react-select";
 
 import Check from "@material-ui/icons/Check";
 import { connect } from "react-redux";
@@ -70,7 +70,8 @@ class Add extends React.Component {
     alert: null,
     show: false,
     price: "",
-    contractedVendor: ""
+    contractedVendor: "",
+    submitState: false
   };
 
   componentDidMount() {
@@ -79,6 +80,9 @@ class Add extends React.Component {
       rowArray.push(i);
     }
     let vendorID = this.props.pr.vendor;
+    let lineItems = this.props.pr.lineitems;
+    //lineItems['New key'] = lineItems['old key'];
+
     this.setState({ rowArray: rowArray, lineItems: this.props.pr.lineitems });
     genericActions.fetchAll("departments", this.props.user.token, items => {
       this.setState({ departments: items });
@@ -119,106 +123,104 @@ class Add extends React.Component {
   getPrice = e => {
     this.setState({ price: e.target.value });
   };
+  setItem = i => event => {
+    let items = this.state.lineItems;
+    items[[i]][[event.target.name]] = event.target.value;
+    this.setState({
+      lineItems: items
+    });
+  };
 
   submitQuote = () => {
+    this.setState({ submitState: true });
     let items = this.props.pr.lineitems.filter((prop, key) => {
       if (this.state.checkedLineItems.indexOf(key) > -1) {
         return prop;
       }
     });
-    if (this.props.pr.purchaseType === "Contract") {
+    if (
+      this.props.pr.purchaseType === "Contract" ||
+      this.props.pr.purchaseType === "Sole Source"
+    ) {
       let vendor = [
         {
           value: this.props.pr.vendor
         }
       ];
-      let items = [];
-      let item = this.props.pr.lineitems[0];
-      item.price = this.state.price;
-      item.description = item.itemdescription;
-      item.currency = "0";
-      items.push(item);
-      let data = { items };
-      if (this.state.price) {
-        rfqActions.submitQuotation(
-          this.props.user.token,
-          {
-            items: items,
-            vendors: vendor,
-            type: "contract",
-            price: this.state.price,
-            pr: this.props.pr
-          },
-          quote => {
-            if (quote) {
-              rfqActions.submitVendorQuote(
-                this.props.user.token,
-                quote._id,
-                data,
-                docs => {
-                  if (docs) {
-                    this.setState({
-                      message: "Price entered successfully.",
-                      error: false
-                    });
-                  }
+
+      let newData = [];
+      items.map(k => {
+        let myData = {};
+        myData.category = k.category;
+        myData.itemdescription = k.itemdescription;
+        myData.description = k.itemdescription;
+        myData.quantity = k.quantity;
+        myData.uom = k.uom;
+        myData.price = k.price;
+        newData.push(myData);
+      });
+
+      //let items = [];
+      //let item = this.props.pr.lineitems[0];
+      //item.price = this.state.price;
+      //item.description = item.itemdescription;
+      //item.currency = "0";
+      //items.push(item);
+      let data = {
+        items: newData,
+        currency: "0"
+      };
+      // if (this.state.price){
+      rfqActions.submitQuotation(
+        this.props.user.token,
+        {
+          items: data.items,
+          vendors: vendor,
+          type: "contract",
+          price: this.state.price,
+          pr: this.props.pr
+        },
+        quote => {
+          if (quote) {
+            rfqActions.submitVendorQuote(
+              this.props.user.token,
+              quote._id,
+              data,
+              docs => {
+                if (docs) {
+                  this.setState({
+                    message: "Price entered successfully.",
+                    error: false
+                  });
                 }
-              );
-            } else
-              this.setState({
-                message: "An error occur while sending RFQ.",
-                error: true
-              });
-          }
-        );
-      }
-      if (this.props.pr.purchaseType === "Contract") {
-        let vendor = [
-          {
-            value: this.props.pr.vendor
-          }
-        ];
-        let items = [];
-        let item = this.props.pr.lineitems[0];
-        item.price = this.state.price;
-        item.description = item.itemdescription;
-        item.currency = "0";
-        items.push(item);
-        let data = { items };
-        if (this.state.price) {
-          rfqActions.submitQuotation(
-            this.props.user.token,
-            {
-              items: items,
-              vendors: vendor,
-              type: "contract",
-              price: this.state.price,
-              pr: this.props.pr
-            },
-            quote => {
-              if (quote) {
-                rfqActions.submitVendorQuote(
-                  this.props.user.token,
-                  quote._id,
-                  data,
-                  docs => {
-                    if (docs) {
-                      this.setState({
-                        message: "Price entered successfully.",
-                        error: false
-                      });
-                    }
-                  }
-                );
-              } else
-                this.setState({
-                  message: "An error occur while sending RFQ.",
-                  error: true
-                });
-            }
-          );
+              }
+            );
+          } else
+            this.setState({
+              message: "An error occur while sending RFQ.",
+              error: true
+            });
         }
-      }
+      );
+      // }
+      // else alert("Please Enter Price")
+    } else {
+      rfqActions.submitQuotation(
+        this.props.user.token,
+        { items: items, vendors: this.state.selectedOption, pr: this.props.pr },
+        isOk => {
+          if (isOk) {
+            this.setState({
+              message: "RFQ succesfully sent to vendor",
+              error: false
+            });
+          } else
+            this.setState({
+              message: "An error occur while sending RFQ.",
+              error: true
+            });
+        }
+      );
     }
   };
 
@@ -231,6 +233,7 @@ class Add extends React.Component {
         }
       });
       const uom = Uom.getUom(prop.uom);
+      console.log(this.props.pr.lineitems, "hello people");
       return (
         <TableRow key={key}>
           <TableCell
@@ -262,18 +265,37 @@ class Add extends React.Component {
           <TableCell className={classes.td}>{prop.itemdescription}</TableCell>
           <TableCell className={classes.td}>{prop.quantity}</TableCell>
           <TableCell className={classes.td}>{uom.name}</TableCell>
+          {this.props.pr.purchaseType === "Contract" ||
+          this.props.pr.purchaseType === "Sole Source" ? (
+            <TableCell className={classes.td}>
+              <CustomInput
+                name="price"
+                id="price"
+                type="number"
+                labelText="Enter Price"
+                required
+                formControlProps={{
+                  style: { width: "130px", padding: "0", margin: "0" },
+                  name: "unit"
+                }}
+                inputProps={{
+                  name: "price",
+                  onChange: this.setItem(key),
+                  style: { fontSize: "11px" }
+                  //value: (this.state.lineItems[key]["price"])? this.state.lineItems[key]["price"]: ""
+                }}
+              />
+            </TableCell>
+          ) : (
+            ""
+          )}
         </TableRow>
       );
     });
 
     return (
       <div>
-        <GridItem
-          xs={12}
-          sm={12}
-          md={12}
-          style={{ overflowY: "scroll", height: "50vh" }}
-        >
+        <GridItem xs={12} sm={12} md={12}>
           <Card>
             <CardBody>
               <Notification
@@ -283,7 +305,8 @@ class Add extends React.Component {
               <form>
                 <Grid container>
                   <GridItem xs={12} sm={12} md={11} lg={11}>
-                    {this.props.pr.purchaseType === "Contract" ? (
+                    {this.props.pr.purchaseType === "Contract" ||
+                    this.props.pr.purchaseType === "Sole Source" ? (
                       ` `
                     ) : (
                       <Select
@@ -304,12 +327,10 @@ class Add extends React.Component {
                         />
                          */}
 
-                  {this.props.pr.purchaseType === "Contract" ? (
+                  {this.props.pr.purchaseType === "Contract" ||
+                  this.props.pr.purchaseType === "Sole Source" ? (
                     <GridItem xs={12} sm={12} md={12} lg={12}>
                       <span style={generalStyle.textLabel}>Vendor:</span>
-                      <span style={generalStyle.text}>
-                        {this.state.contractedVendor}{" "}
-                      </span>
                       <span style={generalStyle.text}>
                         {this.state.contractedVendor}{" "}
                       </span>
@@ -384,25 +405,38 @@ class Add extends React.Component {
                             >
                               Unit
                             </TableCell>
+                            {this.props.pr.purchaseType === "Contract" ||
+                            this.props.pr.purchaseType === "Sole Source" ? (
+                              <TableCell
+                                className={
+                                  classes.tableCell +
+                                  " " +
+                                  classes.tableHeadCell +
+                                  " " +
+                                  classes.td
+                                }
+                                style={{ color: "blue" }}
+                              >
+                                Enter Price
+                              </TableCell>
+                            ) : (
+                              ""
+                            )}
                           </TableRow>
                         </TableHead>
                         <TableBody>{tableData}</TableBody>
                       </Table>
-                      {this.props.pr.purchaseType === "Contract" ? (
-                        <CustomInput
-                          labelText="Enter Price"
-                          id="price"
-                          formControlProps={{
-                            fullWidth: true
-                          }}
-                          inputProps={{
-                            onChange: this.getPrice,
-                            value: this.state.price
-                          }}
-                        />
-                      ) : (
-                        ""
-                      )}
+                      {/* { (this.props.pr.purchaseType === "Contract" || this.props.pr.purchaseType === "Sole Source")?<CustomInput
+                        labelText="Enter Price"
+                        id="price"
+                        formControlProps={{
+                           fullWidth: true
+                        }}
+                        inputProps={{
+                          onChange: this.getPrice,
+                          value: this.state.price
+                        }}
+                      />: ""} */}
                     </div>
                   </GridItem>
                 </Grid>
@@ -415,6 +449,7 @@ class Add extends React.Component {
                     color="yellowgreen"
                     onClick={this.submitQuote}
                     style={{ float: "right" }}
+                    disabled={this.state.submitState}
                   >
                     Submit
                   </Button>
