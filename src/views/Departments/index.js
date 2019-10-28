@@ -1,8 +1,11 @@
 import React from "react";
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
+import Switch from "@material-ui/core/Switch";
 import Grid from "@material-ui/core/Grid";
 import MenuItem from "@material-ui/core/MenuItem";
+import Chip from "@material-ui/core/Chip";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 // core components
 import GridItem from "../../components/Grid/GridItem.jsx";
 import CustomInput from "../../components/CustomInput/CustomInput.jsx";
@@ -41,12 +44,16 @@ class Index extends React.Component {
   state = {
     data: {},
     users: [],
-    validationState : {
-      name: '',
-      code: '',
-      slug:'',
-  },
-  responseMessage:[]
+    validationState: {
+      name: "",
+      code: "",
+      slug: ""
+    },
+    responseMessage: [],
+    userId: "",
+    userdata: {},
+    isMultiple: false,
+    departments: []
   };
 
   validate = (type, value) => {
@@ -60,7 +67,7 @@ class Index extends React.Component {
           }
         });
         break;
-        case "slug":
+      case "slug":
         const slug = helpers.isEmpty(value) ? false : true;
         this.setState({
           validationState: {
@@ -69,7 +76,7 @@ class Index extends React.Component {
           }
         });
         break;
-        case "code":
+      case "code":
         const code = helpers.isEmpty(value) ? false : true;
         this.setState({
           validationState: {
@@ -78,9 +85,8 @@ class Index extends React.Component {
           }
         });
         break;
-
     }
-}   
+  };
 
   handleChange = event => {
     this.validate(event.target.id, event.target.value);
@@ -89,7 +95,7 @@ class Index extends React.Component {
     this.setState({
       data: data
     });
-  }
+  };
 
   handleChangeSelect = e => {
     this.validate(e.target.id, e.target.value);
@@ -98,7 +104,9 @@ class Index extends React.Component {
     this.setState({
       data: data
     });
-  }
+  };
+
+  handleDelete = e => {};
 
   /* handleSubmit = () => {
     departmentAction.updateDepartment(this.props, this.state.data, (json)=>{
@@ -107,29 +115,45 @@ class Index extends React.Component {
   } */
 
   componentDidMount() {
-    departmentAction.findDepartmentById(this.props, this.props.match.params.id,(json)=>{
-      this.setState({data: json[0]})
-    });
-    userAction.findAllStaff(this.props, (json)=>{
-        this.setState({users:json});
+    departmentAction.findDepartmentById(
+      this.props,
+      this.props.match.params.id,
+      json => {
+        this.setState({
+          data: json.department,
+          isMultiple: json.isArray,
+          departments: json.departments
+        });
+      }
+    );
+    userAction.findAllStaff(this.props, json => {
+      this.setState({ users: json });
     });
   }
 
-  submitForm = ()=>{
-      departmentAction.saveDepartment(this.props.user.token, this.props.match.params.id, this.state.data,  (result)=>{
-        if(result.ok && result.statusText == "OK" && result.status == 200 ) {
+  submitForm = () => {
+    departmentAction.saveDepartment(
+      this.props.user.token,
+      this.props.match.params.id,
+      this.state.data,
+      result => {
+        if (result.ok && result.statusText == "OK" && result.status == 200) {
           alert("Data Saved");
         }
-      });
-  }
-
+        this.props.history.push("/crud/departments");
+      }
+    );
+  };
 
   render() {
     const { classes } = this.props;
+    console.log(this.state.data);
+    console.log(this.state.departments);
+
     return (
       <div>
         <Grid container>
-        {this.state.responseMessage.success === true ? (
+          {this.state.responseMessage.success === true ? (
             <Notification
               error={false}
               message={this.state.responseMessage.message}
@@ -141,7 +165,9 @@ class Index extends React.Component {
             <form>
               <Card>
                 <CardHeader color="primary">
-                  <h4 className={classes.cardTitleWhite}>{this.state.data.name}</h4>
+                  <h4 className={classes.cardTitleWhite}>
+                    {this.state.data.name}
+                  </h4>
                 </CardHeader>
                 <CardBody>
                   <Grid container>
@@ -152,20 +178,20 @@ class Index extends React.Component {
                           fullWidth: true
                         }}
                         inputProps={{
-                          onChange: (e)=>this.handleChange(e),
+                          onChange: e => this.handleChange(e),
                           value: this.state.data.name,
-                          labelText:"Name",
-                            }}
-                            error={
-                              this.state.validationState.name === ""
-                                ? ""
-                                : this.state.validationState.name
-                            }
-                            success={
-                              this.state.validationState.name === ""
-                                ? ""
-                                : !this.state.validationState.name
-                            }
+                          labelText: "Name"
+                        }}
+                        error={
+                          this.state.validationState.name === ""
+                            ? ""
+                            : this.state.validationState.name
+                        }
+                        success={
+                          this.state.validationState.name === ""
+                            ? ""
+                            : !this.state.validationState.name
+                        }
                       />
                     </GridItem>
                     <GridItem xs={12} sm={12} md={12}>
@@ -175,24 +201,52 @@ class Index extends React.Component {
                           fullWidth: true
                         }}
                         inputProps={{
-                          onChange: (e)=>this.handleChange(e),
+                          onChange: e => this.handleChange(e),
                           value: this.state.data.slug,
                           labelText: "slug"
-                                                }}
-                                                error={
-                                                  this.state.validationState.slug === ""
-                                                    ? ""
-                                                    : this.state.validationState.slug
-                                                }
-                                                success={
-                                                  this.state.validationState.slug === ""
-                                                    ? ""
-                                                    : !this.state.validationState.slug
-                                                }
+                        }}
+                        error={
+                          this.state.validationState.slug === ""
+                            ? ""
+                            : this.state.validationState.slug
+                        }
+                        success={
+                          this.state.validationState.slug === ""
+                            ? ""
+                            : !this.state.validationState.slug
+                        }
                       />
                     </GridItem>
+
+                    <GridItem xs={12} sm={12} md={12}>
+                      <CustomInput
+                        id="code"
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        inputProps={{
+                          onChange: e => this.handleChange(e),
+                          value: this.state.data.code,
+                          labelText: "code"
+                        }}
+                        error={
+                          this.state.validationState.code === ""
+                            ? ""
+                            : this.state.validationState.code
+                        }
+                        success={
+                          this.state.validationState.code === ""
+                            ? ""
+                            : !this.state.validationState.code
+                        }
+                      />
+                    </GridItem>
+
                     <GridItem xs={12} sm={12} md={6}>
-                      <CustomSelect labelText="Staff" name="hod" id="hod" 
+                      <CustomSelect
+                        labelText="Staff"
+                        name="hod"
+                        id="hod"
                         required
                         value={this.state.data.hod}
                         onChange={e => this.handleChangeSelect(e)}
@@ -211,11 +265,29 @@ class Index extends React.Component {
                               key={key}
                               value={data._id}
                             >
-                              {data.lastname + " "+ data.firstname }
+                              {data.lastname + " " + data.firstname}
                             </MenuItem>
                           );
                         })}
                       </CustomSelect>
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={12}>
+                      <FormControlLabel
+                        control={
+                          <Switch checked={this.state.isMultiple} value="" />
+                        }
+                        label="HOD"
+                      />
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={12}>
+                      <p style={{ color: "#ccc" }}>Department List:</p>
+                      {this.state.departments.map((dept, key) => (
+                        <Chip
+                          key={key}
+                          label={dept.name}
+                          onDelete={this.handleDelete}
+                        />
+                      ))}
                     </GridItem>
                   </Grid>
                 </CardBody>

@@ -277,12 +277,6 @@ class PurchaseRequisition extends React.Component {
     } else if (!this.state.data.type) {
       errorState.type = true;
       error = true;
-    } else if (
-      this.state.data.purchaseType === "Sole Source" &&
-      this.state.vendor === ""
-    ) {
-      errorState.purchaseType = true;
-      error = true;
     }
 
     if (error) {
@@ -315,13 +309,21 @@ class PurchaseRequisition extends React.Component {
       return;
     }
 
+    if (this.state.data.purchaseType === "Sole Source" && !this.state.vendor) {
+      this.setState({
+        isError: true,
+        message: `Kindly Select a vendor for purchase type of ${this.state.data.purchaseType}`
+      });
+      return;
+    }
+
     if (
       this.state.data.purchaseType === "Sole Source" &&
-      !this.state.data.justification
+      typeof this.state.data.justification === "undefined"
     ) {
       this.setState({
         isError: true,
-        message: `Select a Vendor for Purchase Type of ${this.state.data.purchaseType} and Kindly fill the justification field if empty`
+        message: `Kindly fill the justification field if empty`
       });
       return;
     }
@@ -407,13 +409,7 @@ class PurchaseRequisition extends React.Component {
   }
 
   render() {
-    // console.log(this.state.data, "data");
-    // console.log(this.state.departments, "departments");
-    // console.log(this.state.vendors);
-    // console.log(this.state.data.justification);
-    // console.log(this.state.data.purchaseType);
-    console.log(this.props.user);
-    // console.log(this.state.data.department);
+    // console.log(this.props.user);
     const filteredVendors = this.state.vendors.filter(vendor => {
       return (
         vendor.general_info.company_name
