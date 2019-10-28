@@ -80,7 +80,8 @@ class Edit extends React.Component {
       dateneeded: "",
       status: "012",
       requestor: {},
-      department: {}
+      department: {},
+      closeoutmethod: ""
     },
     lineItems: [],
     startDate: moment(),
@@ -704,6 +705,23 @@ class Edit extends React.Component {
                           }}
                           inputProps={{
                             value: this.state.data.comment,
+                            disabled: true
+                          }}
+                        />
+                      </GridItem>
+                    )}
+
+                    {this.state.data.closeoutmethod && (
+                      <GridItem xs={12} sm={4} md={4}>
+                        <CustomInput
+                          labelText="Close Out Method"
+                          // id="comment"
+                          required
+                          formControlProps={{
+                            fullWidth: true
+                          }}
+                          inputProps={{
+                            value: this.state.data.closeoutmethod,
                             disabled: true
                           }}
                         />
