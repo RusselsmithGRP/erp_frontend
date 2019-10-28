@@ -175,13 +175,12 @@ class Add extends React.Component {
                       }}
                     />
                   }
-                  classes={{
-                    label: classes.label
-                  }}
                 />
                 {key + 1}
               </TableCell>
-              <TableCell className={classes.td}>{prop.description}</TableCell>
+              <TableCell className={classes.td}>
+                {prop.description || prop.itemdescription}
+              </TableCell>
               <TableCell className={classes.td}>{prop.quantity}</TableCell>
               <TableCell className={classes.td}>{prop.unit}</TableCell>
               <TableCell className={classes.td}>
@@ -269,7 +268,7 @@ class Add extends React.Component {
   //   }
   // }
   render() {
-  console.log(this.state.data, "data")
+
     const { classes, tableHeaderColor } = this.props;
 
     const creditTerms = [
