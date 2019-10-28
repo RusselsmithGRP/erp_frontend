@@ -58,3 +58,12 @@ export function removeDepartmentFromList(token, data, callback) {
     .then(res => res.json())
     .then(data => callback(data));
 }
+
+export function updateMultipleDepartments(token, data, callback) {
+  let m = new MiddleWare(token);
+  return m
+    .makeConnection("/departments/add/dept", m.PATCH, data)
+    .then(res => res.json())
+    .then(data => callback(data))
+    .catch(err => callback(err));
+}

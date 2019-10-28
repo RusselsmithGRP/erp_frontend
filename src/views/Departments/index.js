@@ -58,7 +58,8 @@ class Index extends React.Component {
     isMultiple: false,
     departments: [],
     optionsDepartment: [],
-    department: ""
+    department: "",
+    showList: false
   };
 
   validate = (type, value) => {
@@ -102,12 +103,24 @@ class Index extends React.Component {
     });
   };
 
+  onToggle = () => {
+    this.setState({
+      showList: !this.state.showList
+    });
+  };
+
   handleChangeSelect = e => {
     this.validate(e.target.id, e.target.value);
     let data = this.state.data;
     data[[e.target.name]] = e.target.value;
     this.setState({
       data: data
+    });
+  };
+
+  handleDepartment = e => {
+    this.setState({
+      [e.target.name]: e.target.value
     });
   };
 
@@ -122,6 +135,21 @@ class Index extends React.Component {
       result => {
         console.log(result);
         window.location.reload();
+      }
+    );
+  };
+
+  updateDepartments = () => {
+    let data = {};
+    data = this.state.data;
+    data.department = this.state.department;
+    data.hod = data.hod;
+    data.showList = this.state.showList;
+    departmentAction.updateMultipleDepartments(
+      this.props.user.token,
+      data,
+      result => {
+        console.log(result);
       }
     );
   };
@@ -168,9 +196,10 @@ class Index extends React.Component {
 
   render() {
     const { classes } = this.props;
-    console.log(this.state.data);
-    console.log(this.state.departments);
-    console.log(this.state.optionsDepartment);
+    // console.log(this.state.data);
+    // console.log(this.state.departments);
+    // console.log(this.state.optionsDepartment);
+    console.log(this.state.department);
 
     return (
       <div>
@@ -266,7 +295,7 @@ class Index extends React.Component {
 
                     <GridItem xs={12} sm={12} md={6}>
                       <CustomSelect
-                        labelText="Staff"
+                        labelText="HOD"
                         name="hod"
                         id="hod"
                         required
@@ -295,10 +324,10 @@ class Index extends React.Component {
                     </GridItem>
                     <GridItem xs={12} sm={12} md={6}>
                       <CustomSelect
-                        labelText="Other Department"
-                        name="department2"
+                        labelText="Select Department"
+                        name="department"
                         value={this.state.department}
-                        // onChange={e => this.handleChangeSelect(e)}
+                        onChange={e => this.handleDepartment(e)}
                         formControlProps={{
                           fullWidth: true
                         }}
@@ -322,22 +351,28 @@ class Index extends React.Component {
                     <GridItem xs={12} sm={12} md={12}>
                       <FormControlLabel
                         control={
-                          <Switch checked={this.state.isMultiple} value="" />
+                          <Switch
+                            checked={this.state.showList}
+                            onChange={this.onToggle}
+                            value=""
+                          />
                         }
-                        label="HOD"
+                        label={this.state.showList ? "Hide" : "Show"}
                       />
                     </GridItem>
-                    <GridItem xs={12} sm={12} md={12}>
-                      <p style={{ color: "#ccc" }}>Department List:</p>
+                    {this.state.showList && (
+                      <GridItem xs={12} sm={12} md={12}>
+                        <p style={{ color: "#ccc" }}>Department List:</p>
 
-                      {this.state.departments.map((dept, key) => (
-                        <Chip
-                          key={key}
-                          label={dept.name}
-                          onDelete={() => this.handleDelete(dept._id)}
-                        />
-                      ))}
-                    </GridItem>
+                        {this.state.departments.map((dept, key) => (
+                          <Chip
+                            key={key}
+                            label={dept.name}
+                            onDelete={() => this.handleDelete(dept._id)}
+                          />
+                        ))}
+                      </GridItem>
+                    )}
                   </Grid>
                 </CardBody>
                 <CardFooter>
@@ -345,6 +380,17 @@ class Index extends React.Component {
                     Submit
                   </Button>
                 </CardFooter>
+                {this.state.showList && (
+                  <CardFooter>
+                    <Button
+                      variant="contained"
+                      color="default"
+                      onClick={this.updateDepartments}
+                    >
+                      Add Department
+                    </Button>
+                  </CardFooter>
+                )}
               </Card>
             </form>
           </GridItem>
