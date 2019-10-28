@@ -6,6 +6,7 @@ import Grid from "@material-ui/core/Grid";
 import MenuItem from "@material-ui/core/MenuItem";
 import Chip from "@material-ui/core/Chip";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Paper from "@material-ui/core/Paper";
 // core components
 import GridItem from "../../components/Grid/GridItem.jsx";
 import CustomInput from "../../components/CustomInput/CustomInput.jsx";
@@ -17,6 +18,8 @@ import CardFooter from "../../components/Card/CardFooter.jsx";
 import CustomSelect from "../../components/CustomInput/CustomSelect.jsx";
 import * as userAction from "../../actions/user";
 import * as departmentAction from "../../actions/department";
+import * as genericActions from "../../actions/generic.js";
+
 import { connect } from "react-redux";
 import Notification from "../Notifications/Index.jsx";
 import helpers from "../helpers";
@@ -53,7 +56,9 @@ class Index extends React.Component {
     userId: "",
     userdata: {},
     isMultiple: false,
-    departments: []
+    departments: [],
+    optionsDepartment: [],
+    department: ""
   };
 
   validate = (type, value) => {
@@ -106,7 +111,20 @@ class Index extends React.Component {
     });
   };
 
-  handleDelete = e => {};
+  handleDelete = id => {
+    let data = {};
+    data = this.state.data;
+    data.id = id;
+    data.hod = data.hod;
+    departmentAction.removeDepartmentFromList(
+      this.props.user.token,
+      data,
+      result => {
+        console.log(result);
+        window.location.reload();
+      }
+    );
+  };
 
   /* handleSubmit = () => {
     departmentAction.updateDepartment(this.props, this.state.data, (json)=>{
@@ -129,6 +147,9 @@ class Index extends React.Component {
     userAction.findAllStaff(this.props, json => {
       this.setState({ users: json });
     });
+    genericActions.fetchAll("departments", this.props.user.token, items => {
+      this.setState({ optionsDepartment: items });
+    });
   }
 
   submitForm = () => {
@@ -149,6 +170,7 @@ class Index extends React.Component {
     const { classes } = this.props;
     console.log(this.state.data);
     console.log(this.state.departments);
+    console.log(this.state.optionsDepartment);
 
     return (
       <div>
@@ -271,6 +293,32 @@ class Index extends React.Component {
                         })}
                       </CustomSelect>
                     </GridItem>
+                    <GridItem xs={12} sm={12} md={6}>
+                      <CustomSelect
+                        labelText="Other Department"
+                        name="department2"
+                        value={this.state.department}
+                        // onChange={e => this.handleChangeSelect(e)}
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        inputProps={{
+                          margin: "normal"
+                        }}
+                      >
+                        {this.state.optionsDepartment.map(function(data, key) {
+                          return (
+                            <MenuItem
+                              name="department"
+                              key={key}
+                              value={data._id}
+                            >
+                              {data.name}
+                            </MenuItem>
+                          );
+                        })}
+                      </CustomSelect>
+                    </GridItem>
                     <GridItem xs={12} sm={12} md={12}>
                       <FormControlLabel
                         control={
@@ -281,11 +329,12 @@ class Index extends React.Component {
                     </GridItem>
                     <GridItem xs={12} sm={12} md={12}>
                       <p style={{ color: "#ccc" }}>Department List:</p>
+
                       {this.state.departments.map((dept, key) => (
                         <Chip
                           key={key}
                           label={dept.name}
-                          onDelete={this.handleDelete}
+                          onDelete={() => this.handleDelete(dept._id)}
                         />
                       ))}
                     </GridItem>

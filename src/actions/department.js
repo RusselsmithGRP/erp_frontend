@@ -50,3 +50,11 @@ export function fectchDeptHod(token, departmentId, callback) {
       callback(json);
     });
 }
+
+export function removeDepartmentFromList(token, data, callback) {
+  let m = new MiddleWare(token);
+  return m
+    .makeConnection("/departments/remove", m.PATCH, data)
+    .then(res => res.json())
+    .then(data => callback(data));
+}
