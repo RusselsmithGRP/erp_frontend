@@ -83,8 +83,8 @@ class Pdf extends Component {
 
     return realSum;
   }
-  getVAT(vat, total) {
-    let val =  (parseInt(vat) / 100) * parseInt(total);
+  getVAT(vat, total, discount) {
+    let val =  (parseInt(vat) / 100) *( parseInt(total) - parseInt(discount));
     // let realVat = parseInt(total) + parseInt(val);
     return val;
   }
@@ -98,6 +98,8 @@ class Pdf extends Component {
       this.props.user.token,
       this.props.match.params.id,
       doc => {
+        console.log(doc.po.discount, "docs")
+        doc.po.discount = (doc.po.discount)? doc.po.discount: 0;
         this.setState({ po: doc.po, items: doc.items });
         sessionStorage.setItem('effectiveDate', doc.po.approvedByDate)
       }
@@ -109,6 +111,7 @@ class Pdf extends Component {
 }
 
   render() {
+    console.log( this.state.po, "PO")
     const { classes, data } = this.props;
     let currency = "";
     const numberWords = require("number-words");
@@ -282,7 +285,8 @@ class Pdf extends Component {
                       <td style={generalStyle.tableTd2}>
                         {this.getVAT(
                           this.state.po.vat,
-                          this.getTotal(this.state.items)
+                          this.getTotal(this.state.items),
+                          this.state.po.discount
                         )}
                       </td>
                     </tr>
@@ -308,11 +312,7 @@ class Pdf extends Component {
                       <th style={generalStyle.tableTd3}>Total:</th>
                       <td style={generalStyle.tableTd2}>
                         {currencies.getCurrencyCode(currency)}
-                        {(this.state.po.discount)? 
-                        parseInt(this.getTotal(this.state.items))  + parseInt(this.getVAT(this.state.po.vat, this.getTotal(this.state.items)))
-                           - parseInt(this.state.po.discount): 
-                           parseInt(this.getTotal(this.state.items))  + parseInt(this.getVAT(this.state.po.vat, this.getTotal(this.state.items)))
-                           }
+                        {parseInt(this.getTotal(this.state.items))  + parseInt(this.getVAT(this.state.po.vat, this.getTotal(this.state.items),this.state.po.discount) - parseInt(this.state.po.discount))}
                       </td>
                     </tr>
                   </tbody>
@@ -321,9 +321,7 @@ class Pdf extends Component {
                   <br />
                   <p>
                     <strong>Amount In words: </strong>
-                    {numberWords.convert((this.state.po.discount)? parseInt(this.getTotal(this.state.items))  + parseInt(this.getVAT(this.state.po.vat, this.getTotal(this.state.items)))
-                           - parseInt(this.state.po.discount): 
-                           parseInt(this.getTotal(this.state.items))  + parseInt(this.getVAT(this.state.po.vat, this.getTotal(this.state.items))) )}
+                    {numberWords.convert(parseInt(this.getTotal(this.state.items))  + parseInt(this.getVAT(this.state.po.vat, this.getTotal(this.state.items),this.state.po.discount) - parseInt(this.state.po.discount)) )}
                   </p>
                 </div>
               </div>
