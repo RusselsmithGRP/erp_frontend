@@ -129,14 +129,16 @@ class Index extends React.Component {
     data = this.state.data;
     data.id = id;
     data.hod = data.hod;
-    departmentAction.removeDepartmentFromList(
-      this.props.user.token,
-      data,
-      result => {
-        console.log(result);
-        window.location.reload();
-      }
-    );
+    if (confirm("Are you sure you want to delete department?")) {
+      departmentAction.removeDepartmentFromList(
+        this.props.user.token,
+        data,
+        result => {
+          console.log(result);
+          window.location.reload();
+        }
+      );
+    }
   };
 
   updateDepartments = () => {
