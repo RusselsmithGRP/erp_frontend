@@ -322,7 +322,7 @@ class Index extends React.Component {
                         })}
                       </CustomSelect>
                     </GridItem>
-                    <GridItem xs={12} sm={12} md={6}>
+                    {/* <GridItem xs={12} sm={12} md={6}>
                       <CustomSelect
                         labelText="Select Department"
                         name="department"
@@ -347,7 +347,7 @@ class Index extends React.Component {
                           );
                         })}
                       </CustomSelect>
-                    </GridItem>
+                    </GridItem> */}
                     <GridItem xs={12} sm={12} md={12}>
                       <FormControlLabel
                         control={
@@ -357,7 +357,11 @@ class Index extends React.Component {
                             value=""
                           />
                         }
-                        label={this.state.showList ? "Hide" : "Show"}
+                        label={
+                          this.state.showList
+                            ? "Hide Department List"
+                            : "Show Department List"
+                        }
                       />
                     </GridItem>
                     {this.state.showList && (
@@ -380,7 +384,7 @@ class Index extends React.Component {
                     Submit
                   </Button>
                 </CardFooter>
-                {this.state.showList && (
+                {/* {this.state.showList && (
                   <CardFooter>
                     <Button
                       variant="contained"
@@ -390,7 +394,7 @@ class Index extends React.Component {
                       Add Department
                     </Button>
                   </CardFooter>
-                )}
+                )} */}
               </Card>
             </form>
           </GridItem>
