@@ -37,10 +37,10 @@ export default class PdfTemplate extends React.Component {
               </tr>
               <tr>
                 <td style={generalStyle.text5} width="60%">
-                  Revision: 17
+                  Revision: 18
                 </td>
                 <td style={generalStyle.text6} width="40%">
-                  Effective Date: 16 February 2019 
+                  Effective Date: 25 June, 2019 
                 </td>
               </tr>
             </tbody>

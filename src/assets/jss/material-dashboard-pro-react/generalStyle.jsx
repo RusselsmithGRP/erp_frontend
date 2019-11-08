@@ -284,14 +284,14 @@ const generalStyle = {
   POinput3: {
     float: "none",
     display: "inline-block",
-    verticalAlign: "middle",
+    // verticalAlign: "middle",
     outline: "0",
     borderWidth: "0",
     borderColor: "#000",
     maxWidth: "70px",
     margin: "2px 0",
-    fontSize: "10px",
-    padding: "0 4px",
+    fontSize: "8px",
+    padding: "0 2px",
     fontFamily: "arial, helvetica, sans-serif",
   },
   space10: {
