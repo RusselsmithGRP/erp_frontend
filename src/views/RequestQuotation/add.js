@@ -95,10 +95,12 @@ class Add extends React.Component {
       this.setState({ departments: items });
     });
     vendorActions.searchVendor(this.props.user.token, "", vendors => {
-      let myVendors = vendors.filter(t => t._id == vendorID);
-      this.setState({
-        contractedVendor: myVendors[0].general_info.company_name
-      });
+      if( this.props.pr.purchaseType === "Contract" ||this.props.pr.purchaseType === "Sole Source"){
+        let myVendors = vendors.filter(t => t._id == vendorID);
+        this.setState({
+          contractedVendor: myVendors[0].general_info.company_name
+        });
+      }
 
       let options = vendors
         .filter(v => {
@@ -108,6 +110,15 @@ class Add extends React.Component {
           return { value: f._id, label: f.general_info.company_name };
         });
       this.setState({ options });
+
+      console.log(options, "vendors")
+
+    // let options = vendors.map((v)=>{
+    //     return {value:v._id, label: v.general_info.company_name}
+    // })
+
+    this.setState({options});
+
     });
   }
 
@@ -233,6 +244,7 @@ class Add extends React.Component {
   };
 
   render() {
+
     const { classes, tableHeaderColor } = this.props;
     const tableData = this.props.pr.lineitems.map((prop, key)=> {
     const category = categories.map(option => {
@@ -285,7 +297,7 @@ class Add extends React.Component {
           </TableCell> 
 
           {(this.props.pr.purchaseType === "Contract" || this.props.pr.purchaseType === "Sole Source")? <TableCell className={classes.td}>
-                  <CustomInput
+              <CustomInput
                 name="price"
                 id="price"
                 type="number"
@@ -314,7 +326,7 @@ class Add extends React.Component {
               <option>--none--</option>
                  {_currencies}
               </select>
-          </TableCell> : ""}   
+          </TableCell> : " "}   
         </TableRow>
       );
     });
@@ -328,14 +340,16 @@ class Add extends React.Component {
                 <Notification error={this.state.error} message={this.state.message} />
                   <form>
                       <Grid container>
-                        <GridItem xs={12} sm={12} md={11} lg={11}>
-                        { (this.props.pr.purchaseType === "Contract"|| this.props.pr.purchaseType === "Sole Source")? ` ` : <Select
+                        { (this.props.pr.purchaseType === "Contract"|| this.props.pr.purchaseType === "Sole Source")? ` ` : 
+                         <GridItem xs={12} sm={12} md={12} lg={12}>
+                        <Select
                               isMulti
                               value={this.state.selectedOption}
                               onChange={this.handleChange}
                               options={this.state.options}
-                          /> }
-                        </GridItem>
+                          /> 
+                          </GridItem>
+                          }
                          {/* 
                         <CustomInput labelText="Vendors" id="vendors" name="vendors"
                           formControlProps={{
