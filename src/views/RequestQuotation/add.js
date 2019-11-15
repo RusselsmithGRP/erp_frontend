@@ -12,7 +12,7 @@ import CardBody from "components/Card/CardBody.jsx";
 import CardFooter from "components/Card/CardFooter.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import InputLabel from "@material-ui/core/InputLabel";
-// import Select from "@material-ui/core/Select";
+//import Select from "@material-ui/core/Select";
 import CustomInput from "components/CustomInput/CustomInput.jsx";
 import CustomSelect from "components/CustomInput/CustomSelect.jsx";
 import Table from "@material-ui/core/Table";
@@ -138,7 +138,6 @@ class Add extends React.Component {
   handleChange = selectedOption => {
     this.setState({ selectedOption });
   };
-
   getPrice = e => {
     this.setState({ price: e.target.value });
   };
