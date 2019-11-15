@@ -13,6 +13,7 @@ class MiddleWare {
         this.token = token;
     }
 
+    
   makeConnection(endpoint, httpVerb, body = "") {
     let option = {};
     body ? JSON.stringify(body) : "";
