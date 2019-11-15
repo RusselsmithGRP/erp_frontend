@@ -111,7 +111,6 @@ class Add extends React.Component {
         });
       this.setState({ options });
 
-      console.log(options, "vendors")
 
     // let options = vendors.map((v)=>{
     //     return {value:v._id, label: v.general_info.company_name}
