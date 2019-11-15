@@ -60,11 +60,11 @@ const categories = [
 ];
 
 const currencies = [
-  { value: "0", label: " ₦ ", code: "NGN "},
-  { value: "1", label: " $ ", code:"USD " },
+  { value: "0", label: " ₦ ", code: "NGN " },
+  { value: "1", label: " $ ", code: "USD " },
   { value: "2", label: " £ ", code: "GBP " },
   { value: "3", label: " € ", code: "EUR " }
-]
+];
 
 class Add extends React.Component {
   state = {
@@ -95,7 +95,10 @@ class Add extends React.Component {
       this.setState({ departments: items });
     });
     vendorActions.searchVendor(this.props.user.token, "", vendors => {
-      if( this.props.pr.purchaseType === "Contract" ||this.props.pr.purchaseType === "Sole Source"){
+      if (
+        this.props.pr.purchaseType === "Contract" ||
+        this.props.pr.purchaseType === "Sole Source"
+      ) {
         let myVendors = vendors.filter(t => t._id == vendorID);
         this.setState({
           contractedVendor: myVendors[0].general_info.company_name
@@ -111,13 +114,11 @@ class Add extends React.Component {
         });
       this.setState({ options });
 
+      // let options = vendors.map((v)=>{
+      //     return {value:v._id, label: v.general_info.company_name}
+      // })
 
-    // let options = vendors.map((v)=>{
-    //     return {value:v._id, label: v.general_info.company_name}
-    // })
-
-    this.setState({options});
-
+      this.setState({ options });
     });
   }
 
@@ -165,18 +166,18 @@ class Add extends React.Component {
         }
       ];
 
-        let newData = [];
-        items.map((k) => {
-          let myData = {}
-          myData.category = k.category;
-          myData.itemdescription = k.itemdescription;
-          myData.description = k.itemdescription;
-          myData.quantity = k.quantity;
-          myData.uom = k.uom;
-          myData.currency = k.currency;
-          myData.price = k.price;
-          newData.push(myData)
-        })
+      let newData = [];
+      items.map(k => {
+        let myData = {};
+        myData.category = k.category;
+        myData.itemdescription = k.itemdescription;
+        myData.description = k.itemdescription;
+        myData.quantity = k.quantity;
+        myData.uom = k.uom;
+        myData.currency = k.currency;
+        myData.price = k.price;
+        newData.push(myData);
+      });
 
       //let items = [];
       //let item = this.props.pr.lineitems[0];
@@ -243,18 +244,19 @@ class Add extends React.Component {
   };
 
   render() {
-
     const { classes, tableHeaderColor } = this.props;
-    const tableData = this.props.pr.lineitems.map((prop, key)=> {
-    const category = categories.map(option => {
-        if(prop.category == option.value){
-          return option.label
-        } 
-    });
-    const _currencies = currencies.map((k) =>
-    <option key={k.value} value={k.value}>{k.code}</option>
-  );
-    const uom = Uom.getUom(prop.uom);
+    const tableData = this.props.pr.lineitems.map((prop, key) => {
+      const category = categories.map(option => {
+        if (prop.category == option.value) {
+          return option.label;
+        }
+      });
+      const _currencies = currencies.map(k => (
+        <option key={k.value} value={k.value}>
+          {k.code}
+        </option>
+      ));
+      const uom = Uom.getUom(prop.uom);
       return (
         <TableRow key={key}>
           <TableCell
@@ -267,35 +269,29 @@ class Add extends React.Component {
             }}
           >
             <FormControlLabel
-                control={
-                  <Checkbox
-                      tabIndex={-1}
-                      onClick={() => this.handleLineItems(key)}
-                      checkedIcon={
-                        <Check className={classes.checkedIcon} />
-                      }
-                      icon={<Check className={classes.uncheckedIcon} />}
-                      classes={{
-                        checked: classes.checked
-                      }}
-                  />
-                }
-                classes={{
-                  label: classes.label
-                }}
+              control={
+                <Checkbox
+                  tabIndex={-1}
+                  onClick={() => this.handleLineItems(key)}
+                  checkedIcon={<Check className={classes.checkedIcon} />}
+                  icon={<Check className={classes.uncheckedIcon} />}
+                  classes={{
+                    checked: classes.checked
+                  }}
+                />
+              }
+              classes={{
+                label: classes.label
+              }}
             />
           </TableCell>
-          <TableCell className={classes.td}>
-                {prop.itemdescription}
-          </TableCell>
-          <TableCell className={classes.td}>
-                {prop.quantity}
-          </TableCell>
-          <TableCell className={classes.td}>
-                {uom.name}
-          </TableCell> 
+          <TableCell className={classes.td}>{prop.itemdescription}</TableCell>
+          <TableCell className={classes.td}>{prop.quantity}</TableCell>
+          <TableCell className={classes.td}>{uom.name}</TableCell>
 
-          {(this.props.pr.purchaseType === "Contract" || this.props.pr.purchaseType === "Sole Source")? <TableCell className={classes.td}>
+          {this.props.pr.purchaseType === "Contract" ||
+          this.props.pr.purchaseType === "Sole Source" ? (
+            <TableCell className={classes.td}>
               <CustomInput
                 name="price"
                 id="price"
@@ -313,43 +309,62 @@ class Add extends React.Component {
                   //value: (this.state.lineItems[key]["price"])? this.state.lineItems[key]["price"]: ""
                 }}
               />
-          </TableCell> : ""} 
+            </TableCell>
+          ) : (
+            ""
+          )}
 
-          {(this.props.pr.purchaseType === "Contract" || this.props.pr.purchaseType === "Sole Source")? <TableCell className={classes.td}>
-            <select 
-              onChange={this.setItem(key)}
-              //value={data.teamMembers}
-              id="currency"
-              name="currency"                
-              className="browser-default custom-select custom-select-md mb-3">
-              <option>--none--</option>
-                 {_currencies}
+          {this.props.pr.purchaseType === "Contract" ||
+          this.props.pr.purchaseType === "Sole Source" ? (
+            <TableCell className={classes.td}>
+              <select
+                onChange={this.setItem(key)}
+                //value={data.teamMembers}
+                id="currency"
+                name="currency"
+                className="browser-default custom-select custom-select-md mb-3"
+              >
+                <option>--none--</option>
+                {_currencies}
               </select>
-          </TableCell> : " "}   
+            </TableCell>
+          ) : (
+            " "
+          )}
         </TableRow>
       );
     });
 
-
-  	return (
-        <div>
-            <GridItem xs={12} sm={12} md={12} style={{ overflowY: "scroll", height: "50vh" }}>
-              <Card>
-                <CardBody>
-                <Notification error={this.state.error} message={this.state.message} />
-                  <form>
-                      <Grid container>
-                        { (this.props.pr.purchaseType === "Contract"|| this.props.pr.purchaseType === "Sole Source")? ` ` : 
-                         <GridItem xs={12} sm={12} md={12} lg={12}>
-                        <Select
-                              isMulti
-                              value={this.state.selectedOption}
-                              onChange={this.handleChange}
-                              options={this.state.options}
-                          /> 
-                          </GridItem>
-                          }
-                         {/* 
+    return (
+      <div>
+        <GridItem
+          xs={12}
+          sm={12}
+          md={12}
+          style={{ overflowY: "scroll", height: "50vh" }}
+        >
+          <Card>
+            <CardBody>
+              <Notification
+                error={this.state.error}
+                message={this.state.message}
+              />
+              <form>
+                <Grid container>
+                  {this.props.pr.purchaseType === "Contract" ||
+                  this.props.pr.purchaseType === "Sole Source" ? (
+                    ` `
+                  ) : (
+                    <GridItem xs={12} sm={12} md={12} lg={12}>
+                      <Select
+                        isMulti
+                        value={this.state.selectedOption}
+                        onChange={this.handleChange}
+                        options={this.state.options}
+                      />
+                    </GridItem>
+                  )}
+                  {/* 
                         <CustomInput labelText="Vendors" id="vendors" name="vendors"
                           formControlProps={{
                             fullWidth: true
@@ -359,36 +374,123 @@ class Add extends React.Component {
                         />
                          */}
 
-                   { (this.props.pr.purchaseType === "Contract"|| this.props.pr.purchaseType === "Sole Source")?
-                         <GridItem xs={12} sm={12} md={12} lg={12}>
-                       
-                        <span style={generalStyle.textLabel}>
-                        Vendor:
+                  {this.props.pr.purchaseType === "Contract" ||
+                  this.props.pr.purchaseType === "Sole Source" ? (
+                    <GridItem xs={12} sm={12} md={12} lg={12}>
+                      <span style={generalStyle.textLabel}>Vendor:</span>
+                      <span style={generalStyle.text}>
+                        {this.state.contractedVendor}{" "}
                       </span>
-                      <span style={generalStyle.text}>{this.state.contractedVendor} </span>
-                     
-                        </GridItem> : ""}
-                      </Grid>
-                    <Grid container>
-                      <GridItem xs={12} sm={12} md={12} lg={12}>
-                          <div className={classes.tableResponsive} style ={{ overflowX: "scroll"}}>
-                          <Table className={classes.table} > 
-                            <TableHead  className={classes[tableHeaderColor + "TableHeader"]} style={{marginTop:"10px", color:"blue", borderBottomColor:"#333",borderBottomStyle:"solid", borderBottomWidth:"1px"}}>
-                              <TableRow>
-                                <TableCell className={classes.tableCell + " " + classes.tableHeadCell+ " " +classes.td} style={{color: "blue", width:"55px"}}>Item No</TableCell>
-                                <TableCell className={classes.tableCell + " " + classes.tableHeadCell+ " " +classes.td} style={{color: "blue"}}>Item Description</TableCell>
-                                <TableCell className={classes.tableCell + " " + classes.tableHeadCell+" "+classes.td} style={{color: "blue", width: "70px"}}>Quantity</TableCell>
-                                <TableCell className={classes.tableCell + " " + classes.tableHeadCell+" "+classes.td} style={{color: "blue"}}>Unit</TableCell>
-                                { (this.props.pr.purchaseType === "Contract" || this.props.pr.purchaseType === "Sole Source")?   <TableCell className={classes.tableCell + " " + classes.tableHeadCell+" "+classes.td} style={{color: "blue"}}>Enter Price</TableCell>: ""}
-                                { (this.props.pr.purchaseType === "Contract" || this.props.pr.purchaseType === "Sole Source")?   <TableCell className={classes.tableCell + " " + classes.tableHeadCell+" "+classes.td} style={{color: "blue"}}>Currency</TableCell>: ""}
-
-                              </TableRow>
-                            </TableHead>
-                            <TableBody>
-                            {tableData}
-                            </TableBody>
-                          </Table> 
-                          {/* { (this.props.pr.purchaseType === "Contract" || this.props.pr.purchaseType === "Sole Source")?<CustomInput
+                    </GridItem>
+                  ) : (
+                    ""
+                  )}
+                </Grid>
+                <Grid container>
+                  <GridItem xs={12} sm={12} md={12} lg={12}>
+                    <div
+                      className={classes.tableResponsive}
+                      style={{ overflowX: "scroll" }}
+                    >
+                      <Table className={classes.table}>
+                        <TableHead
+                          className={classes[tableHeaderColor + "TableHeader"]}
+                          style={{
+                            marginTop: "10px",
+                            color: "blue",
+                            borderBottomColor: "#333",
+                            borderBottomStyle: "solid",
+                            borderBottomWidth: "1px"
+                          }}
+                        >
+                          <TableRow>
+                            <TableCell
+                              className={
+                                classes.tableCell +
+                                " " +
+                                classes.tableHeadCell +
+                                " " +
+                                classes.td
+                              }
+                              style={{ color: "blue", width: "55px" }}
+                            >
+                              Item No
+                            </TableCell>
+                            <TableCell
+                              className={
+                                classes.tableCell +
+                                " " +
+                                classes.tableHeadCell +
+                                " " +
+                                classes.td
+                              }
+                              style={{ color: "blue" }}
+                            >
+                              Item Description
+                            </TableCell>
+                            <TableCell
+                              className={
+                                classes.tableCell +
+                                " " +
+                                classes.tableHeadCell +
+                                " " +
+                                classes.td
+                              }
+                              style={{ color: "blue", width: "70px" }}
+                            >
+                              Quantity
+                            </TableCell>
+                            <TableCell
+                              className={
+                                classes.tableCell +
+                                " " +
+                                classes.tableHeadCell +
+                                " " +
+                                classes.td
+                              }
+                              style={{ color: "blue" }}
+                            >
+                              Unit
+                            </TableCell>
+                            {this.props.pr.purchaseType === "Contract" ||
+                            this.props.pr.purchaseType === "Sole Source" ? (
+                              <TableCell
+                                className={
+                                  classes.tableCell +
+                                  " " +
+                                  classes.tableHeadCell +
+                                  " " +
+                                  classes.td
+                                }
+                                style={{ color: "blue" }}
+                              >
+                                Enter Price
+                              </TableCell>
+                            ) : (
+                              ""
+                            )}
+                            {this.props.pr.purchaseType === "Contract" ||
+                            this.props.pr.purchaseType === "Sole Source" ? (
+                              <TableCell
+                                className={
+                                  classes.tableCell +
+                                  " " +
+                                  classes.tableHeadCell +
+                                  " " +
+                                  classes.td
+                                }
+                                style={{ color: "blue" }}
+                              >
+                                Currency
+                              </TableCell>
+                            ) : (
+                              ""
+                            )}
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>{tableData}</TableBody>
+                      </Table>
+                      {/* { (this.props.pr.purchaseType === "Contract" || this.props.pr.purchaseType === "Sole Source")?<CustomInput
                         labelText="Enter Price"
                         id="price"
                         formControlProps={{
@@ -440,7 +542,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  null
-)(withStyles(styles)(Add));
+export default connect(mapStateToProps, null)(withStyles(styles)(Add));
