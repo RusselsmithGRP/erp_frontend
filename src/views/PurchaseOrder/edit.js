@@ -61,7 +61,7 @@ class Edit extends React.Component {
       shipto:"",
       creditterms:"",
       grand_total: 0,
-      vat: 5,
+      vat: 7.5,
       lineitems: []
     },
     vendors:[],

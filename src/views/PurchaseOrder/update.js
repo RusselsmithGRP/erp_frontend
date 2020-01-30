@@ -55,7 +55,7 @@ class update extends Component {
     data: {
       vendor: "",
       grand_total: 0,
-      vat: 5,
+      vat: 7.5,
       lineitems: []
     },
     vendors: [],
@@ -222,7 +222,7 @@ class update extends Component {
     let data = this.state.data;
     if (this.state.isvatable) {
       //const vat = event.target.value? event.target.values: this.state.data.vat;
-      data.grand_total = parseInt(grandTotal) + grandTotal * (5 / 100);
+      data.grand_total = parseInt(grandTotal) + grandTotal * (7.5 / 100);
     } else {
       data.grand_total = parseInt(grandTotal);
     }
@@ -761,7 +761,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  null
-)(withStyles(styles)(update));
+export default connect(mapStateToProps, null)(withStyles(styles)(update));
