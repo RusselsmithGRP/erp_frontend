@@ -340,7 +340,7 @@ class Add extends React.Component {
                   <form>
                       <Grid container>
                         { (this.props.pr.purchaseType === "Contract"|| this.props.pr.purchaseType === "Sole Source")? ` ` : 
-                         <GridItem xs={12} sm={12} md={12} lg={12}>
+                         <GridItem xs={12} sm={16} md={12} lg={12}>
                         <Select
                               isMulti
                               value={this.state.selectedOption}

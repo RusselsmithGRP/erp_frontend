@@ -297,9 +297,9 @@ class View extends React.Component {
           <TableCell className={classes.td}>{prop.description}</TableCell>
           <TableCell className={classes.td}>{prop.quantity}</TableCell>
           <TableCell className={classes.td}>{uom.name}</TableCell>
-          <TableCell className={classes.td}>{currencies.getCurrencyCode(prop.currency)}{" "}{prop.price/100}</TableCell>
+          <TableCell className={classes.td}>{currencies.getCurrencyCode(prop.currency)}{prop.price/100}</TableCell>
           <TableCell className={classes.td}>
-            {currencies.getCurrencyCode(prop.currency)}{" "}{(prop.price * prop.quantity)/100}
+            {currencies.getCurrencyCode(prop.currency)}{(prop.price * prop.quantity)/100}
           </TableCell>
         </TableRow>
         );
@@ -546,7 +546,7 @@ class View extends React.Component {
                         fontWeight: "700"
                       }}
                     >
-                     {currencies.getCurrencyCode(this.state.currency)}{" "} {this.state.doc.po.grand_total}
+                     {currencies.getCurrencyCode(this.state.currency)}{this.state.doc.po.grand_total}
                     </span>
                   </div>
                   {/* <Button onClick={this.handleOpen} color="yellowgreen">
