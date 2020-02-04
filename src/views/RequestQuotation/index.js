@@ -454,7 +454,8 @@ class Index extends React.Component {
                           disabled={!this.state.selectedPr ? true : false}
                         >
                           {this.state.pr
-                            ? (this.state.pr.purchaseType === "Contract" || this.state.pr.purchaseType === "Sole Source")
+                            ? this.state.pr.purchaseType === "Contract" ||
+                              this.state.pr.purchaseType === "Sole Source"
                               ? "Enter Price"
                               : "Request For Quote"
                             : " "}
@@ -498,7 +499,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  null
-)(withStyles(styles)(Index));
+export default connect(mapStateToProps, null)(withStyles(styles)(Index));
