@@ -12,6 +12,8 @@ import ForgotPassword from "./views/UserProfile/ForgotPassword.jsx";
 import Confirm from "./views/UserProfile/Confirm.jsx";
 import Resetpassword from "./views/UserProfile/Resetpassword.jsx";
 import RegistrationPage from "./views/RegistrationPage/index.js";
+import Terms from "./views/Terms";
+
 import "./index.css";
 
 const hist = createBrowserHistory();
@@ -22,6 +24,7 @@ ReactDOM.render(
     <Router history={hist} basename={`${process.env.PARENT_FOLDER}`}>
       <Switch>
         <Route path="/login" exact component={LoginPage} />
+        <Route path="/terms" exact component={Terms} />
         <Route path="/resetpassword/:token" exact component={Resetpassword} />
         <Route path="/forgotpassword" exact component={ForgotPassword} />
         <Route path="/register" exact component={RegistrationPage} />

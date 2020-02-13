@@ -339,7 +339,8 @@ class RegisterPage extends React.Component {
                           label={
                             <span>
                               I agree to the{" "}
-                              <a href="#pablo">terms and conditions</a>.
+                              {/* <a href="#pablo">terms and conditions</a>. */}
+                              <Link to="/terms">terms and conditions</Link>.
                             </span>
                           }
                         />
