@@ -389,7 +389,9 @@ class View extends React.Component {
             )}
 
             {/* Approve/Reject Starts Here... */}
-            {user.role === "iac" && vendor.status === "PENDING" ? (
+            {user.role === "iac" ||
+            (user.email === "fawosedo@russelsmithgroup.com" &&
+              vendor.status === "PENDING") ? (
               <Grid
                 container
                 spacing={16}
@@ -451,7 +453,4 @@ function mapStateToProps(state) {
 //   }
 // }
 
-export default connect(
-  mapStateToProps,
-  null
-)(withStyles(styles)(View));
+export default connect(mapStateToProps, null)(withStyles(styles)(View));
