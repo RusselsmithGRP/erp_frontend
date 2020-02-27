@@ -390,6 +390,7 @@ class View extends React.Component {
 
             {/* Approve/Reject Starts Here... */}
             {user.role === "iac" ||
+            user.role === "admin" ||
             (user.email === "fawosedo@russelsmithgroup.com" &&
               vendor.status === "PENDING") ? (
               <Grid
