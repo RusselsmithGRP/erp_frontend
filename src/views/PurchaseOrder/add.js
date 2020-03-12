@@ -272,9 +272,11 @@ class Add extends React.Component {
 
     const creditTerms = [
       { value: "0", label: "Advance" },
-      { value: "1", label: "30 days" },
-      { value: "2", label: "45 days" },
-      { value: "3", label: "60 days" }
+      { value: "1", label: "14 days" },
+      { value: "2", label: "30 days" },
+      { value: "3", label: "45 days" },
+      { value: "4", label: "60 days" },
+      { value: "5", label: "Select additional terms" }
     ];
     return (
       <div>
