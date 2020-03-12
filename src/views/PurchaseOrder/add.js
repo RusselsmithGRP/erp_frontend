@@ -276,7 +276,7 @@ class Add extends React.Component {
       { value: "2", label: "30 days" },
       { value: "3", label: "45 days" },
       { value: "4", label: "60 days" },
-      { value: "5", label: "Select additional terms" }
+      { value: "5", label: "See Additional Terms" }
     ];
     return (
       <div>
