@@ -215,7 +215,7 @@ class Add extends React.Component {
     let data = this.state.data;
     if (this.state.isvatable) {
       //const vat = event.target.value? event.target.values: this.state.data.vat;
-      data.grand_total = parseInt(grandTotal) + grandTotal * (5 / 100);
+      data.grand_total = parseInt(grandTotal) + grandTotal * (7.5 / 100);
     } else {
       data.grand_total = parseInt(grandTotal);
     }
@@ -268,14 +268,15 @@ class Add extends React.Component {
   //   }
   // }
   render() {
-
     const { classes, tableHeaderColor } = this.props;
 
     const creditTerms = [
       { value: "0", label: "Advance" },
-      { value: "1", label: "30 days" },
-      { value: "2", label: "45 days" },
-      { value: "3", label: "60 days" }
+      { value: "1", label: "14 days" },
+      { value: "2", label: "30 days" },
+      { value: "3", label: "45 days" },
+      { value: "4", label: "60 days" },
+      { value: "5", label: "See Additional Terms" }
     ];
     return (
       <div>
@@ -449,7 +450,7 @@ class Add extends React.Component {
                         checked={this.state.isvatable}
                         onChange={e => {
                           let val = !this.state.isvatable;
-                          let vat = val ? 5 : 0;
+                          let vat = val ? 7.5 : 0;
                           let data = this.state.data;
                           data.vat = vat;
                           this.setState({ isvatable: val, data });
@@ -677,7 +678,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  null
-)(withStyles(styles)(Add));
+export default connect(mapStateToProps, null)(withStyles(styles)(Add));

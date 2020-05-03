@@ -321,12 +321,12 @@ class AddUser extends React.Component {
                         error={
                           this.state.validationState.department === ""
                             ? ""
-                            : this.state.validationState.email
+                            : this.state.validationState.department
                         }
                         success={
-                          this.state.validationState.email === ""
+                          this.state.validationState.department === ""
                             ? ""
-                            : !this.state.validationState.email
+                            : !this.state.validationState.department
                         }
                       >
                         {this.state.optionsDepartment.map(function(data, key) {

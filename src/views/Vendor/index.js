@@ -238,7 +238,8 @@ class Index extends React.Component {
               </CardHeader>
               <CardBody>
                 {this.props.user.role == "iac" ||
-                this.props.user.role == "admin" ? (
+                this.props.user.role == "admin" ||
+                this.props.user.email === "fawosedo@russelsmithgroup.com" ? (
                   <Card>
                     <CardBody>
                       <FormControl
@@ -416,7 +417,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  null
-)(withStyles(styles)(Index));
+export default connect(mapStateToProps, null)(withStyles(styles)(Index));

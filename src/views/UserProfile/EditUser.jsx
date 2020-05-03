@@ -177,7 +177,7 @@ class EditUser extends React.Component {
                           fullWidth: true
                         }}
                         inputProps={{
-                          onChange: this.handleChange,
+                          onChange: this.handleChange.bind(this),
                           value: this.state.data.email
                         }}
                       />

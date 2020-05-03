@@ -379,7 +379,7 @@ class Add extends React.Component {
                     <GridItem xs={12} sm={12} md={12} lg={12}>
                       <span style={generalStyle.textLabel}>Vendor:</span>
                       <span style={generalStyle.text}>
-                        {this.state.contractedVendor}{" "}
+                        {this.state.contractedVendor}
                       </span>
                     </GridItem>
                   ) : (
