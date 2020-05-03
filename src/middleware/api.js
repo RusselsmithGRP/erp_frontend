@@ -7,14 +7,15 @@ class MiddleWare {
   GET = "GET";
   PATCH = "PATCH";
 
+  // "http://ec2-18-223-2-36.us-east-2.compute.amazonaws.com:3000";
+
   constructor(token = "") {
     this.api_root =
-      // "http://ec2-18-223-2-36.us-east-2.compute.amazonaws.com:3000";
-      this.api_root = "http://localhost:3000";
+      "http://ec2-52-15-140-35.us-east-2.compute.amazonaws.com:3000";
+    this.api_root = "http://localhost:3000";
     this.token = token;
   }
 
-    
   makeConnection(endpoint, httpVerb, body = "") {
     let option = {};
     body ? JSON.stringify(body) : "";
@@ -24,8 +25,8 @@ class MiddleWare {
         mode: "cors",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer " + this.token
-        }
+          Authorization: "Bearer " + this.token,
+        },
       };
     } else {
       option = {
@@ -33,12 +34,12 @@ class MiddleWare {
         mode: "cors",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer " + this.token
+          Authorization: "Bearer " + this.token,
         },
-        body: JSON.stringify(body)
+        body: JSON.stringify(body),
       };
     }
-    return fetch(this.api_root + endpoint, option).catch(e => {
+    return fetch(this.api_root + endpoint, option).catch((e) => {
       console.log(e);
     });
   }
