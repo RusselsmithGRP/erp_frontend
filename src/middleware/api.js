@@ -11,13 +11,8 @@ class MiddleWare {
 
   constructor(token = "") {
     this.api_root =
-<<<<<<< HEAD
       "http://ec2-52-15-140-35.us-east-2.compute.amazonaws.com:3000";
     this.api_root = "http://localhost:3000";
-=======
-      "http://ec2-18-223-2-36.us-east-2.compute.amazonaws.com:3000";
-    // this.api_root = "http://localhost:3000";
->>>>>>> b1b181571b78c5f1606cc09765d2ec607adedde5
     this.token = token;
   }
 
