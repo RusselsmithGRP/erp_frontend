@@ -12,7 +12,7 @@ class MiddleWare {
   constructor(token = "") {
     this.api_root =
       "http://ec2-52-15-140-35.us-east-2.compute.amazonaws.com:3000";
-    this.api_root = "http://localhost:3000";
+    // this.api_root = "http://localhost:3000";
     this.token = token;
   }
 
