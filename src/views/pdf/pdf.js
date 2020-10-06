@@ -84,7 +84,7 @@ class Pdf extends Component {
     return realSum;
   }
   getVAT(vat, total, discount) {
-    let val =  (parseInt(vat) / 100) *( parseInt(total) - parseInt(discount));
+    let val =  (vat / 100) * (parseInt(total) - parseInt(discount));
     // let realVat = parseInt(total) + parseInt(val);
     return val;
   }
