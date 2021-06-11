@@ -77,10 +77,13 @@ class Pdf extends Component {
   getTotal(arr) {
     let sum = 0;
     for (var i = 0; i < arr.length; i++) {
-      sum += parseInt(arr[i].price * arr[i].quantity);
+      sum += parseInt((arr[i].price * arr[i].quantity));
+      
     }
+    let freightcharges =this.state.po.freightcharges && this.state.po.freightcharges;
     let realSum = Util.financial(sum);
 
+    realSum = realSum + (freightcharges || 0)
     return realSum;
   }
   getVAT(vat, total, discount) {
@@ -116,6 +119,7 @@ class Pdf extends Component {
     let currency = "";
     const numberWords = require("number-words");
     const tableData = this.state.items.map((prop, key) => {
+      
       currency = prop.currency;
       return (
         <tr>
@@ -129,11 +133,14 @@ class Pdf extends Component {
           </td>
           <td style={generalStyle.tableTd}>
             {currencies.getCurrencyCode(prop.currency)}
+            
             {Util.financial(prop.quantity * prop.price)}
           </td>
         </tr>
       );
     });
+
+    
 
 
     return (

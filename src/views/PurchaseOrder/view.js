@@ -41,10 +41,10 @@ import * as currencies from "../../utility/Currencies.js";
 
 const shipto = [
   { slug: "lagos", name: "Lagos Office" },
-  { slug: "portharcourt", name: "Port-Harcourt Office" }
+  { slug: "portharcourt", name: "Port-Harcourt Office" },
 ];
 
-const styles = theme => ({
+const styles = (theme) => ({
   ...tableStyle,
   ...regularFormsStyle,
   td: {
@@ -52,23 +52,23 @@ const styles = theme => ({
     margin: "0 10px",
     padding: "0 10px",
     fontWeight: "700",
-    fontSize: "15px"
+    fontSize: "15px",
   },
   removeDivPadding: { maxWidth: "12%" },
   cardIconTitle: {
     ...cardTitle,
     marginTop: "15px",
-    marginBottom: "0px"
+    marginBottom: "0px",
   },
   cardIconTitle: {
     ...cardTitle,
     marginTop: "15px",
-    marginBottom: "0px"
+    marginBottom: "0px",
   },
   typo: {
     paddingLeft: "25%",
     marginBottom: "40px",
-    position: "relative"
+    position: "relative",
   },
   note: {
     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
@@ -81,20 +81,20 @@ const styles = theme => ({
     left: "0",
     marginLeft: "20px",
     position: "absolute",
-    width: "260px"
+    width: "260px",
   },
   ulStyle: {
     listStyleType: "none",
     overflow: "auto",
     padding: "0",
-    borderBottom: "1px solid #000"
+    borderBottom: "1px solid #000",
   },
   liStyle: {
     float: "left",
     paddingBottom: "15px",
     fontWeight: "700",
     lineHeight: "2",
-    width: "25%"
+    width: "25%",
   },
   paper: {
     position: "fixed",
@@ -104,54 +104,54 @@ const styles = theme => ({
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    outline: "none"
+    outline: "none",
   },
   closeButtonSetting: {
     position: "absolute",
     top: " 10px",
-    right: "30px"
+    right: "30px",
   },
   ap: {
-    fontWeight: "500"
+    fontWeight: "500",
   },
   shadow: {
     boxShadow: "rgba(0, 0, 0, 0.085) 0.1px 0.125rem 0.25rem",
-    padding: "15px"
+    padding: "15px",
   },
   space1: {
-    height: "10px"
+    height: "10px",
   },
   boxer: {
     display: "table",
     borderCollapse: "collapse",
-    width: "100%"
+    width: "100%",
   },
   boxRow: {
     display: "table-row",
     cursor: "pointer",
     "&:active": {
       backgroundColor: "#fff",
-      borderLeft: "5px solid #3393FF"
+      borderLeft: "5px solid #3393FF",
     },
     "&:hover": {
-      backgroundColor: "#fff"
-    }
+      backgroundColor: "#fff",
+    },
   },
   box: {
     display: "table-cell",
     verticalAlign: " top",
     borderBottom: " 1px solid #ddd",
-    padding: "15px"
+    padding: "15px",
   },
   sidebar: {
     minHeight: "70vh",
-    backgroundColor: "#f5f5f5"
+    backgroundColor: "#f5f5f5",
   },
   boxHeader: {
     fontWeight: "700",
     backgroundColor: "#D3D3D3",
-    display: "table-row"
-  }
+    display: "table-row",
+  },
 });
 
 class View extends React.Component {
@@ -159,15 +159,15 @@ class View extends React.Component {
     doc: {
       po: {
         vendor: {
-          general_info: {}
+          general_info: {},
         },
         requestor: {},
         vat: "",
         discount: "",
         servicecharge: "",
-        freightcharges: ""
+        freightcharges: "",
       },
-      items: []
+      items: [],
     },
     vendors: [],
     quotes: [],
@@ -179,21 +179,19 @@ class View extends React.Component {
     open: false,
     additional_terms: "",
     currency: "",
-    disabled: false
-
+    disabled: false,
   };
 
   renderRedirect = () => {
-    if(this.state.error) {
-      this.setState({disabled: false})
+    if (this.state.error) {
+      this.setState({ disabled: false });
     }
-    if(this.state.error === false) {
-      setTimeout(function() {
+    if (this.state.error === false) {
+      setTimeout(function () {
         window.location.href = "/order";
       }, 3000);
     }
   };
-
 
   handleOpen = () => {
     this.setState({ open: true });
@@ -202,18 +200,18 @@ class View extends React.Component {
     this.setState({ open: false });
   }
 
-  handleChange = e => {
+  handleChange = (e) => {
     const action = e.target.value;
     let showReason = action == "disapprove" ? true : false;
     this.setState({ showReason, action });
   };
-  handleTerms = e => {
+  handleTerms = (e) => {
     this.setState({
-      additional_terms: e.target.value
+      additional_terms: e.target.value,
     });
   };
 
-  handleFormChange = e => {
+  handleFormChange = (e) => {
     const reason = e.target.value;
     this.setState({ reason });
   };
@@ -221,15 +219,15 @@ class View extends React.Component {
     const data = {};
     data.id = this.state.doc.po._id;
     data.additional_terms = this.state.additional_terms;
-    poActions.submitTerms(this.props.user.token, data, result => {
+    poActions.submitTerms(this.props.user.token, data, (result) => {
       if (result) {
         alert("Addititional terms added");
       }
     });
   };
 
-  submitForm = e => {
-    this.setState({disabled: true});
+  submitForm = (e) => {
+    this.setState({ disabled: true });
     let data = {};
     let message = "";
     if (this.state.action == "approve") {
@@ -244,7 +242,7 @@ class View extends React.Component {
       this.props.user.token,
       this.props.match.params.id,
       data,
-      isOk => {
+      (isOk) => {
         if (isOk) this.setState({ message: message, error: false });
         else
           this.setState({ message: "Error processing request.", error: true });
@@ -252,7 +250,7 @@ class View extends React.Component {
     );
   };
 
-  openPDF = e => {
+  openPDF = (e) => {
     var win = window.open("/pdf/" + this.props.match.params.id, "_blank");
     win.focus();
   };
@@ -268,7 +266,7 @@ class View extends React.Component {
     poActions.fetchPurchaseOrderById(
       this.props.user.token,
       this.props.match.params.id,
-      doc => {
+      (doc) => {
         this.setState({ doc });
         this.parseRow();
       }
@@ -276,32 +274,35 @@ class View extends React.Component {
   }
 
   render() {
-    console.log(this.state.doc.items, "wik")
     const { classes, tableHeaderColor } = this.props;
     const table_data = this.state.doc.items.length ? (
       this.state.doc.items.map((prop, key) => {
         const uom = Uom.getUom(prop.uom);
         return (
           <TableRow key={key}>
-          <TableCell
-            component="th"
-            style={{
-              border: "none",
-              padding: "0",
-              width: "20px",
-              textAlign: "center"
-            }}
-          >
-            {key + 1}
-          </TableCell>
-          <TableCell className={classes.td}>{prop.description}</TableCell>
-          <TableCell className={classes.td}>{prop.quantity}</TableCell>
-          <TableCell className={classes.td}>{uom.name}</TableCell>
-          <TableCell className={classes.td}>{currencies.getCurrencyCode(prop.currency)}{prop.price/100}</TableCell>
-          <TableCell className={classes.td}>
-            {currencies.getCurrencyCode(prop.currency)}{(prop.price * prop.quantity)/100}
-          </TableCell>
-        </TableRow>
+            <TableCell
+              component="th"
+              style={{
+                border: "none",
+                padding: "0",
+                width: "20px",
+                textAlign: "center",
+              }}
+            >
+              {key + 1}
+            </TableCell>
+            <TableCell className={classes.td}>{prop.description}</TableCell>
+            <TableCell className={classes.td}>{prop.quantity}</TableCell>
+            <TableCell className={classes.td}>{uom.name}</TableCell>
+            <TableCell className={classes.td}>
+              {currencies.getCurrencyCode(prop.currency)}
+              {prop.price / 100}
+            </TableCell>
+            <TableCell className={classes.td}>
+              {currencies.getCurrencyCode(prop.currency)}
+              {(prop.price * prop.quantity) / 100}
+            </TableCell>
+          </TableRow>
         );
       })
     ) : (
@@ -310,7 +311,7 @@ class View extends React.Component {
 
     return (
       <div>
-       {this.renderRedirect()}
+        {this.renderRedirect()}
         <Notification error={this.state.error} message={this.state.message} />
         <Grid container>
           <GridItem xs={12} sm={12} md={12}>
@@ -335,7 +336,9 @@ class View extends React.Component {
                       <li className={classes.liStyle}>
                         EID: <br />
                         <span className={classes.ap}>
-                          {( this.state.doc.po.requestor != null) ? this.state.doc.po.requestor.eid: ""}
+                          {this.state.doc.po.requestor != null
+                            ? this.state.doc.po.requestor.eid
+                            : ""}
                         </span>
                       </li>
                       <li className={classes.liStyle}>
@@ -361,7 +364,9 @@ class View extends React.Component {
                       <li className={classes.liStyle}>
                         Vendor: <br />
                         <span className={classes.ap}>
-                          {(this.state.doc.po.vendor)? this.state.doc.po.vendor.general_info.company_name: ""}
+                          {this.state.doc.po.vendor
+                            ? this.state.doc.po.vendor.general_info.company_name
+                            : ""}
                         </span>
                       </li>
                       <li className={classes.liStyle}>
@@ -390,7 +395,7 @@ class View extends React.Component {
                           color: "#1b4aa5",
                           borderBottomColor: "#333",
                           borderBottomStyle: "solid",
-                          borderBottomWidth: "1px"
+                          borderBottomWidth: "1px",
                         }}
                       >
                         <TableRow>
@@ -468,7 +473,7 @@ class View extends React.Component {
                           </TableCell>
                         </TableRow>
                       </TableHead>
-                        
+
                       <div />
 
                       <TableBody>{table_data}</TableBody>
@@ -481,11 +486,11 @@ class View extends React.Component {
                         labelText="Discount"
                         id="discount"
                         formControlProps={{
-                          style: { width: "100%" }
+                          style: { width: "100%" },
                         }}
                         inputProps={{
                           disabled: true,
-                          value: this.state.doc.po.discount
+                          value: this.state.doc.po.discount,
                         }}
                       />
                     </GridItem>
@@ -494,11 +499,11 @@ class View extends React.Component {
                         labelText="VAT"
                         id="vat"
                         formControlProps={{
-                          style: { width: "100%" }
+                          style: { width: "100%" },
                         }}
                         inputProps={{
                           disabled: true,
-                          value: this.state.doc.po.vat
+                          value: this.state.doc.po.vat,
                         }}
                       />
                     </GridItem>
@@ -507,11 +512,11 @@ class View extends React.Component {
                         labelText="Freight Charges"
                         id="freightcharges"
                         formControlProps={{
-                          style: { width: "100%" }
+                          style: { width: "100%" },
                         }}
                         inputProps={{
                           disabled: true,
-                          value: this.state.doc.po.freightcharges
+                          value: this.state.doc.po.freightcharges,
                         }}
                       />
                     </GridItem>
@@ -520,11 +525,11 @@ class View extends React.Component {
                         labelText="Service Charges"
                         id="servicecharge"
                         formControlProps={{
-                          style: { width: "100%" }
+                          style: { width: "100%" },
                         }}
                         inputProps={{
                           disabled: true,
-                          value: this.state.doc.po.servicecharge
+                          value: this.state.doc.po.servicecharge,
                         }}
                       />
                     </GridItem>
@@ -534,7 +539,7 @@ class View extends React.Component {
                       style={{
                         color: "#1b4aa5",
                         fontWeight: "700",
-                        margin: "7px"
+                        margin: "7px",
                       }}
                     >
                       Total:
@@ -543,10 +548,11 @@ class View extends React.Component {
                       style={{
                         float: "right",
                         color: "#1b4aa5",
-                        fontWeight: "700"
+                        fontWeight: "700",
                       }}
                     >
-                     {currencies.getCurrencyCode(this.state.currency)}{this.state.doc.po.grand_total}
+                      {currencies.getCurrencyCode(this.state.currency)}
+                      {this.state.doc.po.grand_total}
                     </span>
                   </div>
                   {/* <Button onClick={this.handleOpen} color="yellowgreen">
@@ -571,11 +577,11 @@ class View extends React.Component {
                             labelText="Additional Terms"
                             id="additional_terms"
                             formControlProps={{
-                              fullWidth: true
+                              fullWidth: true,
                             }}
                             inputProps={{
-                              onChange: e => this.handleTerms(e),
-                              value: this.state.additional_terms
+                              onChange: (e) => this.handleTerms(e),
+                              value: this.state.additional_terms,
                             }}
                           />
                           <Button
@@ -589,8 +595,11 @@ class View extends React.Component {
                     </div>
                   </Modal>
                 </CardBody>
-                
-                {this.props.user._id != ((this.state.doc.po.requestor)? this.state.doc.po.requestor._id: "") ? (
+
+                {this.props.user._id !=
+                (this.state.doc.po.requestor
+                  ? this.state.doc.po.requestor._id
+                  : "") ? (
                   <CardFooter>
                     <Grid container>
                       {this.state.showReason ? (
@@ -600,64 +609,76 @@ class View extends React.Component {
                             id="reason"
                             required
                             formControlProps={{
-                              fullWidth: true
+                              fullWidth: true,
                             }}
                             inputProps={{
                               name: "reason",
                               value: this.state.reason,
-                              onChange: this.handleFormChange
+                              onChange: this.handleFormChange,
                             }}
                           />
                         </GridItem>
                       ) : (
                         ""
                       )}
-                      <GridItem xs={12} sm={6} md={6}>
-                        <h4>Choose Action &darr;</h4>
-                        <FormControl
-                          fullWidth
-                          className={classes.selectFormControl}
-                        >
-                          <Select
-                            MenuProps={{
-                              className: classes.selectMenu
-                            }}
-                            classes={{
-                              select: classes.select
-                            }}
-                            value={this.state.action}
-                            inputProps={{
-                              name: "simpleSelect",
-                              id: "type"
-                            }}
-                            onChange={this.handleChange}
-                          >
-                            <MenuItem
-                              classes={{
-                                root: classes.selectMenuItem,
-                                selected: classes.selectMenuItemSelected
-                              }}
-                              value="approve"
+                      {Status.getStatus(this.state.doc.po.status) ===
+                      "CEO Approved" ? (
+                        <Button color="yellowgreen">Mark as closed</Button>
+                      ) : Status.getStatus(this.state.doc.po.status) ===
+                        "PO Closed" ? null : (
+                        <>
+                          <GridItem xs={12} sm={6} md={6}>
+                            <h4>Choose Action &darr;</h4>
+                            <FormControl
+                              fullWidth
+                              className={classes.selectFormControl}
                             >
-                              Approve
-                            </MenuItem>
-                            <MenuItem
-                              classes={{
-                                root: classes.selectMenuItem,
-                                selected: classes.selectMenuItemSelected
-                              }}
-                              value="disapprove"
+                              <Select
+                                MenuProps={{
+                                  className: classes.selectMenu,
+                                }}
+                                classes={{
+                                  select: classes.select,
+                                }}
+                                value={this.state.action}
+                                inputProps={{
+                                  name: "simpleSelect",
+                                  id: "type",
+                                }}
+                                onChange={this.handleChange}
+                              >
+                                <MenuItem
+                                  classes={{
+                                    root: classes.selectMenuItem,
+                                    selected: classes.selectMenuItemSelected,
+                                  }}
+                                  value="approve"
+                                >
+                                  Approve
+                                </MenuItem>
+                                <MenuItem
+                                  classes={{
+                                    root: classes.selectMenuItem,
+                                    selected: classes.selectMenuItemSelected,
+                                  }}
+                                  value="disapprove"
+                                >
+                                  Reject
+                                </MenuItem>
+                              </Select>
+                            </FormControl>
+                          </GridItem>
+                          <GridItem xs={12} sm={6} md={6}>
+                            <Button
+                              color="yellowgreen"
+                              onClick={this.submitForm}
+                              disabled={this.state.disabled}
                             >
-                              Reject
-                            </MenuItem>
-                          </Select>
-                        </FormControl>
-                      </GridItem>
-                      <GridItem xs={12} sm={6} md={6}>
-                        <Button color="yellowgreen" onClick={this.submitForm} disabled={this.state.disabled}>
-                          Submit 
-                        </Button>
-                      </GridItem>
+                              Submit
+                            </Button>
+                          </GridItem>
+                        </>
+                      )}
                     </Grid>
                   </CardFooter>
                 ) : (
@@ -672,22 +693,19 @@ class View extends React.Component {
   }
 }
 View.defaultProps = {
-  tableHeaderColor: "gray"
+  tableHeaderColor: "gray",
 };
 
 View.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
 };
 
 function mapStateToProps(state) {
   return {
     user: state.auth.user,
     loading: state.loader.loading,
-    loader: state.loader
+    loader: state.loader,
   };
 }
 
-export default connect(
-  mapStateToProps,
-  null
-)(withStyles(styles)(View));
+export default connect(mapStateToProps, null)(withStyles(styles)(View));

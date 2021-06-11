@@ -34,8 +34,8 @@ const styles = {
   cardIconTitle: {
     ...cardTitle,
     marginTop: "15px",
-    marginBottom: "0px"
-  }
+    marginBottom: "0px",
+  },
 };
 class Index extends React.Component {
   constructor(props) {
@@ -43,7 +43,7 @@ class Index extends React.Component {
     this.handler = this.handler.bind(this);
     this.state = {
       data: [],
-      status: "012"
+      status: "012",
     };
   }
 
@@ -58,14 +58,14 @@ class Index extends React.Component {
    */
   componentDidMount() {
     prActions
-      .fetchAllRequistion(this.props.user.token, docs => {
+      .fetchAllRequistion(this.props.user?.token, (docs) => {
         // this.setState({ data: docs });
         console.log(docs);
         return docs;
       })
-      .then(data => {
+      .then((data) => {
         let newData = data.filter(
-          doc =>
+          (doc) =>
             (doc.purchaseType === "Open Market" && doc.status === "011") ||
             doc.status === "013"
         );
@@ -81,7 +81,7 @@ class Index extends React.Component {
 
   processJson(responseJson) {
     let datas = [];
-    responseJson.map(row => {
+    responseJson.map((row) => {
       {
         {
           debugger;
@@ -91,9 +91,9 @@ class Index extends React.Component {
       arry.push(
         row._id,
         row.requisitionno,
-        row.requestor.firstname,
-        row.requestor.lastname,
-        row.department.name,
+        row.requestor?.firstname,
+        row.requestor?.lastname,
+        row.department?.name,
         row.status
       );
       datas.push(arry);
@@ -101,7 +101,7 @@ class Index extends React.Component {
     const dataTable = {
       headerRow: ["#", "Requestor Name", "Department", "Status", "Actions"],
       footerRow: ["#", "Requestor Name", "Department", "Status", "Actions"],
-      dataRows: datas
+      dataRows: datas,
     };
     return dataTable;
   }
@@ -145,7 +145,7 @@ class Index extends React.Component {
             <div className="actions-right">
               <Link to={"/openmarket/view/" + prop[0]}>View</Link>
             </div>
-          )
+          ),
         };
       });
       return (
@@ -176,26 +176,26 @@ class Index extends React.Component {
                   columns={[
                     {
                       Header: "#",
-                      accessor: "id"
+                      accessor: "id",
                     },
                     {
                       Header: "Requestor",
-                      accessor: "requestor"
+                      accessor: "requestor",
                     },
                     {
                       Header: "Department",
-                      accessor: "department"
+                      accessor: "department",
                     },
                     {
                       Header: "Status",
-                      accessor: "status"
+                      accessor: "status",
                     },
                     {
                       Header: "Actions",
                       accessor: "actions",
                       sortable: false,
-                      filterable: false
-                    }
+                      filterable: false,
+                    },
                   ]}
                   defaultPageSize={10}
                   showPaginationTop
@@ -213,20 +213,17 @@ class Index extends React.Component {
 
 Index.propTypes = {
   vendorActions: PropTypes.object,
-  data: PropTypes.object
+  data: PropTypes.object,
 };
 
 Index.defaultProps = {
-  data: { dataRows: {} }
+  data: { dataRows: {} },
 };
 function mapStateToProps(state) {
   return {
     loader: state.loader,
-    user: state.auth.user
+    user: state.auth.user,
   };
 }
 
-export default connect(
-  mapStateToProps,
-  null
-)(withStyles(styles)(Index));
+export default connect(mapStateToProps, null)(withStyles(styles)(Index));

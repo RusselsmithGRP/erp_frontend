@@ -16,8 +16,9 @@ export const STATUS = {
   POX2: "HOD Declined Approval With Reason",
   PO02: "Awaiting Final Approval",
   PO03: "CEO Approved",
+  PO04: "PO Closed",
   POX3: "CEO Declined Approval With Reason",
-  X: "Request Cancelled"
+  X: "Request Cancelled",
 };
 
 export function getStatus(status) {
