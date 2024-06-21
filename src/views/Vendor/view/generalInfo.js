@@ -41,7 +41,6 @@ class GeneralInfo extends React.Component {
 
   render() {
     const { classes, data } = this.props;
-    //console.log(this.props);
     if(this.props.loader.loading){
       return (
         <div>
@@ -56,7 +55,7 @@ class GeneralInfo extends React.Component {
       <div>
         <Grid container>
           <GridItem xs={12} sm={12} md={12}>
-          <form className={classes.container} noValidate autoComplete="off">
+          <form className={classes.container} autoComplete="off">
             <Progress loading={this.props.loading}/>
             <Card>
               <CardBody>

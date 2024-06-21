@@ -41,11 +41,9 @@ const tableStyle = theme => ({
   table: {
     marginBottom: "0",
     width: "100%",
-    maxWidth: "100%",
     backgroundColor: "transparent",
     borderSpacing: "0",
     borderCollapse: "collapse",
-    overflow: "auto"
   },
   tableShoppingHead: {
     fontSize: "0.9em !important",
@@ -55,8 +53,10 @@ const tableStyle = theme => ({
     fontSize: "1.25em !important"
   },
   tableHeadCell: {
-    color: "rgba(0, 0, 0, 0.87)",
-    border: "none !important"
+    color: "blue",
+    borderBottom: "1px solid rgb(51, 51, 51) !important",
+    fontWeight: "700 !important",
+    width: "auto"
   },
   tableCell: {
     ...defaultFont,
@@ -65,11 +65,10 @@ const tableStyle = theme => ({
     verticalAlign: "middle",
     fontSize: "1em",
     borderBottom: "none",
-    borderTop: "1px solid #ddd",
     position: "relative",
     [theme.breakpoints.down("sm")]: {
       minHeight: "24px",
-      minWidth: "32px",
+      maxWidth: "20px"
     }
   },
   tableCellTotal: {
@@ -85,9 +84,9 @@ const tableStyle = theme => ({
     textAlign: "right"
   },
   tableResponsive: {
-    // width: "100%",
+    width: "100%",
     minHeight: "0.1%",
-    overflowX: "auto"
+
   },
   tableStripedRow: {
     backgroundColor: "#f9f9f9"

@@ -9,7 +9,7 @@ const sweetAlertStyle = {
     marginTop: "0",
     marginBottom: "3px",
     color: "#3C4858",
-    fontSize: "18px"
+    fontSize: "18px",
   },
   center: {
     textAlign: "center"

@@ -36,6 +36,7 @@ class ChangePassword extends React.Component {
   state = {
     data: {oldPassword: '', password:'', confirmPassword:''},
     resetMessage: {},
+    errorState: '',
     showNotif: '',
 	 card: {
     minWidth:12,
@@ -51,11 +52,6 @@ class ChangePassword extends React.Component {
   componentDidMount(){
     stateLoader.unsetState();
   }
-  componentWillReceiveProps(nextProps, nextState) {
-    if (this.state.resetMessage != nextState.resetMessage) {
-        this.setState({showNotif: true});
-    }
-  }
   changePassword = (e) => {
     e.preventDefault();
     this.props.ChangeYourPassword(this);
@@ -65,18 +61,17 @@ class ChangePassword extends React.Component {
   render() {
     const { classes } = this.props;
       return (
-        <div className={classes.content} style={{backgroundColor:'#082356', backgroundImage:"url(" + bg + ")", backgroundRepeat:"no-repeat"}}>
-        <div className={classes.container}>
-		      <GridContainer justify="center">
-            <GridItem xs={12} sm={8} md={4}>
-            {(this.state.resetMessage)?<Notification error={false} message={this.state.resetMessage.message} />: ""}
+		      <div>
+        <Grid container>
+        <GridItem xs={12} sm={12} md={8}>
+          <Card>
+            <CardHeader color="primary">
+            <h4 className={classes.cardTitleWhite}>Change your Password</h4>
+            </CardHeader>
+            <CardBody>
+            {(this.state.resetMessage)?<Notification error={this.state.errorState} message={this.state.resetMessage.message} />: ""}
             <Progress loading={this.state.loading}/>
             <form onSubmit={this.changePassword}>
-              <Card>
-                <CardHeader color="primary" style={{background: "linear-gradient(60deg, #000, #000)"}}>
-                   <center><img src={logo} /></center>
-		           </CardHeader>
-              <CardBody>
               <Grid container>
               <GridItem xs={12} sm={12} md={12}>
                       <CustomInput labelText="Current Password"  id="oldPassword" required formControlProps={{
@@ -128,17 +123,11 @@ class ChangePassword extends React.Component {
                         </GridItem>
                     
 						        </Grid>
-                  </CardBody>
-                  <Progress loading={this.state.loading}/>
-					        <img src={logo2} />
-					        <CardFooter>
-                 
-					        </CardFooter>
-				        </Card>
             </form> 
-          </GridItem>
-        </GridContainer>
-        </div>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </Grid>
         </div>
       );
     }
@@ -162,8 +151,13 @@ function mapDispatchToProps(dispatch) {
         let data = e.state.data;
         userAction.changePassword(data, e.props.user._id,  (json)=>{
           e.setState({resetMessage:json});
+          if (e.state.resetMessage.success === false){
+            e.setState({errorState: true});
+          }
+          else {
+            e.setState({errorState: false});
+          }
         });
-        console.log("the message"+e.state.resetMessage)
       }
     }
   }

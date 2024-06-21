@@ -7,13 +7,16 @@ let AclAuth = {
       data.email = username;
       data.password = password;
       middleware.makeConnection('/users/login','POST', data).then((response) => {
-        if(response.ok && response.status == 200){
+        if (response.status == 406){
+         return cb(response);
+        }
+        else if(response.ok && response.status == 200){
          return response.json();
         }else{
           cb(response);
         }
       }).then(
-        (user)=>{   
+        (user)=>{
             cb('', user.user, user.token);
         }
       )

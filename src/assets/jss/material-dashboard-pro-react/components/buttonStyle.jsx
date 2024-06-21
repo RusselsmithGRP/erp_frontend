@@ -57,7 +57,7 @@ const buttonStyle = {
     "& svg": {
       position: "relative",
       display: "inline-block",
-      top: "0",
+      top: "-10px",
       width: "18px",
       height: "18px",
       marginRight: "4px",
@@ -147,12 +147,12 @@ const buttonStyle = {
     }
   },
   twitter: {
-    backgroundColor: "#55acee",
+    backgroundColor: "#0072c6",
     color: "#fff",
     boxShadow:
       "0 2px 2px 0 rgba(85, 172, 238, 0.14), 0 3px 1px -2px rgba(85, 172, 238, 0.2), 0 1px 5px 0 rgba(85, 172, 238, 0.12)",
     "&:hover,&:focus,&:visited": {
-      backgroundColor: "#55acee",
+      backgroundColor: "blue",
       color: "#fff",
       boxShadow:
         "0 14px 26px -12px rgba(85, 172, 238, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(85, 172, 238, 0.2)"
@@ -278,7 +278,20 @@ const buttonStyle = {
         "0 14px 26px -12px rgba(255, 69, 0, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(255, 69, 0, 0.2)"
     }
   },
-  simple: {
+
+  yellowgreen: {
+    backgroundColor: "#9ACD32",
+    color: " #fff",
+    boxShadow:
+      "0 2px 2px 0 rgba(255, 69, 0, 0.14), 0 3px 1px -2px rgba(255, 69, 0, 0.2), 0 1px 5px 0 rgba(255, 69, 0, 0.12)",
+    "&:hover,&:focus": {
+      backgroundColor: "#9ACD32",
+      color: " #fff",
+      boxShadow:
+        "0 14px 26px -12px rgba(255, 69, 0, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(255, 69, 0, 0.2)"
+    }
+  },
+   simple: {
     "&,&:focus,&:hover": {
       color: "#FFFFFF",
       background: "transparent",
@@ -409,17 +422,18 @@ const buttonStyle = {
   justIcon: {
     paddingLeft: "12px",
     paddingRight: "12px",
+    marginLeft:"7px",
     fontSize: "20px",
-    height: "41px",
-    minWidth: "41px",
-    width: "41px",
+    height: "21px",
+    minWidth: "21px",
+    width: "21px",
     "& .fab,& .fas,& .far,& .fal,& svg": {
       marginRight: "0px"
     },
     "&$lg": {
-      height: "57px",
-      minWidth: "57px",
-      width: "57px",
+      height: "37px",
+      minWidth: "37px",
+      width: "37px",
       lineHeight: "56px",
       "& .fab,& .fas,& .far,& .fal": {
         fontSize: "32px",

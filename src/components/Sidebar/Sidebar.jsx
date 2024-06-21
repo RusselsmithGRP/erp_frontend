@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import PerfectScrollbar from "perfect-scrollbar";
 import { NavLink } from "react-router-dom";
 import cx from "classnames";
+import * as roleAction from "../../actions/role";
 
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -14,7 +15,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import Hidden from "@material-ui/core/Hidden";
 import Collapse from "@material-ui/core/Collapse";
-import { connect } from 'react-redux'
+import { connect } from "react-redux";
 
 // core components
 import HeaderLinks from "components/Header/HeaderLinks.jsx";
@@ -43,6 +44,7 @@ class SidebarWrapper extends React.Component {
       ps.destroy();
     }
   }
+
   render() {
     const { className, user, headerLinks, links } = this.props;
     return (
@@ -65,7 +67,8 @@ class Sidebar extends React.Component {
       openTables: this.activeRoute("/tables"),
       openMaps: this.activeRoute("/maps"),
       openPages: this.activeRoute("-page"),
-      miniActive: true
+      miniActive: true,
+      permissions: []
     };
     this.activeRoute.bind(this);
   }
@@ -78,6 +81,16 @@ class Sidebar extends React.Component {
     st[collapse] = !this.state[collapse];
     this.setState(st);
   }
+  /**
+   * @author Idowu
+   * @summary Changed componentWillMount to UNSAFE_componentWillMount
+   */
+  UNSAFE_componentWillMount() {
+    roleAction.resolvePermission(this.props, this.props.user.role, json => {
+      this.setState({ permissions: json[0].permission });
+    });
+  }
+
   render() {
     const {
       classes,
@@ -135,11 +148,7 @@ class Sidebar extends React.Component {
     var user = (
       <div className={userWrapperClass}>
         <div className={photo}>
-          <Person
-            className={
-              classes.avatarImg
-            }
-          />
+          <Person className={classes.avatarImg} />
         </div>
         <List className={classes.list}>
           <ListItem className={classes.item + " " + classes.userItem}>
@@ -149,7 +158,15 @@ class Sidebar extends React.Component {
               onClick={() => this.openCollapse("openAvatar")}
             >
               <ListItemText
-                primary={rtlActive ? "تانيا أندرو" : this.props.user.email}
+                primary={
+                  rtlActive
+                    ? "تانيا أندرو"
+                    : typeof this.props.user != "undefined"
+                    ? this.props.user.firstname
+                    : "" + " " + (typeof this.props.user != "undefined")
+                    ? this.props.user.lastname.charAt(0)
+                    : "" + "."
+                }
                 secondary={
                   <b
                     className={
@@ -232,6 +249,12 @@ class Sidebar extends React.Component {
           if (prop.redirect) {
             return null;
           }
+          if (
+            this.state.permissions.indexOf(prop.path) === -1 &&
+            this.props.user.role != "admin"
+          ) {
+            return;
+          }
           if (prop.collapse) {
             const navLinkClasses =
               classes.itemLink +
@@ -301,6 +324,12 @@ class Sidebar extends React.Component {
                     {prop.views.map((prop, key) => {
                       if (prop.redirect) {
                         return null;
+                      }
+                      if (
+                        this.state.permissions.indexOf(prop.path) === -1 &&
+                        this.props.user.role != "admin"
+                      ) {
+                        return;
                       }
                       const navLinkClasses =
                         classes.collapseItemLink +
@@ -511,4 +540,7 @@ function mapStateToProps(state) {
     user: state.auth.user
   };
 }
-export default connect(mapStateToProps, null)(withStyles(sidebarStyle)(Sidebar));
+export default connect(
+  mapStateToProps,
+  null
+)(withStyles(sidebarStyle)(Sidebar));

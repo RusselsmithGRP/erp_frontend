@@ -11,7 +11,7 @@ import Close from "@material-ui/icons/Close";
 import snackbarContentStyle from "../../assets/jss/material-dashboard-pro-react/components/snackbarContentStyle.jsx";
 
 function SnackbarContent({ ...props }) {
-  const { classes, message, color, close, icon } = props;
+  const { classes, message, color, close, icon, onclose } = props;
   var action = [];
   const messageClasses = classNames({
     [classes.iconMessage]: icon !== undefined
@@ -23,6 +23,7 @@ function SnackbarContent({ ...props }) {
         key="close"
         aria-label="Close"
         color="inherit"
+        onClick={onclose}
       >
         <Close className={classes.close} />
       </IconButton>
@@ -50,7 +51,8 @@ SnackbarContent.propTypes = {
   message: PropTypes.node.isRequired,
   color: PropTypes.oneOf(["info", "success", "warning", "danger", "primary"]),
   close: PropTypes.bool,
-  icon: PropTypes.func
+  icon: PropTypes.func,
+  onClose: PropTypes.func
 };
 
 export default withStyles(snackbarContentStyle)(SnackbarContent);
